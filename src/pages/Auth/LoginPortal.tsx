@@ -130,7 +130,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
       <div className="w-full max-w-6xl min-h-screen md:min-h-[660px] md:h-[680px] bg-white md:rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row border border-slate-200/80">
         
         {/* ================= LEFT COLUMN: BRAND HERO BANNER ================= */}
-        <div className="w-full md:w-1/2 bg-linear-to-b from-[#1D4ED8] via-[#2563EB] to-[#1E40AF] p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden shrink-0">
+        <div className="w-full md:w-1/2 bg-gradient-to-b from-[#1D4ED8] via-[#2563EB] to-[#1E40AF] p-8 md:p-12 text-white flex flex-col justify-between relative overflow-hidden shrink-0">
           
           {/* Subtle Background Pattern */}
           <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:18px_18px] pointer-events-none" />
@@ -139,21 +139,25 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
 
           {/* Top Hero Text */}
           <div className="relative z-10 space-y-1">
-            <p className="text-sm md:text-base font-medium text-blue-100 tracking-wide">
-              Selamat Datang di Aplikasi Laundry
-            </p>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white drop-shadow-xs">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-extrabold uppercase tracking-wide backdrop-blur-xs border border-white/30">
+              <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+              <span>14 Hari Uji Coba Gratis</span>
+            </span>
+            <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white drop-shadow-xs pt-1">
               Laundry Suite
             </h1>
+            <p className="text-xs md:text-sm font-medium text-blue-100">
+              Satu Sistem Operasi untuk Seluruh Bisnis Laundry
+            </p>
           </div>
 
           {/* Center Graphic Showcase with Floating Badges */}
-          <div className="relative z-10 my-8 flex items-center justify-center">
+          <div className="relative z-10 my-6 flex items-center justify-center">
             {/* Center Circular Device Illustration */}
-            <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full bg-linear-to-tr from-blue-700/60 to-sky-400/30 border border-white/20 p-4 flex items-center justify-center backdrop-blur-xs shadow-2xl">
+            <div className="relative w-64 h-64 md:w-72 md:h-72 rounded-full bg-gradient-to-tr from-blue-700/60 to-sky-400/30 border border-white/20 p-4 flex items-center justify-center backdrop-blur-xs shadow-2xl">
               
               {/* WhatsApp Autosender Highlight Pill */}
-              <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/95 text-slate-800 px-3.5 py-1.5 rounded-full shadow-lg border border-blue-100 flex items-center gap-1.5 z-20 animate-bounce duration-1000">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 bg-white/95 text-slate-800 px-3.5 py-1.5 rounded-full shadow-lg border border-blue-100 flex items-center gap-1.5 z-20">
                 <MessageSquare className="w-4 h-4 text-emerald-500 fill-emerald-500" />
                 <div className="text-[11px] font-extrabold leading-tight">
                   <span className="text-[9px] block text-slate-400 font-bold -mb-0.5">WhatsApp</span>
@@ -178,7 +182,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
               </div>
 
               {/* Person working avatar / illustration */}
-              <div className="w-44 h-44 rounded-full bg-linear-to-b from-sky-300 to-blue-600 p-1 flex items-center justify-center shadow-inner overflow-hidden">
+              <div className="w-40 h-40 rounded-full bg-gradient-to-b from-sky-300 to-blue-600 p-1 flex items-center justify-center shadow-inner overflow-hidden">
                 <img 
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80" 
                   alt="Laundry Owner" 
@@ -189,10 +193,14 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
           </div>
 
           {/* Bottom Highlight Bullet List */}
-          <div className="relative z-10 text-xs text-blue-100 space-y-1">
+          <div className="relative z-10 text-xs text-blue-100 space-y-1.5">
             <div className="flex items-center gap-2 font-medium">
-              <CheckCircle2 className="w-4 h-4 text-sky-300" />
-              <span>Multi-Outlet, POS Kasir, & Integrasi WA Otomatis</span>
+              <CheckCircle2 className="w-4 h-4 text-sky-300 shrink-0" />
+              <span>Akses Penuh Semua Modul (Kasir, QR Bag, Kurir & Laba Rugi)</span>
+            </div>
+            <div className="flex items-center gap-2 font-medium">
+              <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
+              <span>Tanpa Biaya Tersembunyi • Tanpa Kartu Kredit</span>
             </div>
           </div>
         </div>
@@ -202,7 +210,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-between bg-white overflow-y-auto">
           
           {/* Top Logo and Back Button */}
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-brand-500/20">
                 LS
@@ -216,7 +224,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
               <button
                 type="button"
                 onClick={onBackToLanding}
-                className="text-[11px] font-bold text-slate-500 hover:text-brand-600 flex items-center gap-1 transition px-2 py-1 rounded-lg hover:bg-slate-50"
+                className="text-[11px] font-bold text-slate-500 hover:text-brand-600 flex items-center gap-1 transition px-2.5 py-1 rounded-lg hover:bg-slate-50 border border-slate-200"
               >
                 <span>← Halaman Utama</span>
               </button>
@@ -224,17 +232,20 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
           </div>
 
           {/* Dynamic Content based on ViewState */}
-          <div className="my-auto py-6">
+          <div className="my-auto py-4">
 
             {/* ----------------- STATE 1: WELCOME SCREEN ----------------- */}
             {viewState === 'welcome' && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="space-y-2">
+                  <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200 inline-block">
+                    ✨ 14-Hari Free Trial
+                  </span>
                   <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                    Smart Laundry Management
+                    Mulai Kelola Laundry Anda Lebih Cerdas
                   </h2>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    Atur, kelola & pantau seluruh operasional usaha laundry Anda kapanpun dan dimanapun dengan mudah.
+                    Daftar sekarang untuk mendapatkan akses gratis 14 hari penuh ke seluruh fitur kasir, produksi mesin cuci, kurir jemput, dan laporan keuangan.
                   </p>
                 </div>
 
@@ -244,15 +255,15 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                     onClick={() => setViewState('register')}
                     className="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold shadow-lg shadow-brand-600/25 transition active:scale-[0.99] flex items-center justify-center gap-2"
                   >
-                    <span>Daftar Akun Baru</span>
+                    <span>Mulai Trial 14 Hari Gratis ➔</span>
                   </button>
 
                   <button
                     type="button"
                     onClick={() => setViewState('login')}
-                    className="w-full py-3.5 bg-white hover:bg-slate-50 text-brand-600 border-2 border-brand-600 rounded-xl text-xs font-extrabold transition active:scale-[0.99] flex items-center justify-center gap-2"
+                    className="w-full py-3.5 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-xl text-xs font-bold transition active:scale-[0.99]"
                   >
-                    <span>Login ke Akun Anda</span>
+                    Sudah Punya Akun? Masuk di Sini
                   </button>
                 </div>
 
@@ -478,37 +489,42 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                     <ArrowLeft className="w-5 h-5 text-brand-600" />
                   </button>
                   <div>
-                    <h2 className="text-lg font-black text-slate-900 leading-tight">
-                      Daftar Akun Bisnis Laundry
+                    <div className="flex items-center gap-1.5">
+                      <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-full border border-emerald-200 uppercase">
+                        14 Hari Free Trial
+                      </span>
+                    </div>
+                    <h2 className="text-lg font-black text-slate-900 leading-tight mt-0.5">
+                      Daftar Uji Coba Gratis Laundry Suite
                     </h2>
-                    <p className="text-[11px] text-slate-400">Pilih paket sesuai kebutuhan skala usaha Anda</p>
+                    <p className="text-[11px] text-slate-500">Akses penuh semua modul tanpa biaya & tanpa kartu kredit</p>
                   </div>
                 </div>
 
                 <form onSubmit={handlePerformRegister} className="space-y-3">
-                  {/* Plan Selector */}
+                  {/* Plan Selector with Free Trial Highlight */}
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                      Pilihan Paket Berlangganan
+                      Pilihan Paket Trial (Bebas Ganti Kapan Saja)
                     </label>
                     <div className="grid grid-cols-3 gap-2">
                       {[
-                        { key: 'starter', name: 'Starter', price: 'Rp 199k/bln', desc: '1 Outlet • POS' },
-                        { key: 'growth', name: 'Growth', price: 'Rp 499k/bln', desc: '3 Outlet • Kanban & Kurir' },
-                        { key: 'business', name: 'Business', price: 'Rp 1.2jt/bln', desc: 'Unlimited • Whitelabel' }
+                        { key: 'starter', name: 'Starter', price: 'Rp 0 Trial', thenPrice: 'Rp 199k/bln', desc: '1 Outlet • POS' },
+                        { key: 'growth', name: 'Growth ⭐', price: 'Rp 0 Trial', thenPrice: 'Rp 499k/bln', desc: '5 Outlet • Produksi & Kurir' },
+                        { key: 'business', name: 'Business', price: 'Rp 0 Trial', thenPrice: 'Rp 1.2jt/bln', desc: 'Unlimited • ERP' }
                       ].map(plan => (
                         <button
                           key={plan.key}
                           type="button"
                           onClick={() => setRegPlan(plan.key as any)}
-                          className={`p-2.5 rounded-xl border text-left transition ${
+                          className={`p-2.5 rounded-xl border text-left transition relative ${
                             regPlan === plan.key
-                              ? 'border-brand-600 bg-brand-50/50 ring-2 ring-brand-500/20'
-                              : 'border-slate-200 hover:border-slate-300'
+                              ? 'border-brand-600 bg-brand-50/60 ring-2 ring-brand-500/20 shadow-xs'
+                              : 'border-slate-200 hover:border-slate-300 bg-white'
                           }`}
                         >
                           <div className="font-extrabold text-xs text-slate-900">{plan.name}</div>
-                          <div className="text-[10px] text-brand-700 font-bold">{plan.price}</div>
+                          <div className="text-[10px] text-emerald-700 font-extrabold">{plan.price}</div>
                           <div className="text-[9px] text-slate-400 mt-0.5">{plan.desc}</div>
                         </button>
                       ))}
@@ -525,7 +541,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                         onChange={(e) => setRegName(e.target.value)}
                         placeholder="Budi Santoso"
                         required
-                        className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-brand-600"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-500"
                       />
                     </div>
                     <div>
@@ -536,7 +552,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                         onChange={(e) => setRegLaundryName(e.target.value)}
                         placeholder="KlinKlin Laundry"
                         required
-                        className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-brand-600"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-500"
                       />
                     </div>
                   </div>
@@ -550,30 +566,38 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                         onChange={(e) => setRegPhone(e.target.value)}
                         placeholder="081234567890"
                         required
-                        className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-brand-600"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-700 mb-1">Email Akun</label>
+                      <label className="block text-[10px] font-bold text-slate-700 mb-1">Email Akun (Opsional)</label>
                       <input
                         type="email"
                         value={regEmail}
                         onChange={(e) => setRegEmail(e.target.value)}
                         placeholder="owner@laundry.com"
-                        className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-brand-600"
+                        className="w-full px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-brand-600 focus:ring-1 focus:ring-brand-500"
                       />
                     </div>
                   </div>
 
                   <button
                     type="submit"
-                    className="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold shadow-lg shadow-brand-600/25 transition active:scale-[0.99] mt-2"
+                    className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white rounded-xl text-xs font-black shadow-lg shadow-blue-600/25 transition active:scale-[0.99] mt-2 flex items-center justify-center gap-1.5"
                   >
-                    Daftar & Masuk ke Dashboard ➔
+                    <span>🚀 Mulai Trial 14 Hari Gratis Sekarang ➔</span>
                   </button>
+
+                  <div className="flex items-center justify-center gap-4 text-[10px] text-slate-400 pt-1">
+                    <span>✓ Langsung Aktif</span>
+                    <span>•</span>
+                    <span>✓ Tanpa Kartu Kredit</span>
+                    <span>•</span>
+                    <span>✓ 100% Gratis</span>
+                  </div>
                 </form>
 
-                <div className="text-center text-xs text-slate-500">
+                <div className="text-center text-xs text-slate-500 pt-1">
                   Sudah punya akun?{' '}
                   <button
                     type="button"
