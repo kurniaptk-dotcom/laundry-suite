@@ -226,40 +226,116 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
             </p>
           </div>
 
-          {/* Center Visual Mockup Display */}
+          {/* Center Visual Mockup: Animated Smart Laundry Machine & Operations Hub */}
           <div className="relative z-10 my-auto py-6 flex items-center justify-center">
-            <div className="relative w-64 h-64 flex items-center justify-center">
-              {/* Pulsing decorative rings */}
-              <div className="absolute inset-0 rounded-full border-2 border-dashed border-blue-300/40 animate-spin-slow" />
-              <div className="absolute inset-4 rounded-full border border-white/20" />
+            <div className="relative w-72 h-72 flex items-center justify-center">
               
-              {/* Profile Avatar Card */}
-              <div className="w-36 h-36 rounded-full p-1 bg-gradient-to-tr from-sky-300 via-white to-blue-200 shadow-2xl overflow-hidden relative group">
-                <img 
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop" 
-                  alt="Laundry Suite Operator"
-                  className="w-full h-full object-cover rounded-full"
-                />
+              {/* Outer Decorative Rotating Tech Ring */}
+              <div className="absolute inset-0 rounded-full border-2 border-dashed border-sky-300/30 animate-spin-slow" />
+              <div className="absolute inset-4 rounded-full border border-white/20" />
+
+              {/* Central Smart Washing Machine Unit (Glassmorphism & Realistic Metallic Finish) */}
+              <div className="w-44 h-52 bg-gradient-to-b from-white/95 via-blue-50/90 to-slate-100/95 backdrop-blur-md rounded-2xl shadow-2xl border-2 border-white/60 p-3 flex flex-col justify-between relative group transform transition hover:scale-105 duration-300">
+                
+                {/* Machine Top Control Panel */}
+                <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                    <div className="text-[9px] font-black text-slate-800 tracking-wider uppercase font-mono">
+                      SMART WASH
+                    </div>
+                  </div>
+                  {/* Digital LED Timer Screen */}
+                  <div className="bg-slate-900 text-sky-400 font-mono text-[9px] font-black px-1.5 py-0.5 rounded-md border border-slate-700 shadow-inner flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                    <span>24:00</span>
+                  </div>
+                </div>
+
+                {/* Main Washing Drum (Front Load Animated Glass Porthole) */}
+                <div className="relative my-auto flex items-center justify-center">
+                  {/* Outer Chrome Rim */}
+                  <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-slate-400 via-white to-slate-300 p-1.5 shadow-xl flex items-center justify-center relative">
+                    {/* Dark Glass Door Interior */}
+                    <div className="w-full h-full rounded-full bg-gradient-to-b from-blue-950 via-sky-900 to-blue-900 overflow-hidden relative flex items-center justify-center shadow-inner">
+                      
+                      {/* Water Wave Gradient Effect */}
+                      <div className="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-sky-400/50 via-cyan-300/30 to-transparent animate-pulse" />
+                      
+                      {/* Spinning Drum Perforations & Laundry Bubbles */}
+                      <div className="absolute inset-1 rounded-full border border-dashed border-sky-300/40 animate-spin" style={{ animationDuration: '6s' }} />
+                      <div className="absolute inset-3 rounded-full border border-white/20 animate-spin" style={{ animationDuration: '3s', animationDirection: 'reverse' }} />
+                      
+                      {/* Laundry Foam / Bubble Particles */}
+                      <div className="absolute w-4 h-4 rounded-full bg-white/70 blur-[0.5px] top-4 left-5 animate-bounce-gentle" />
+                      <div className="absolute w-3 h-3 rounded-full bg-sky-200/80 blur-[0.5px] bottom-5 right-6 animate-pulse" />
+                      <div className="absolute w-2 h-2 rounded-full bg-white/90 top-8 right-5" />
+                      
+                      {/* Center Hub Glass Reflection */}
+                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-white/40 via-sky-200/20 to-transparent backdrop-blur-xs border border-white/40 flex items-center justify-center shadow-sm">
+                        <Sparkles className="w-4 h-4 text-sky-200 animate-spin-slow" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Machine Bottom Drawer / Filter Cap */}
+                <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
+                  <div className="flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                  </div>
+                  <span className="text-[8px] font-bold text-slate-500">Auto Detergent 100%</span>
+                </div>
               </div>
 
-              {/* Floating Feature Badges */}
-              <div className="absolute top-1 right-2 bg-white text-slate-800 px-3 py-1.5 rounded-full shadow-lg text-[11px] font-bold flex items-center gap-1.5 animate-bounce-gentle">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>WhatsApp Autosender</span>
+              {/* Floating Operational Management Badges */}
+              
+              {/* Badge 1: WhatsApp Autosender */}
+              <div className="absolute -top-2 right-0 bg-white/95 text-slate-800 px-3 py-1.5 rounded-xl shadow-xl text-[11px] font-extrabold flex items-center gap-1.5 border border-white/80 animate-bounce-gentle">
+                <div className="w-5 h-5 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                  <MessageSquare className="w-3 h-3" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-black text-slate-800 leading-none">WhatsApp Otomatis</div>
+                  <div className="text-[8px] text-emerald-600 font-semibold">Resi & Notif Siap Ambil</div>
+                </div>
               </div>
 
-              <div className="absolute bottom-2 left-2 bg-white text-slate-800 px-3 py-1.5 rounded-full shadow-lg text-[11px] font-bold flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-blue-600" />
-                <span>QRIS & POS Kasir</span>
+              {/* Badge 2: POS Kasir & QRIS */}
+              <div className="absolute -bottom-2 -left-2 bg-white/95 text-slate-800 px-3 py-1.5 rounded-xl shadow-xl text-[11px] font-extrabold flex items-center gap-1.5 border border-white/80">
+                <div className="w-5 h-5 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
+                  <Store className="w-3 h-3" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-black text-slate-800 leading-none">POS & Timbangan</div>
+                  <div className="text-[8px] text-blue-600 font-semibold">Cetak Struk & QRIS</div>
+                </div>
               </div>
 
-              <div className="absolute top-1/2 -left-4 bg-white/90 backdrop-blur-xs text-blue-800 p-2 rounded-xl shadow-md">
-                <Store className="w-4 h-4" />
+              {/* Badge 3: Kurir Live Tracking */}
+              <div className="absolute top-1/2 -right-8 -translate-y-1/2 bg-white/95 text-slate-800 px-2.5 py-1.5 rounded-xl shadow-xl text-[10px] font-bold flex items-center gap-1.5 border border-white/80">
+                <div className="w-5 h-5 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
+                  <Zap className="w-3 h-3" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-black text-slate-800 leading-none">Manajemen Kurir</div>
+                  <div className="text-[8px] text-amber-600 font-semibold">Pickup & Antar Jemput</div>
+                </div>
               </div>
 
-              <div className="absolute top-1/2 -right-4 bg-white/90 backdrop-blur-xs text-amber-500 p-2 rounded-xl shadow-md">
-                <Zap className="w-4 h-4" />
+              {/* Badge 4: Produksi & Kanban */}
+              <div className="absolute top-1/2 -left-8 -translate-y-1/2 bg-white/95 text-slate-800 px-2.5 py-1.5 rounded-xl shadow-xl text-[10px] font-bold flex items-center gap-1.5 border border-white/80">
+                <div className="w-5 h-5 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
+                  <Layers className="w-3 h-3" />
+                </div>
+                <div>
+                  <div className="text-[10px] font-black text-slate-800 leading-none">Kanban Mesin</div>
+                  <div className="text-[8px] text-indigo-600 font-semibold">Cuci, Kering, Setrika</div>
+                </div>
               </div>
+
             </div>
           </div>
 
