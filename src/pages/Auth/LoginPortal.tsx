@@ -226,16 +226,12 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
             </p>
           </div>
 
-          {/* Center Visual Mockup: Animated Smart Laundry Machine & Operations Hub */}
-          <div className="relative z-10 my-auto py-6 flex items-center justify-center">
-            <div className="relative w-72 h-72 flex items-center justify-center">
+          {/* Center Visual Mockup: Animated Smart Laundry Machine & Orbiting Team Roles */}
+          <div className="relative z-10 my-auto py-8 flex items-center justify-center">
+            <div className="relative w-80 h-80 flex items-center justify-center">
               
-              {/* Outer Decorative Rotating Tech Ring */}
-              <div className="absolute inset-0 rounded-full border-2 border-dashed border-sky-300/30 animate-spin-slow" />
-              <div className="absolute inset-4 rounded-full border border-white/20" />
-
-              {/* Central Smart Washing Machine Unit (Glassmorphism & Realistic Metallic Finish) */}
-              <div className="w-44 h-52 bg-gradient-to-b from-white/95 via-blue-50/90 to-slate-100/95 backdrop-blur-md rounded-2xl shadow-2xl border-2 border-white/60 p-3 flex flex-col justify-between relative group transform transition hover:scale-105 duration-300">
+              {/* Central Stationary Smart Washing Machine Unit (z-20) */}
+              <div className="w-44 h-52 bg-gradient-to-b from-white/95 via-blue-50/90 to-slate-100/95 backdrop-blur-md rounded-2xl shadow-2xl border-2 border-white/60 p-3 flex flex-col justify-between relative group transform transition hover:scale-105 duration-300 z-20">
                 
                 {/* Machine Top Control Panel */}
                 <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
@@ -290,70 +286,89 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                 </div>
               </div>
 
-              {/* ================= FLOATING ROLE AVATAR BADGES (OWNER, KASIR, KURIR, OPERATOR) ================= */}
-              
-              {/* 1. OWNER BISNIS (Top-Left) */}
-              <div className="absolute -top-3 -left-6 bg-white/95 text-slate-800 p-2 rounded-2xl shadow-xl border border-white/90 flex items-center gap-2 animate-bounce-gentle backdrop-blur-md">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-400 via-yellow-300 to-amber-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
-                  <div className="w-full h-full rounded-full bg-amber-900/10 flex items-center justify-center text-sm">
-                    👑
+              {/* ================= 360-DEGREE ORBITAL REVOLVING RING ================= */}
+              <div className="absolute inset-0 rounded-full border border-dashed border-sky-300/30 animate-orbit pointer-events-none z-30">
+                
+                {/* 1. TOP: OWNER BISNIS */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
+                  <div className="animate-counter-orbit">
+                    <div className="bg-white/95 text-slate-800 p-1.5 px-2.5 rounded-2xl shadow-2xl border border-white/90 flex items-center gap-2 backdrop-blur-md hover:scale-110 transition-transform">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-amber-400 via-yellow-300 to-amber-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
+                        <div className="w-full h-full rounded-full bg-amber-900/10 flex items-center justify-center text-xs">
+                          👑
+                        </div>
+                      </div>
+                      <div className="text-left pr-1 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] font-black text-slate-900 leading-none">Owner Bisnis</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                        </div>
+                        <div className="text-[8px] text-amber-700 font-semibold leading-tight mt-0.5">Pantau Omzet & Cabang</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="text-left pr-1">
-                  <div className="flex items-center gap-1">
-                    <span className="text-[10px] font-black text-slate-900 leading-none">Owner Bisnis</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                  </div>
-                  <div className="text-[8px] text-amber-700 font-semibold leading-tight mt-0.5">Pantau Omzet & Cabang</div>
-                </div>
-              </div>
 
-              {/* 2. KURIR DELIVERY (Top-Right) */}
-              <div className="absolute -top-3 -right-6 bg-white/95 text-slate-800 p-2 rounded-2xl shadow-xl border border-white/90 flex items-center gap-2 backdrop-blur-md">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-400 via-teal-300 to-emerald-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
-                  <div className="w-full h-full rounded-full bg-emerald-900/10 flex items-center justify-center text-sm">
-                    🛵
+                {/* 2. RIGHT: KURIR DELIVERY */}
+                <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 pointer-events-auto">
+                  <div className="animate-counter-orbit">
+                    <div className="bg-white/95 text-slate-800 p-1.5 px-2.5 rounded-2xl shadow-2xl border border-white/90 flex items-center gap-2 backdrop-blur-md hover:scale-110 transition-transform">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-emerald-400 via-teal-300 to-emerald-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
+                        <div className="w-full h-full rounded-full bg-emerald-900/10 flex items-center justify-center text-xs">
+                          🛵
+                        </div>
+                      </div>
+                      <div className="text-left pr-1 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] font-black text-slate-900 leading-none">Kurir Delivery</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        </div>
+                        <div className="text-[8px] text-emerald-700 font-semibold leading-tight mt-0.5">Antar Jemput & POD</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="text-left pr-1">
-                  <div className="flex items-center gap-1">
-                    <span className="text-[10px] font-black text-slate-900 leading-none">Kurir Delivery</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  </div>
-                  <div className="text-[8px] text-emerald-700 font-semibold leading-tight mt-0.5">Antar Jemput & Bukti POD</div>
-                </div>
-              </div>
 
-              {/* 3. KASIR OUTLET (Bottom-Left) */}
-              <div className="absolute -bottom-3 -left-6 bg-white/95 text-slate-800 p-2 rounded-2xl shadow-xl border border-white/90 flex items-center gap-2 backdrop-blur-md">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-400 via-sky-300 to-blue-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
-                  <div className="w-full h-full rounded-full bg-blue-900/10 flex items-center justify-center text-sm">
-                    👩‍💼
+                {/* 3. BOTTOM: KASIR OUTLET */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 pointer-events-auto">
+                  <div className="animate-counter-orbit">
+                    <div className="bg-white/95 text-slate-800 p-1.5 px-2.5 rounded-2xl shadow-2xl border border-white/90 flex items-center gap-2 backdrop-blur-md hover:scale-110 transition-transform">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-400 via-sky-300 to-blue-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
+                        <div className="w-full h-full rounded-full bg-blue-900/10 flex items-center justify-center text-xs">
+                          👩‍💼
+                        </div>
+                      </div>
+                      <div className="text-left pr-1 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] font-black text-slate-900 leading-none">Kasir Outlet</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                        </div>
+                        <div className="text-[8px] text-blue-700 font-semibold leading-tight mt-0.5">Input Kiloan & Kasir</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="text-left pr-1">
-                  <div className="flex items-center gap-1">
-                    <span className="text-[10px] font-black text-slate-900 leading-none">Kasir Outlet</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-                  </div>
-                  <div className="text-[8px] text-blue-700 font-semibold leading-tight mt-0.5">Input Kiloan & Cetak Struk</div>
-                </div>
-              </div>
 
-              {/* 4. OPERATOR CUCI & QC (Bottom-Right) */}
-              <div className="absolute -bottom-3 -right-6 bg-white/95 text-slate-800 p-2 rounded-2xl shadow-xl border border-white/90 flex items-center gap-2 animate-bounce-gentle backdrop-blur-md">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-400 via-indigo-300 to-purple-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
-                  <div className="w-full h-full rounded-full bg-purple-900/10 flex items-center justify-center text-sm">
-                    👔
+                {/* 4. LEFT: OPERATOR CUCI & QC */}
+                <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 pointer-events-auto">
+                  <div className="animate-counter-orbit">
+                    <div className="bg-white/95 text-slate-800 p-1.5 px-2.5 rounded-2xl shadow-2xl border border-white/90 flex items-center gap-2 backdrop-blur-md hover:scale-110 transition-transform">
+                      <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-400 via-indigo-300 to-purple-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
+                        <div className="w-full h-full rounded-full bg-purple-900/10 flex items-center justify-center text-xs">
+                          👔
+                        </div>
+                      </div>
+                      <div className="text-left pr-1 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <span className="text-[10px] font-black text-slate-900 leading-none">Operator Cuci</span>
+                          <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />
+                        </div>
+                        <div className="text-[8px] text-purple-700 font-semibold leading-tight mt-0.5">Kontrol Mesin & QC</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="text-left pr-1">
-                  <div className="flex items-center gap-1">
-                    <span className="text-[10px] font-black text-slate-900 leading-none">Operator Cuci & QC</span>
-                    <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />
-                  </div>
-                  <div className="text-[8px] text-purple-700 font-semibold leading-tight mt-0.5">Kontrol Mesin & Packing</div>
-                </div>
+
               </div>
 
             </div>

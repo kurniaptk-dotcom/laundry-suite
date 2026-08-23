@@ -58,3 +58,23 @@
 .animate-pulse-subtle {
   animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
+/* 360 Degree Orbital Revolution for Hero Visuals */
+@keyframes orbit-revolve {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes orbit-counter-revolve {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+.animate-orbit {
+  animation: orbit-revolve 20s linear infinite;
+}
+
+.animate-counter-orbit {
+  animation: orbit-counter-revolve 20s linear infinite;
+}
+
