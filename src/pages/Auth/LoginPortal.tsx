@@ -290,49 +290,69 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                 </div>
               </div>
 
-              {/* Floating Operational Management Badges */}
+              {/* ================= FLOATING ROLE AVATAR BADGES (OWNER, KASIR, KURIR, OPERATOR) ================= */}
               
-              {/* Badge 1: WhatsApp Autosender */}
-              <div className="absolute -top-2 right-0 bg-white/95 text-slate-800 px-3 py-1.5 rounded-xl shadow-xl text-[11px] font-extrabold flex items-center gap-1.5 border border-white/80 animate-bounce-gentle">
-                <div className="w-5 h-5 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
-                  <MessageSquare className="w-3 h-3" />
+              {/* 1. OWNER BISNIS (Top-Left) */}
+              <div className="absolute -top-3 -left-6 bg-white/95 text-slate-800 p-2 rounded-2xl shadow-xl border border-white/90 flex items-center gap-2 animate-bounce-gentle backdrop-blur-md">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-amber-400 via-yellow-300 to-amber-500 p-0.5 shadow-md flex items-center justify-center shrink-0">
+                  <div className="w-full h-full rounded-full bg-amber-900/10 flex items-center justify-center text-sm">
+                    👑
+                  </div>
                 </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-800 leading-none">WhatsApp Otomatis</div>
-                  <div className="text-[8px] text-emerald-600 font-semibold">Resi & Notif Siap Ambil</div>
-                </div>
-              </div>
-
-              {/* Badge 2: POS Kasir & QRIS */}
-              <div className="absolute -bottom-2 -left-2 bg-white/95 text-slate-800 px-3 py-1.5 rounded-xl shadow-xl text-[11px] font-extrabold flex items-center gap-1.5 border border-white/80">
-                <div className="w-5 h-5 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
-                  <Store className="w-3 h-3" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-800 leading-none">POS & Timbangan</div>
-                  <div className="text-[8px] text-blue-600 font-semibold">Cetak Struk & QRIS</div>
+                <div className="text-left pr-1">
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] font-black text-slate-900 leading-none">Owner Bisnis</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                  </div>
+                  <div className="text-[8px] text-amber-700 font-semibold leading-tight mt-0.5">Pantau Omzet & Cabang</div>
                 </div>
               </div>
 
-              {/* Badge 3: Kurir Live Tracking */}
-              <div className="absolute top-1/2 -right-8 -translate-y-1/2 bg-white/95 text-slate-800 px-2.5 py-1.5 rounded-xl shadow-xl text-[10px] font-bold flex items-center gap-1.5 border border-white/80">
-                <div className="w-5 h-5 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
-                  <Zap className="w-3 h-3" />
+              {/* 2. KURIR DELIVERY (Top-Right) */}
+              <div className="absolute -top-3 -right-6 bg-white/95 text-slate-800 p-2 rounded-2xl shadow-xl border border-white/90 flex items-center gap-2 backdrop-blur-md">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-emerald-400 via-teal-300 to-emerald-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
+                  <div className="w-full h-full rounded-full bg-emerald-900/10 flex items-center justify-center text-sm">
+                    🛵
+                  </div>
                 </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-800 leading-none">Manajemen Kurir</div>
-                  <div className="text-[8px] text-amber-600 font-semibold">Pickup & Antar Jemput</div>
+                <div className="text-left pr-1">
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] font-black text-slate-900 leading-none">Kurir Delivery</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  </div>
+                  <div className="text-[8px] text-emerald-700 font-semibold leading-tight mt-0.5">Antar Jemput & Bukti POD</div>
                 </div>
               </div>
 
-              {/* Badge 4: Produksi & Kanban */}
-              <div className="absolute top-1/2 -left-8 -translate-y-1/2 bg-white/95 text-slate-800 px-2.5 py-1.5 rounded-xl shadow-xl text-[10px] font-bold flex items-center gap-1.5 border border-white/80">
-                <div className="w-5 h-5 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
-                  <Layers className="w-3 h-3" />
+              {/* 3. KASIR OUTLET (Bottom-Left) */}
+              <div className="absolute -bottom-3 -left-6 bg-white/95 text-slate-800 p-2 rounded-2xl shadow-xl border border-white/90 flex items-center gap-2 backdrop-blur-md">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-400 via-sky-300 to-blue-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
+                  <div className="w-full h-full rounded-full bg-blue-900/10 flex items-center justify-center text-sm">
+                    👩‍💼
+                  </div>
                 </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-800 leading-none">Kanban Mesin</div>
-                  <div className="text-[8px] text-indigo-600 font-semibold">Cuci, Kering, Setrika</div>
+                <div className="text-left pr-1">
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] font-black text-slate-900 leading-none">Kasir Outlet</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                  </div>
+                  <div className="text-[8px] text-blue-700 font-semibold leading-tight mt-0.5">Input Kiloan & Cetak Struk</div>
+                </div>
+              </div>
+
+              {/* 4. OPERATOR CUCI & QC (Bottom-Right) */}
+              <div className="absolute -bottom-3 -right-6 bg-white/95 text-slate-800 p-2 rounded-2xl shadow-xl border border-white/90 flex items-center gap-2 animate-bounce-gentle backdrop-blur-md">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-400 via-indigo-300 to-purple-600 p-0.5 shadow-md flex items-center justify-center shrink-0">
+                  <div className="w-full h-full rounded-full bg-purple-900/10 flex items-center justify-center text-sm">
+                    👔
+                  </div>
+                </div>
+                <div className="text-left pr-1">
+                  <div className="flex items-center gap-1">
+                    <span className="text-[10px] font-black text-slate-900 leading-none">Operator Cuci & QC</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-purple-600" />
+                  </div>
+                  <div className="text-[8px] text-purple-700 font-semibold leading-tight mt-0.5">Kontrol Mesin & Packing</div>
                 </div>
               </div>
 
