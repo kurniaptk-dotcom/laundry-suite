@@ -19,14 +19,20 @@ import { LoginPortal } from './pages/Auth/LoginPortal';
 import { ThermalReceiptModal } from './components/modals/ThermalReceiptModal';
 import { GarmentTagModal } from './components/modals/GarmentTagModal';
 import { WhatsAppSimulatorDrawer } from './components/modals/WhatsAppSimulatorDrawer';
+import { LandingPage } from './pages/Marketing/LandingPage';
 import { Order } from './types';
 
 const MainApp: React.FC = () => {
   const { 
     isAuthenticated, currentRole, currentOutlet, 
-    currentTenant, impersonatedTenant, exitImpersonation 
+    currentTenant, impersonatedTenant, exitImpersonation,
+    login
   } = useApp();
   const [activeTab, setActiveTab] = useState<string>('dashboard');
+
+  // Marketing & Auth state
+  const [unauthView, setUnauthView] = useState<'landing' | 'login' | 'register'>('landing');
+  const [selectedPlan, setSelectedPlan] = useState<'starter' | 'growth' | 'business'>('growth');
 
   // Receipt & Tag Modals State
   const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
@@ -48,9 +54,28 @@ const MainApp: React.FC = () => {
     }
   }, [currentRole]);
 
-  // If user is not logged in, show the Login Portal
+  // If user is not logged in, show Landing Page or Login Portal
   if (!isAuthenticated) {
-    return <LoginPortal />;
+    if (unauthView === 'landing') {
+      return (
+        <LandingPage
+          onOpenLogin={(view, plan) => {
+            setUnauthView(view || 'login');
+            if (plan) setSelectedPlan(plan);
+          }}
+          onExploreDemo={(role) => {
+            login(role || 'tenant_owner');
+          }}
+        />
+      );
+    }
+    return (
+      <LoginPortal
+        initialView={unauthView}
+        defaultPlan={selectedPlan}
+        onBackToLanding={() => setUnauthView('landing')}
+      />
+    );
   }
 
   const handleOrderCreated = (newOrder: Order) => {

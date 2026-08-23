@@ -7,11 +7,21 @@ import {
   Lock, Mail, Phone, ChevronDown, Check, Zap, Layers, Award
 } from 'lucide-react';
 
-export const LoginPortal: React.FC = () => {
+interface LoginPortalProps {
+  initialView?: 'welcome' | 'login' | 'register';
+  defaultPlan?: 'starter' | 'growth' | 'business';
+  onBackToLanding?: () => void;
+}
+
+export const LoginPortal: React.FC<LoginPortalProps> = ({ 
+  initialView = 'login', 
+  defaultPlan = 'growth',
+  onBackToLanding 
+}) => {
   const { login, createTenant, tenants, customers, employees } = useApp();
 
   // Screen View: 'welcome' | 'login' | 'register'
-  const [viewState, setViewState] = useState<'welcome' | 'login' | 'register'>('welcome');
+  const [viewState, setViewState] = useState<'welcome' | 'login' | 'register'>(initialView);
   
   // Login Tab: 'wa' | 'email'
   const [loginMethod, setLoginMethod] = useState<'wa' | 'email'>('wa');
@@ -29,7 +39,7 @@ export const LoginPortal: React.FC = () => {
   const [regPhone, setRegPhone] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
-  const [regPlan, setRegPlan] = useState<'starter' | 'growth' | 'business'>('growth');
+  const [regPlan, setRegPlan] = useState<'starter' | 'growth' | 'business'>(defaultPlan);
 
   // Handle Login Submission with Smart Role & Subscription Detection
   const handlePerformLogin = (e: React.FormEvent) => {
@@ -191,19 +201,26 @@ export const LoginPortal: React.FC = () => {
         {/* ================= RIGHT COLUMN: INTERACTIVE FORM AREA ================= */}
         <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-between bg-white overflow-y-auto">
           
-          {/* Header Logo */}
-          <div className="space-y-1">
+          {/* Top Logo and Back Button */}
+          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-black text-sm">
+              <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-black text-sm shadow-md shadow-brand-500/20">
                 LS
               </div>
               <span className="text-xl font-black tracking-tight text-slate-900">
                 Laundry<span className="text-brand-600">Suite</span>
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">
-              Operating Suite for Laundry Business
-            </p>
+
+            {onBackToLanding && (
+              <button
+                type="button"
+                onClick={onBackToLanding}
+                className="text-[11px] font-bold text-slate-500 hover:text-brand-600 flex items-center gap-1 transition px-2 py-1 rounded-lg hover:bg-slate-50"
+              >
+                <span>← Halaman Utama</span>
+              </button>
+            )}
           </div>
 
           {/* Dynamic Content based on ViewState */}
