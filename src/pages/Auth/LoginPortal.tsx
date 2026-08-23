@@ -534,7 +534,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                   Belum punya akun laundry?{' '}
                   <button
                     type="button"
-                    onClick={() => { setViewState('register'); setLoginError(null); }}
+                    onClick={() => { setViewState('register'); setLoginError(null); window.history.pushState(null, '', '/register'); }}
                     className="font-bold text-brand-600 hover:underline"
                   >
                     Daftar Akun / Free Trial
@@ -720,7 +720,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                   Sudah punya akun?{' '}
                   <button
                     type="button"
-                    onClick={() => { setViewState('login'); setLoginError(null); }}
+                    onClick={() => { setViewState('login'); setLoginError(null); window.history.pushState(null, '', '/login'); }}
                     className="font-bold text-brand-600 hover:underline"
                   >
                     Masuk ke akun
