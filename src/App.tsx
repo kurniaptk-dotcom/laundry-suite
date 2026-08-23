@@ -28,6 +28,19 @@ const VALID_TABS = [
   'settings', 'super-admin', 'customer-portal'
 ];
 
+const TAB_ALIAS_MAP: Record<string, string> = {
+  'admin': 'super-admin',
+  'track': 'customer-portal',
+};
+
+const getPathSlug = (): string => {
+  const path = window.location.pathname.replace(/^\/+|\/+$/g, '').split('?')[0];
+  if (path) return TAB_ALIAS_MAP[path] || path;
+  const hash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+  if (hash) return TAB_ALIAS_MAP[hash] || hash;
+  return '';
+};
+
 const MainApp: React.FC = () => {
   const { 
     isAuthenticated, currentRole, currentOutlet, 
@@ -35,23 +48,20 @@ const MainApp: React.FC = () => {
     login
   } = useApp();
 
-  // Helper to parse URL hash or pathname
   const getInitialTab = (): string => {
-    const hash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
-    if (VALID_TABS.includes(hash)) return hash;
+    const slug = getPathSlug();
+    if (VALID_TABS.includes(slug)) return slug;
     return 'dashboard';
   };
 
   const getInitialUnauthView = (): 'landing' | 'login' | 'register' => {
-    const hash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
-    if (hash === 'login') return 'login';
-    if (hash === 'register') return 'register';
+    const slug = getPathSlug();
+    if (slug === 'login') return 'login';
+    if (slug === 'register') return 'register';
     return 'landing';
   };
 
   const [activeTab, setActiveTab] = useState<string>(getInitialTab);
-
-  // Marketing & Auth state
   const [unauthView, setUnauthView] = useState<'landing' | 'login' | 'register'>(getInitialUnauthView);
   const [selectedPlan, setSelectedPlan] = useState<any>('trial');
 
@@ -62,54 +72,61 @@ const MainApp: React.FC = () => {
   // WhatsApp Drawer State
   const [showWhatsAppDrawer, setShowWhatsAppDrawer] = useState<boolean>(false);
 
-  // Sync URL hash when unauthenticated state changes
+  // Sync clean URL pathname when unauthenticated view changes
   React.useEffect(() => {
     if (!isAuthenticated) {
-      const currentHash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
-      if (unauthView === 'landing' && currentHash !== '' && currentHash !== 'landing') {
-        window.history.replaceState(null, '', window.location.pathname);
-      } else if (unauthView === 'login' && currentHash !== 'login') {
-        window.location.hash = '#login';
-      } else if (unauthView === 'register' && currentHash !== 'register') {
-        window.location.hash = '#register';
+      const slug = getPathSlug();
+      if (unauthView === 'landing') {
+        if (slug !== '') {
+          window.history.pushState(null, '', '/');
+        }
+      } else if (unauthView === 'login') {
+        if (slug !== 'login') {
+          window.history.pushState(null, '', '/login');
+        }
+      } else if (unauthView === 'register') {
+        if (slug !== 'register') {
+          window.history.pushState(null, '', '/register');
+        }
       }
     }
   }, [unauthView, isAuthenticated]);
 
-  // Sync URL hash when authenticated tab changes
+  // Sync clean URL pathname when authenticated tab changes
   React.useEffect(() => {
     if (isAuthenticated) {
-      const currentHash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
-      if (currentHash !== activeTab) {
-        window.location.hash = `#${activeTab}`;
+      const slug = getPathSlug();
+      const targetPath = activeTab === 'dashboard' ? '/dashboard' : `/${activeTab}`;
+      if (slug !== activeTab) {
+        window.history.pushState(null, '', targetPath);
       }
     }
   }, [activeTab, isAuthenticated]);
 
-  // Listen to browser Back/Forward navigation (hashchange & popstate)
+  // Listen to browser Back/Forward navigation (popstate)
   React.useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+    const handlePopState = () => {
+      const slug = getPathSlug();
       if (!isAuthenticated) {
-        if (hash === 'login') setUnauthView('login');
-        else if (hash === 'register') setUnauthView('register');
+        if (slug === 'login') setUnauthView('login');
+        else if (slug === 'register') setUnauthView('register');
         else setUnauthView('landing');
       } else {
-        if (VALID_TABS.includes(hash)) {
-          setActiveTab(hash);
+        if (VALID_TABS.includes(slug)) {
+          setActiveTab(slug);
+        } else if (slug === '' || slug === 'dashboard') {
+          setActiveTab('dashboard');
         }
       }
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    window.addEventListener('popstate', handleHashChange);
+    window.addEventListener('popstate', handlePopState);
     return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-      window.removeEventListener('popstate', handleHashChange);
+      window.removeEventListener('popstate', handlePopState);
     };
   }, [isAuthenticated]);
 
-  // If role is switched to customer, redirect tab to customer portal
+  // If role is switched, update active tab
   React.useEffect(() => {
     if (currentRole === 'customer') {
       setActiveTab('customer-portal');
@@ -130,7 +147,7 @@ const MainApp: React.FC = () => {
           onOpenLogin={(view, plan) => {
             const nextView = view || 'login';
             setUnauthView(nextView);
-            window.location.hash = `#${nextView}`;
+            window.history.pushState(null, '', `/${nextView}`);
             if (plan) setSelectedPlan(plan);
           }}
           onExploreDemo={(role) => {
@@ -145,8 +162,7 @@ const MainApp: React.FC = () => {
         defaultPlan={selectedPlan}
         onBackToLanding={() => {
           setUnauthView('landing');
-          window.location.hash = '';
-          window.history.replaceState(null, '', window.location.pathname);
+          window.history.pushState(null, '', '/');
         }}
       />
     );
