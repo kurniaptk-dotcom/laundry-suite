@@ -5,6 +5,7 @@ import {
   InventoryItem, Employee, AttendanceRecord, PayrollSlip, 
   CashAccount, ExpenseEntry, Voucher, WhatsAppMessage, PlanType 
 } from '../types';
+import { DatabaseEngine, DB_VERSION } from '../services/dbService';
 
 // Default mock services
 const DEFAULT_SERVICES: ServiceItem[] = [
@@ -384,6 +385,10 @@ interface AppContextType {
   markPayrollPaid: (slipId: string) => void;
   createTenant: (tenant: Omit<Tenant, 'id' | 'createdAt' | 'outletsCount'>) => void;
   updateTenantPlan: (tenantId: string, plan: PlanType) => void;
+  exportDatabaseBackup: () => string;
+  importDatabaseBackup: (jsonStr: string) => boolean;
+  resetDatabaseToDefaults: () => void;
+  getStorageStats: () => { bytes: number; kb: string; itemsCount: number };
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -940,6 +945,65 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return outlets.filter(o => o.tenantId === currentTenant.id);
   }, [outlets, currentTenant.id, currentRole]);
 
+  const exportDatabaseBackup = (): string => {
+    return DatabaseEngine.exportBackup({
+      version: DB_VERSION,
+      lastUpdated: new Date().toISOString(),
+      tenants,
+      outlets,
+      services,
+      customers,
+      orders,
+      couriers,
+      deliveryTasks,
+      inventory,
+      employees,
+      attendance,
+      payrollSlips,
+      cashAccounts,
+      expenses,
+      vouchers,
+      whatsappMessages
+    });
+  };
+
+  const importDatabaseBackup = (jsonStr: string): boolean => {
+    const data = DatabaseEngine.parseBackup(jsonStr);
+    if (!data) return false;
+    if (data.tenants) setTenants(data.tenants);
+    if (data.outlets) setOutlets(data.outlets);
+    if (data.customers) setCustomers(data.customers);
+    if (data.orders) setOrders(data.orders);
+    if (data.inventory) setInventory(data.inventory);
+    if (data.employees) setEmployees(data.employees);
+    if (data.expenses) setExpenses(data.expenses);
+    if (data.services) setServices(data.services);
+    return true;
+  };
+
+  const resetDatabaseToDefaults = () => {
+    DatabaseEngine.clearStorage();
+    window.location.reload();
+  };
+
+  const getStorageStats = () => {
+    return DatabaseEngine.getStorageUsage();
+  };
+
+  useEffect(() => {
+    DatabaseEngine.saveSnapshot({
+      tenants, outlets, services, customers, orders,
+      couriers, deliveryTasks, inventory, employees,
+      attendance, payrollSlips, cashAccounts, expenses,
+      vouchers, whatsappMessages
+    });
+  }, [
+    tenants, outlets, services, customers, orders,
+    couriers, deliveryTasks, inventory, employees,
+    attendance, payrollSlips, cashAccounts, expenses,
+    vouchers, whatsappMessages
+  ]);
+
   const value = useMemo(() => ({
     isAuthenticated,
     login,
@@ -997,6 +1061,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     markPayrollPaid,
     createTenant,
     updateTenantPlan,
+    exportDatabaseBackup,
+    importDatabaseBackup,
+    resetDatabaseToDefaults,
+    getStorageStats,
   }), [
     isAuthenticated, currentRole, tenants, currentTenant, tenantScopedOutlets, currentOutlet,
     tenantScopedCustomers, tenantScopedOrders, services, perfumes, couriers, deliveryTasks, tenantScopedInventory,
