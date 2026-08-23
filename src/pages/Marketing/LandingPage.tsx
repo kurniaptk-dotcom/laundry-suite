@@ -536,26 +536,71 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin, onExplore
             </div>
           </div>
 
-          {/* Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+          {/* 4 Pricing Cards Grid (Trial + Starter + Growth + Business) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
             
-            {/* STARTER */}
-            <div className="p-8 rounded-3xl bg-white border border-slate-200 flex flex-col justify-between space-y-6 hover:border-blue-300 hover:shadow-lg transition shadow-sm">
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-slate-400 uppercase">Starter</span>
-                  <h3 className="text-xl font-black text-slate-900">Laundry Satuan & Kiloan</h3>
-                  <p className="text-xs text-slate-500">Cocok untuk 1 outlet laundry mandiri yang baru mulai berkembang.</p>
+            {/* TIER 0: TRIAL 14 HARI */}
+            <div className="p-6 rounded-3xl bg-emerald-50/50 border-2 border-emerald-500/80 flex flex-col justify-between space-y-5 relative shadow-md shadow-emerald-500/10 hover:shadow-lg transition">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-emerald-600 text-white font-black text-[10px] rounded-full uppercase tracking-wider shadow-sm">
+                🎁 14 Hari Gratis
+              </div>
+
+              <div className="space-y-3 pt-1">
+                <div className="space-y-0.5">
+                  <span className="text-[11px] font-extrabold text-emerald-700 uppercase">Trial Experience</span>
+                  <h3 className="text-lg font-black text-slate-900">Uji Coba 14 Hari</h3>
+                  <p className="text-[11px] text-slate-500">Coba seluruh fitur paket Starter secara gratis tanpa kartu kredit.</p>
                 </div>
 
-                <div className="pt-2">
-                  <div className="text-3xl font-black text-slate-900 font-mono">
+                <div className="pt-1">
+                  <div className="text-2xl font-black text-emerald-700 font-mono">
+                    Rp 0
+                    <span className="text-xs font-normal text-slate-400"> / 14 hari</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2 text-xs text-slate-600 pt-3 border-t border-emerald-100">
+                  {[
+                    '1 Outlet / Cabang Laundry',
+                    'Sama dengan Fitur Starter',
+                    'Kasir POS Kiloan & Satuan',
+                    'Cetak Struk Thermal 58/80mm',
+                    'Database Pelanggan & Omzet',
+                    'Akses Langsung Tanpa Bayar'
+                  ].map((feat, idx) => (
+                    <div key={idx} className="flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span className="text-[11px]">{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => onOpenLogin('register', 'trial' as any)}
+                className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl text-xs shadow-md shadow-emerald-600/20 transition"
+              >
+                Mulai Trial Gratis ➔
+              </button>
+            </div>
+
+            {/* TIER 1: STARTER */}
+            <div className="p-6 rounded-3xl bg-white border border-slate-200 flex flex-col justify-between space-y-5 hover:border-blue-300 hover:shadow-lg transition shadow-sm">
+              <div className="space-y-3">
+                <div className="space-y-0.5">
+                  <span className="text-[11px] font-bold text-slate-400 uppercase">Starter</span>
+                  <h3 className="text-lg font-black text-slate-900">Laundry Satuan & Kiloan</h3>
+                  <p className="text-[11px] text-slate-500">Cocok untuk 1 outlet laundry mandiri yang baru mulai berkembang.</p>
+                </div>
+
+                <div className="pt-1">
+                  <div className="text-2xl font-black text-slate-900 font-mono">
                     Rp {billingCycle === 'annually' ? '159.000' : '199.000'}
                     <span className="text-xs font-normal text-slate-400"> / bulan</span>
                   </div>
                 </div>
 
-                <div className="space-y-2.5 text-xs text-slate-600 pt-4 border-t border-slate-100">
+                <div className="space-y-2 text-xs text-slate-600 pt-3 border-t border-slate-100">
                   {[
                     '1 Outlet / Cabang Laundry',
                     'Kasir POS Kiloan & Satuan',
@@ -564,106 +609,108 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin, onExplore
                     'Laporan Omzet Harian',
                     'Shift Laci Kasir (Cash Drawer)'
                   ].map((feat, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-blue-500 shrink-0" />
-                      <span>{feat}</span>
+                    <div key={idx} className="flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-blue-500 shrink-0" />
+                      <span className="text-[11px]">{feat}</span>
                     </div>
                   ))}
                 </div>
               </div>
+
               <button
                 onClick={() => onOpenLogin('register', 'starter')}
-                className="w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-2xl text-xs transition border border-slate-200"
+                className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs transition border border-slate-200"
               >
-                Pilih Starter & Coba 14 Hari
+                Pilih Starter
               </button>
             </div>
 
-            {/* GROWTH (FEATURED) */}
-            <div className="p-8 rounded-3xl bg-white border-2 border-blue-500 flex flex-col justify-between space-y-6 relative shadow-xl shadow-blue-500/10 transform md:-translate-y-3">
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-blue-600 to-sky-500 text-white font-black text-[11px] rounded-full uppercase tracking-wider shadow-lg">
+            {/* TIER 2: GROWTH (FEATURED) */}
+            <div className="p-6 rounded-3xl bg-white border-2 border-blue-500 flex flex-col justify-between space-y-5 relative shadow-xl shadow-blue-500/10 transform lg:-translate-y-2">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-gradient-to-r from-blue-600 to-sky-500 text-white font-black text-[10px] rounded-full uppercase tracking-wider shadow-sm">
                 ⭐ Paling Populer
               </div>
 
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-blue-600 uppercase">Growth</span>
-                  <h3 className="text-xl font-black text-slate-900">Multi-Outlet & Produksi</h3>
-                  <p className="text-xs text-slate-500">Untuk bisnis laundry 2-5 cabang dengan alur produksi & kurir.</p>
+              <div className="space-y-3 pt-1">
+                <div className="space-y-0.5">
+                  <span className="text-[11px] font-bold text-blue-600 uppercase">Growth</span>
+                  <h3 className="text-lg font-black text-slate-900">Multi-Outlet & Produksi</h3>
+                  <p className="text-[11px] text-slate-500">Untuk bisnis laundry 2-5 cabang dengan alur produksi & kurir.</p>
                 </div>
 
-                <div className="pt-2">
-                  <div className="text-3xl font-black text-slate-900 font-mono">
+                <div className="pt-1">
+                  <div className="text-2xl font-black text-slate-900 font-mono">
                     Rp {billingCycle === 'annually' ? '399.000' : '499.000'}
                     <span className="text-xs font-normal text-slate-400"> / bulan</span>
                   </div>
                 </div>
 
-                <div className="space-y-2.5 text-xs text-slate-700 pt-4 border-t border-blue-100">
+                <div className="space-y-2 text-xs text-slate-700 pt-3 border-t border-blue-100">
                   {[
                     'Hingga 5 Cabang / Outlet Aktif',
                     'Semua Fitur di Paket Starter',
                     'Kanban Produksi & QR Bag Tag',
                     'Logistik Kurir & Dispatch PWA',
-                    'CRM Loyalty Wallet & Saldo Deposit',
-                    'Manajemen Stok Bahan Baku & Alert',
-                    'Garansi Cuci Ulang (Rewash Ticket)'
+                    'CRM Loyalty Wallet & Deposit',
+                    'Manajemen Stok Bahan Baku'
                   ].map((feat, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-blue-600 shrink-0" />
-                      <span>{feat}</span>
+                    <div key={idx} className="flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                      <span className="text-[11px]">{feat}</span>
                     </div>
                   ))}
                 </div>
               </div>
+
               <button
                 onClick={() => onOpenLogin('register', 'growth')}
-                className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl text-xs shadow-lg shadow-blue-600/25 transition"
+                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-xl text-xs shadow-lg shadow-blue-600/25 transition"
               >
-                Pilih Growth & Coba 14 Hari
+                Pilih Growth
               </button>
             </div>
 
-            {/* BUSINESS */}
-            <div className="p-8 rounded-3xl bg-white border border-slate-200 flex flex-col justify-between space-y-6 hover:border-indigo-300 hover:shadow-lg transition shadow-sm">
-              <div className="space-y-4">
-                <div className="space-y-1">
-                  <span className="text-xs font-bold text-indigo-500 uppercase">Business</span>
-                  <h3 className="text-xl font-black text-slate-900">Enterprise & Franchise</h3>
-                  <p className="text-xs text-slate-500">Untuk jaringan franchise laundry skala besar dengan ERP keuangan.</p>
+            {/* TIER 3: BUSINESS */}
+            <div className="p-6 rounded-3xl bg-white border border-slate-200 flex flex-col justify-between space-y-5 hover:border-indigo-300 hover:shadow-lg transition shadow-sm">
+              <div className="space-y-3">
+                <div className="space-y-0.5">
+                  <span className="text-[11px] font-bold text-indigo-500 uppercase">Business</span>
+                  <h3 className="text-lg font-black text-slate-900">Enterprise & Franchise</h3>
+                  <p className="text-[11px] text-slate-500">Untuk jaringan franchise laundry skala besar dengan ERP keuangan.</p>
                 </div>
 
-                <div className="pt-2">
-                  <div className="text-3xl font-black text-slate-900 font-mono">
+                <div className="pt-1">
+                  <div className="text-2xl font-black text-slate-900 font-mono">
                     Rp {billingCycle === 'annually' ? '999.000' : '1.299.000'}
                     <span className="text-xs font-normal text-slate-400"> / bulan</span>
                   </div>
                 </div>
 
-                <div className="space-y-2.5 text-xs text-slate-600 pt-4 border-t border-slate-100">
+                <div className="space-y-2 text-xs text-slate-600 pt-3 border-t border-slate-100">
                   {[
-                    'Unlimited Cabang / Outlet Franchise',
+                    'Unlimited Cabang Franchise',
                     'Semua Fitur di Paket Growth',
                     'Penggajian & Komisi Otomatis (HR)',
                     'Keuangan ERP COA & Buku Besar',
                     'WhatsApp Gateway API Resmi',
-                    'Business Intelligence (BI) Dashboard',
-                    'Dedicated Account Manager 24/7'
+                    'Dedicated Account Manager'
                   ].map((feat, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <Check className="w-4 h-4 text-indigo-500 shrink-0" />
-                      <span>{feat}</span>
+                    <div key={idx} className="flex items-center gap-1.5">
+                      <Check className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                      <span className="text-[11px]">{feat}</span>
                     </div>
                   ))}
                 </div>
               </div>
+
               <button
                 onClick={() => onOpenLogin('register', 'business')}
-                className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl text-xs transition shadow-md"
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition shadow-md"
               >
-                Pilih Business & Coba 14 Hari
+                Pilih Business
               </button>
             </div>
+
           </div>
         </div>
       </section>

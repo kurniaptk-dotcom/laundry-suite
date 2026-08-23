@@ -1,4 +1,4 @@
-export type PlanType = 'starter' | 'growth' | 'business';
+export type PlanType = 'trial' | 'starter' | 'growth' | 'business';
 
 export type UserRole = 
   | 'super_admin'

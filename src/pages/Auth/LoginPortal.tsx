@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
-import { UserRole } from '../../types';
+import { UserRole, PlanType } from '../../types';
 import { 
   ArrowLeft, Eye, EyeOff, Sparkles, MessageSquare, 
   Store, CheckCircle2, ShieldCheck, HelpCircle, PhoneCall,
@@ -9,13 +9,13 @@ import {
 
 interface LoginPortalProps {
   initialView?: 'welcome' | 'login' | 'register';
-  defaultPlan?: 'starter' | 'growth' | 'business';
+  defaultPlan?: PlanType;
   onBackToLanding?: () => void;
 }
 
 export const LoginPortal: React.FC<LoginPortalProps> = ({ 
   initialView = 'login', 
-  defaultPlan = 'growth',
+  defaultPlan = 'trial',
   onBackToLanding 
 }) => {
   const { login, createTenant, tenants, customers, employees } = useApp();
@@ -39,7 +39,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
   const [regPhone, setRegPhone] = useState('');
   const [regEmail, setRegEmail] = useState('');
   const [regPassword, setRegPassword] = useState('');
-  const [regPlan, setRegPlan] = useState<'starter' | 'growth' | 'business'>(defaultPlan);
+  const [regPlan, setRegPlan] = useState<PlanType>(defaultPlan);
 
   // Handle Login Submission with Smart Role & Subscription Detection
   const handlePerformLogin = (e: React.FormEvent) => {
@@ -112,9 +112,9 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
     createTenant({
       name: regLaundryName,
       code: newTenantCode,
-      plan: regPlan,
-      status: 'active',
-      mrr: regPlan === 'starter' ? 199000 : regPlan === 'growth' ? 499000 : 1299000,
+      plan: regPlan === 'trial' ? 'starter' : regPlan,
+      status: regPlan === 'trial' ? 'trial' : 'active',
+      mrr: regPlan === 'trial' ? 0 : regPlan === 'starter' ? 199000 : regPlan === 'growth' ? 499000 : 1299000,
       ownerName: regName,
       ownerEmail: regEmail || `${regName.toLowerCase().replace(/\s+/g, '')}@gmail.com`,
       ownerPhone: regPhone || '081299887766',
@@ -141,7 +141,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
           <div className="relative z-10 space-y-1">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 text-white text-[11px] font-extrabold uppercase tracking-wide backdrop-blur-xs border border-white/30">
               <Sparkles className="w-3.5 h-3.5 text-amber-300" />
-              <span>14 Hari Uji Coba Gratis</span>
+              <span>Free Trial & Langganan SaaS</span>
             </span>
             <h1 className="text-3xl md:text-4xl font-black tracking-tight text-white drop-shadow-xs pt-1">
               Laundry Suite
@@ -196,11 +196,11 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
           <div className="relative z-10 text-xs text-blue-100 space-y-1.5">
             <div className="flex items-center gap-2 font-medium">
               <CheckCircle2 className="w-4 h-4 text-sky-300 shrink-0" />
-              <span>Akses Penuh Semua Modul (Kasir, QR Bag, Kurir & Laba Rugi)</span>
+              <span>Multi-Outlet, POS Kasir, & Integrasi WA Otomatis</span>
             </div>
             <div className="flex items-center gap-2 font-medium">
               <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0" />
-              <span>Tanpa Biaya Tersembunyi • Tanpa Kartu Kredit</span>
+              <span>Tersedia 14 Hari Trial Gratis • Tanpa Kartu Kredit</span>
             </div>
           </div>
         </div>
@@ -238,24 +238,32 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
             {viewState === 'welcome' && (
               <div className="space-y-6 animate-in fade-in duration-200">
                 <div className="space-y-2">
-                  <span className="text-[10px] font-extrabold text-blue-600 uppercase tracking-wider bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200 inline-block">
-                    ✨ 14-Hari Free Trial
-                  </span>
                   <h2 className="text-2xl font-black text-slate-900 tracking-tight">
-                    Mulai Kelola Laundry Anda Lebih Cerdas
+                    Smart Laundry Management
                   </h2>
                   <p className="text-xs text-slate-500 leading-relaxed">
-                    Daftar sekarang untuk mendapatkan akses gratis 14 hari penuh ke seluruh fitur kasir, produksi mesin cuci, kurir jemput, dan laporan keuangan.
+                    Atur, kelola & pantau seluruh operasional usaha laundry Anda kapanpun dan dimanapun dengan mudah.
                   </p>
                 </div>
 
                 <div className="space-y-3 pt-2">
                   <button
                     type="button"
+                    onClick={() => {
+                      setRegPlan('trial');
+                      setViewState('register');
+                    }}
+                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-extrabold shadow-lg shadow-emerald-600/25 transition active:scale-[0.99] flex items-center justify-center gap-2"
+                  >
+                    <span>🎁 Mulai Coba Paket Trial (14 Hari Gratis) ➔</span>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => setViewState('register')}
                     className="w-full py-3.5 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-extrabold shadow-lg shadow-brand-600/25 transition active:scale-[0.99] flex items-center justify-center gap-2"
                   >
-                    <span>Mulai Trial 14 Hari Gratis ➔</span>
+                    <span>Daftar Akun Baru</span>
                   </button>
 
                   <button
@@ -266,64 +274,13 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                     Sudah Punya Akun? Masuk di Sini
                   </button>
                 </div>
-
-                {/* Quick 1-Click Multi-Tenant SaaS Simulation */}
-                <div className="pt-4 border-t border-slate-100 space-y-2">
-                  <div className="text-[11px] font-bold text-slate-400 flex items-center justify-between">
-                    <span className="flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                      <span>Simulasi Multi-Tenant Database Terisolasi:</span>
-                    </span>
-                    <span className="text-[10px] text-emerald-600 font-extrabold bg-emerald-50 px-2 py-0.5 rounded-full">
-                      100% Isolated
-                    </span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => login('tenant_owner', 't-1')}
-                      className="p-2.5 rounded-xl border border-slate-200 hover:border-brand-500 bg-slate-50 hover:bg-brand-50/50 text-left transition text-xs font-bold text-slate-800"
-                    >
-                      <div className="text-brand-700 font-extrabold">🏢 Tenant 1: Laundry Bersih Jaya</div>
-                      <div className="text-[10px] text-slate-500 font-normal">Paket Growth • 3 Cabang • Data T-1</div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => login('tenant_owner', 't-2')}
-                      className="p-2.5 rounded-xl border border-slate-200 hover:border-purple-500 bg-slate-50 hover:bg-purple-50/50 text-left transition text-xs font-bold text-slate-800"
-                    >
-                      <div className="text-purple-700 font-extrabold">🏢 Tenant 2: Klin Laundry Express</div>
-                      <div className="text-[10px] text-slate-500 font-normal">Paket Business • 5 Cabang • Data T-2</div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => login('tenant_owner', 't-3')}
-                      className="p-2.5 rounded-xl border border-slate-200 hover:border-amber-500 bg-slate-50 hover:bg-amber-50/50 text-left transition text-xs font-bold text-slate-800"
-                    >
-                      <div className="text-amber-700 font-extrabold">🏢 Tenant 3: Fresh & Clean</div>
-                      <div className="text-[10px] text-slate-500 font-normal">Paket Starter • 1 Cabang • Data T-3</div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => login('super_admin')}
-                      className="p-2.5 rounded-xl border border-slate-200 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50/50 text-left transition text-xs font-bold text-slate-800"
-                    >
-                      <div className="text-emerald-700 font-extrabold">👑 SaaS Super Admin</div>
-                      <div className="text-[10px] text-slate-500 font-normal">Platform Owner • Semua Tenant & MRR</div>
-                    </button>
-                  </div>
-                </div>
               </div>
             )}
 
 
             {/* ----------------- STATE 2: LOGIN FORM ----------------- */}
             {viewState === 'login' && (
-              <div className="space-y-5 animate-in fade-in duration-200">
+              <div className="space-y-4 animate-in fade-in duration-200">
                 {/* Back Button & Title */}
                 <div className="flex items-center gap-3">
                   <button
@@ -333,81 +290,75 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                   >
                     <ArrowLeft className="w-5 h-5 text-brand-600" />
                   </button>
-                  <h2 className="text-xl font-black text-slate-900">
-                    Login
-                  </h2>
+                  <div>
+                    <h2 className="text-xl font-black text-slate-900 leading-tight">
+                      Masuk ke Laundry Suite
+                    </h2>
+                    <p className="text-xs text-slate-400">Masuk sesuai nomor WA atau email terdaftar</p>
+                  </div>
                 </div>
 
-                {/* Tabs: Nomor WA | Email/Username */}
-                <div className="flex border-b border-slate-200">
+                {/* Login Method Toggle Pills */}
+                <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl">
                   <button
                     type="button"
                     onClick={() => setLoginMethod('wa')}
-                    className={`flex-1 pb-2.5 text-xs font-bold transition text-center border-b-2 ${
+                    className={`py-2 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 ${
                       loginMethod === 'wa'
-                        ? 'border-brand-600 text-brand-600'
-                        : 'border-transparent text-slate-400 hover:text-slate-700'
+                        ? 'bg-white text-slate-900 shadow-xs'
+                        : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
-                    Nomor Wa
+                    <MessageSquare className="w-3.5 h-3.5 text-emerald-500" />
+                    <span>WhatsApp</span>
                   </button>
+
                   <button
                     type="button"
                     onClick={() => setLoginMethod('email')}
-                    className={`flex-1 pb-2.5 text-xs font-bold transition text-center border-b-2 ${
+                    className={`py-2 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 ${
                       loginMethod === 'email'
-                        ? 'border-brand-600 text-brand-600'
-                        : 'border-transparent text-slate-400 hover:text-slate-700'
+                        ? 'bg-white text-slate-900 shadow-xs'
+                        : 'text-slate-500 hover:text-slate-800'
                     }`}
                   >
-                    Email/Username
+                    <Mail className="w-3.5 h-3.5 text-brand-600" />
+                    <span>Email & Sandi</span>
                   </button>
                 </div>
 
+                {/* Error Banner */}
                 {loginError && (
-                  <div className="p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium">
+                  <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-600 font-medium animate-in fade-in">
                     {loginError}
                   </div>
                 )}
 
-                <form onSubmit={handlePerformLogin} className="space-y-4">
-                  {/* TAB 1: NOMOR WA */}
+                <form onSubmit={handlePerformLogin} className="space-y-3 pt-1">
                   {loginMethod === 'wa' ? (
-                    <div className="space-y-3">
-                      <p className="text-xs text-slate-600">
-                        Silahkan masukkan <strong className="text-slate-900">nomor Whatsapp</strong> Anda, kami akan mengarahkan akun Anda sesuai paket berlangganan.
-                      </p>
-
-                      <div>
-                        <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                          Nomor Whatsapp <span className="text-rose-500">*</span>
-                        </label>
-                        <div className="flex border border-slate-300 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-brand-500/20 focus-within:border-brand-600">
-                          <div className="bg-slate-50 px-3 py-2.5 flex items-center gap-1.5 border-r border-slate-300 text-xs font-semibold text-slate-700 shrink-0">
-                            <span>🇮🇩</span>
-                            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-                          </div>
-                          <input
-                            type="tel"
-                            value={waNumber}
-                            onChange={(e) => setWaNumber(e.target.value)}
-                            placeholder="856864327294"
-                            required
-                            className="flex-1 px-3.5 py-2.5 text-xs text-slate-800 font-medium focus:outline-none"
-                          />
-                        </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                        Nomor WhatsApp Terdaftar <span className="text-rose-500">*</span>
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="tel"
+                          value={waNumber}
+                          onChange={(e) => setWaNumber(e.target.value)}
+                          placeholder="08123456789"
+                          required
+                          className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl text-xs text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-600 font-mono"
+                        />
                       </div>
+                      <p className="text-[10px] text-slate-400 mt-1">
+                        Contoh login: 081234567890 (Owner), 0856864327294 (Pelanggan)
+                      </p>
                     </div>
                   ) : (
-                    /* TAB 2: EMAIL / USERNAME */
                     <div className="space-y-3">
-                      <p className="text-xs text-slate-600">
-                        Silahkan masukkan <strong className="text-slate-900">Email/Username</strong> dan <strong className="text-slate-900">kata sandi</strong> Anda untuk login.
-                      </p>
-
                       <div>
                         <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                          Email/Username <span className="text-rose-500">*</span>
+                          Alamat Email <span className="text-rose-500">*</span>
                         </label>
                         <input
                           type="text"
@@ -442,11 +393,6 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </button>
                         </div>
-                        <div className="mt-1">
-                          <a href="#" onClick={(e) => { e.preventDefault(); alert('Instruksi reset sandi telah dikirim ke email Anda.'); }} className="text-[11px] font-bold text-brand-600 hover:underline">
-                            Lupa Kata Sandi?
-                          </a>
-                        </div>
                       </div>
                     </div>
                   )}
@@ -458,20 +404,6 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                     Login
                   </button>
                 </form>
-
-                {/* Footer Navigation within Login */}
-                <div className="pt-2 text-center text-xs text-slate-500 space-y-1">
-                  <p>
-                    Belum punya akun?{' '}
-                    <button
-                      type="button"
-                      onClick={() => setViewState('register')}
-                      className="font-bold text-brand-600 hover:underline"
-                    >
-                      Daftar Laundry Suite
-                    </button>
-                  </p>
-                </div>
               </div>
             )}
 
@@ -489,29 +421,46 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                     <ArrowLeft className="w-5 h-5 text-brand-600" />
                   </button>
                   <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-black rounded-full border border-emerald-200 uppercase">
-                        14 Hari Free Trial
-                      </span>
-                    </div>
-                    <h2 className="text-lg font-black text-slate-900 leading-tight mt-0.5">
-                      Daftar Uji Coba Gratis Laundry Suite
+                    <h2 className="text-lg font-black text-slate-900 leading-tight">
+                      Daftar Akun Bisnis Laundry
                     </h2>
-                    <p className="text-[11px] text-slate-500">Akses penuh semua modul tanpa biaya & tanpa kartu kredit</p>
+                    <p className="text-[11px] text-slate-400">Pilih paket sesuai kebutuhan skala usaha Anda</p>
                   </div>
                 </div>
 
                 <form onSubmit={handlePerformRegister} className="space-y-3">
-                  {/* Plan Selector with Free Trial Highlight */}
+                  {/* Plan Selector with 4 Options (Trial + Starter + Growth + Business) */}
                   <div>
                     <label className="block text-[11px] font-bold text-slate-700 mb-1">
-                      Pilihan Paket Trial (Bebas Ganti Kapan Saja)
+                      Pilihan Paket Berlangganan
                     </label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       {[
-                        { key: 'starter', name: 'Starter', price: 'Rp 0 Trial', thenPrice: 'Rp 199k/bln', desc: '1 Outlet • POS' },
-                        { key: 'growth', name: 'Growth ⭐', price: 'Rp 0 Trial', thenPrice: 'Rp 499k/bln', desc: '5 Outlet • Produksi & Kurir' },
-                        { key: 'business', name: 'Business', price: 'Rp 0 Trial', thenPrice: 'Rp 1.2jt/bln', desc: 'Unlimited • ERP' }
+                        { 
+                          key: 'trial', 
+                          name: 'Trial 14 Hari', 
+                          badge: 'Gratis',
+                          price: 'Rp 0', 
+                          desc: '1 Outlet • Sama Fitur Starter' 
+                        },
+                        { 
+                          key: 'starter', 
+                          name: 'Starter', 
+                          price: 'Rp 199k/bln', 
+                          desc: '1 Outlet • POS & Resi' 
+                        },
+                        { 
+                          key: 'growth', 
+                          name: 'Growth ⭐', 
+                          price: 'Rp 499k/bln', 
+                          desc: '5 Outlet • Produksi & Kurir' 
+                        },
+                        { 
+                          key: 'business', 
+                          name: 'Business', 
+                          price: 'Rp 1.2jt/bln', 
+                          desc: 'Unlimited • ERP' 
+                        }
                       ].map(plan => (
                         <button
                           key={plan.key}
@@ -519,13 +468,24 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                           onClick={() => setRegPlan(plan.key as any)}
                           className={`p-2.5 rounded-xl border text-left transition relative ${
                             regPlan === plan.key
-                              ? 'border-brand-600 bg-brand-50/60 ring-2 ring-brand-500/20 shadow-xs'
+                              ? plan.key === 'trial'
+                                ? 'border-emerald-600 bg-emerald-50/70 ring-2 ring-emerald-500/30 shadow-xs'
+                                : 'border-brand-600 bg-brand-50/60 ring-2 ring-brand-500/20 shadow-xs'
                               : 'border-slate-200 hover:border-slate-300 bg-white'
                           }`}
                         >
-                          <div className="font-extrabold text-xs text-slate-900">{plan.name}</div>
-                          <div className="text-[10px] text-emerald-700 font-extrabold">{plan.price}</div>
-                          <div className="text-[9px] text-slate-400 mt-0.5">{plan.desc}</div>
+                          <div className="flex items-center justify-between">
+                            <span className="font-extrabold text-xs text-slate-900">{plan.name}</span>
+                            {plan.badge && (
+                              <span className="text-[8px] bg-emerald-600 text-white font-black px-1.5 py-0.2 rounded-full uppercase">
+                                {plan.badge}
+                              </span>
+                            )}
+                          </div>
+                          <div className={`text-[10px] font-extrabold mt-0.5 ${plan.key === 'trial' ? 'text-emerald-700' : 'text-brand-700'}`}>
+                            {plan.price}
+                          </div>
+                          <div className="text-[9px] text-slate-400 mt-0.5 leading-tight">{plan.desc}</div>
                         </button>
                       ))}
                     </div>
@@ -583,18 +543,19 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
 
                   <button
                     type="submit"
-                    className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-sky-500 hover:from-blue-700 hover:to-sky-600 text-white rounded-xl text-xs font-black shadow-lg shadow-blue-600/25 transition active:scale-[0.99] mt-2 flex items-center justify-center gap-1.5"
+                    className={`w-full py-3.5 text-white rounded-xl text-xs font-black shadow-lg transition active:scale-[0.99] mt-2 flex items-center justify-center gap-1.5 ${
+                      regPlan === 'trial'
+                        ? 'bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 shadow-emerald-600/25'
+                        : 'bg-brand-600 hover:bg-brand-700 shadow-brand-600/25'
+                    }`}
                   >
-                    <span>🚀 Mulai Trial 14 Hari Gratis Sekarang ➔</span>
+                    <span>
+                      {regPlan === 'trial' 
+                        ? '🎁 Mulai Trial 14 Hari Gratis Sekarang ➔' 
+                        : 'Daftar & Masuk ke Dashboard ➔'
+                      }
+                    </span>
                   </button>
-
-                  <div className="flex items-center justify-center gap-4 text-[10px] text-slate-400 pt-1">
-                    <span>✓ Langsung Aktif</span>
-                    <span>•</span>
-                    <span>✓ Tanpa Kartu Kredit</span>
-                    <span>•</span>
-                    <span>✓ 100% Gratis</span>
-                  </div>
                 </form>
 
                 <div className="text-center text-xs text-slate-500 pt-1">

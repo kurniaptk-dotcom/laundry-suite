@@ -3,7 +3,7 @@ import {
   Tenant, Outlet, UserRole, User, Customer, Order, OrderStatus, 
   PaymentMethod, ServiceItem, Courier, DeliveryTask, 
   InventoryItem, Employee, AttendanceRecord, PayrollSlip, 
-  CashAccount, ExpenseEntry, Voucher, WhatsAppMessage 
+  CashAccount, ExpenseEntry, Voucher, WhatsAppMessage, PlanType 
 } from '../types';
 
 // Default mock services
@@ -383,7 +383,7 @@ interface AppContextType {
   generateMonthlyPayroll: (period: string) => void;
   markPayrollPaid: (slipId: string) => void;
   createTenant: (tenant: Omit<Tenant, 'id' | 'createdAt' | 'outletsCount'>) => void;
-  updateTenantPlan: (tenantId: string, plan: 'starter' | 'growth' | 'business') => void;
+  updateTenantPlan: (tenantId: string, plan: PlanType) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -884,8 +884,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setTenants(prev => [...prev, newTenant]);
   };
 
-  const updateTenantPlan = (tenantId: string, plan: 'starter' | 'growth' | 'business') => {
-    const prices = { starter: 199000, growth: 499000, business: 1299000 };
+  const updateTenantPlan = (tenantId: string, plan: PlanType) => {
+    const prices: Record<PlanType, number> = { trial: 0, starter: 199000, growth: 499000, business: 1299000 };
     setTenants(prev => prev.map(t => {
       if (t.id === tenantId) {
         return { ...t, plan, mrr: prices[plan] };
