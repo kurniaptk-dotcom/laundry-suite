@@ -126,4 +126,31 @@ export class SupabaseService {
       return false;
     }
   }
+
+  /**
+   * Seed initial mock data into empty Supabase tables
+   */
+  static async seedInitialData(tenants: Tenant[], outlets: any[], services: any[], customers: Customer[], orders: Order[]): Promise<boolean> {
+    if (!isSupabaseConfigured() || !supabase) return false;
+    try {
+      const { count } = await supabase.from('tenants').select('*', { count: 'exact', head: true });
+      if (count && count > 0) return true; // Already seeded
+
+      // Seed tenants
+      for (const t of tenants) {
+        await this.syncTenant(t);
+      }
+      // Seed customers
+      for (const c of customers) {
+        await this.syncCustomer(c);
+      }
+      // Seed orders
+      for (const o of orders) {
+        await this.syncOrder(o);
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  }
 }

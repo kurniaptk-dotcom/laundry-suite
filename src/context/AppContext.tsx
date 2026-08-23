@@ -6,6 +6,7 @@ import {
   CashAccount, ExpenseEntry, Voucher, WhatsAppMessage, PlanType 
 } from '../types';
 import { DatabaseEngine, DB_VERSION } from '../services/dbService';
+import { SupabaseService } from '../services/supabaseService';
 
 // Default mock services
 const DEFAULT_SERVICES: ServiceItem[] = [
@@ -573,10 +574,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     setOrders(prev => [newOrder, ...prev]);
 
+    // Asynchronously sync new order to Supabase Cloud
+    SupabaseService.syncOrder(newOrder).catch(() => {});
+
     setCustomers(prev => prev.map(c => {
       if (c.id === orderData.customerId) {
         const earnedPoints = Math.floor(orderData.totalAmount / 5000);
-        return {
+        const updatedCustomer = {
           ...c,
           totalOrders: c.totalOrders + 1,
           totalSpent: c.totalSpent + orderData.totalAmount,
@@ -584,6 +588,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           lastOrderDate: now.toISOString().slice(0, 10),
           depositBalance: orderData.paymentMethod === 'deposit' ? Math.max(0, c.depositBalance - orderData.totalAmount) : c.depositBalance
         };
+        SupabaseService.syncCustomer(updatedCustomer).catch(() => {});
+        return updatedCustomer;
       }
       return c;
     }));
@@ -611,13 +617,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const updateOrderStatus = (orderId: string, status: OrderStatus, qcNotes?: string) => {
     setOrders(prev => prev.map(ord => {
       if (ord.id === orderId) {
-        const updated = { 
+        const updated: Order = { 
           ...ord, 
           status, 
           qcNotes: qcNotes || ord.qcNotes,
           qcStatus: status === 'qc_pending' ? 'passed' : ord.qcStatus,
           completedAt: status === 'completed' ? new Date().toISOString().slice(0, 16).replace('T', ' ') : ord.completedAt
         };
+
+        SupabaseService.syncOrder(updated).catch(() => {});
 
         if (status === 'ready') {
           sendWhatsAppNotification(
@@ -989,6 +997,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const getStorageStats = () => {
     return DatabaseEngine.getStorageUsage();
   };
+
+  // Initial Supabase cloud seeding if tables are freshly created
+  useEffect(() => {
+    SupabaseService.seedInitialData(tenants, outlets, services, customers, orders).catch(() => {});
+  }, []);
 
   useEffect(() => {
     DatabaseEngine.saveSnapshot({
