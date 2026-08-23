@@ -1,0 +1,1020 @@
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { 
+  Tenant, Outlet, UserRole, User, Customer, Order, OrderStatus, 
+  PaymentMethod, ServiceItem, Courier, DeliveryTask, 
+  InventoryItem, Employee, AttendanceRecord, PayrollSlip, 
+  CashAccount, ExpenseEntry, Voucher, WhatsAppMessage 
+} from '../types';
+
+// Default mock services
+const DEFAULT_SERVICES: ServiceItem[] = [
+  { id: 'srv-1', name: 'Cuci Setrika Reguler (2 Hari)', category: 'kiloan', unit: 'kg', price: 10000, durationHours: 48, minQty: 3, description: 'Cuci bersih, wangi, setrika rapi, packing plastik seal' },
+  { id: 'srv-2', name: 'Cuci Setrika Express (6 Jam)', category: 'kiloan', unit: 'kg', price: 18000, durationHours: 6, minQty: 2, description: 'Layanan kilat selesai dalam 6 jam dengan prioritas mesin' },
+  { id: 'srv-3', name: 'Cuci Kering Lipat (1 Hari)', category: 'kiloan', unit: 'kg', price: 7000, durationHours: 24, minQty: 3, description: 'Hanya dicuci dan dikeringkan lalu dilipat rapi' },
+  { id: 'srv-4', name: 'Bed Cover King / Jumbo', category: 'satuan', unit: 'pcs', price: 35000, durationHours: 48, description: 'Pencucian khusus bed cover tebal anti kusut & wangi tahan lama' },
+  { id: 'srv-5', name: 'Kemeja Formal / Blouse Satuan', category: 'satuan', unit: 'pcs', price: 15000, durationHours: 24, description: 'Perawatan satuan dengan gantungan dan pelindung plastik' },
+  { id: 'srv-6', name: 'Jas / Blazer Premium Care', category: 'satuan', unit: 'pcs', price: 45000, durationHours: 48, description: 'Dry cleaning & steam press profesional' },
+  { id: 'srv-7', name: 'Sepatu Sneakers Deep Clean', category: 'sepatu_tas', unit: 'pasang', price: 40000, durationHours: 72, description: 'Pembersihan mendalam upper, midsole, dan insole deodorizing' },
+  { id: 'srv-8', name: 'Karpet Bulu / Permadani (m²)', category: 'karpet_linen', unit: 'm2', price: 18000, durationHours: 72, description: 'Pencucian debu mendalam + anti tungau' },
+];
+
+const INITIAL_TENANTS: Tenant[] = [
+  {
+    id: 't-1',
+    name: 'Laundry Bersih Jaya',
+    code: 'LBJ',
+    plan: 'growth',
+    status: 'active',
+    mrr: 499000,
+    outletsCount: 3,
+    ownerName: 'Hendra Gunawan',
+    ownerEmail: 'owner@bersihjaya.id',
+    ownerPhone: '081234567890',
+    createdAt: '2025-01-10',
+  },
+  {
+    id: 't-2',
+    name: 'CleanFast Premium Laundry',
+    code: 'CFP',
+    plan: 'business',
+    status: 'active',
+    mrr: 1299000,
+    outletsCount: 6,
+    ownerName: 'Jessica Suryanto',
+    ownerEmail: 'jessica@cleanfast.co.id',
+    ownerPhone: '081198765432',
+    createdAt: '2024-11-05',
+  },
+  {
+    id: 't-3',
+    name: 'FreshKlin Kiloan Express',
+    code: 'FKE',
+    plan: 'starter',
+    status: 'active',
+    mrr: 199000,
+    outletsCount: 1,
+    ownerName: 'Ahmad Fauzi',
+    ownerEmail: 'ahmad@freshklin.com',
+    ownerPhone: '085712349988',
+    createdAt: '2025-03-01',
+  },
+];
+
+const INITIAL_OUTLETS: Outlet[] = [
+  {
+    id: 'out-1',
+    tenantId: 't-1',
+    name: 'Outlet Tebet (Pusat)',
+    code: 'LBJ-TBT',
+    address: 'Jl. Tebet Raya No. 45, Jakarta Selatan',
+    city: 'Jakarta Selatan',
+    phone: '081288990011',
+    isMain: true,
+    operationalHours: '07:00 - 21:00 WIB',
+    services: DEFAULT_SERVICES,
+  },
+  {
+    id: 'out-2',
+    tenantId: 't-1',
+    name: 'Outlet Bintaro Sektor 7',
+    code: 'LBJ-BIN',
+    address: 'Ruko Bintaro Arcade 2 No. 8, Tangerang Selatan',
+    city: 'Tangerang Selatan',
+    phone: '081288990022',
+    isMain: false,
+    operationalHours: '08:00 - 21:00 WIB',
+    services: DEFAULT_SERVICES,
+  },
+  {
+    id: 'out-3',
+    tenantId: 't-1',
+    name: 'Outlet Galaxy Bekasi',
+    code: 'LBJ-GLX',
+    address: 'Jl. Boulevard Galaxy No. 12, Bekasi Barat',
+    city: 'Bekasi',
+    phone: '081288990033',
+    isMain: false,
+    operationalHours: '07:30 - 21:30 WIB',
+    services: DEFAULT_SERVICES,
+  },
+];
+
+const INITIAL_CUSTOMERS: Customer[] = [
+  {
+    id: 'cust-1',
+    tenantId: 't-1',
+    name: 'Aisyah Putri',
+    phone: '081234567890',
+    email: 'aisyah@example.com',
+    address: 'Jl. Melati Putih No. 12, RT 03/RW 04, Jakarta Selatan, 12345',
+    membershipTier: 'Platinum',
+    loyaltyPoints: 450,
+    depositBalance: 125000,
+    totalOrders: 28,
+    totalSpent: 1850000,
+    joinedDate: '2025-01-15',
+    lastOrderDate: '2026-08-20',
+    referralCode: 'AISYAH88',
+    notes: 'Suka aroma Sakura Blossom, kemeja minta digantung.',
+  },
+  {
+    id: 'cust-2',
+    tenantId: 't-1',
+    name: 'Siti Rahmawati',
+    phone: '085711223344',
+    email: 'siti.rahma@yahoo.com',
+    address: 'Jl. Tebet Barat Dalam VI No. 18, Jakarta Selatan',
+    membershipTier: 'Gold',
+    loyaltyPoints: 210,
+    depositBalance: 120000,
+    totalOrders: 14,
+    totalSpent: 920000,
+    joinedDate: '2025-02-10',
+    lastOrderDate: '2026-08-21',
+    referralCode: 'SITI99',
+    notes: 'Alergi deterjen wangi menyengat, pakai wangi Ocean Soft.',
+  },
+  {
+    id: 'cust-3',
+    tenantId: 't-1',
+    name: 'Dian Permata',
+    phone: '081377889900',
+    email: 'dian.permata@gmail.com',
+    address: 'Jl. Bintaro Utama 3 Blok AP No. 5, Tangerang Selatan',
+    membershipTier: 'Silver',
+    loyaltyPoints: 85,
+    depositBalance: 50000,
+    totalOrders: 6,
+    totalSpent: 410000,
+    joinedDate: '2025-05-18',
+    lastOrderDate: '2026-08-22',
+    referralCode: 'DIAN77',
+    notes: 'Langganan Cuci Kiloan & Bed Cover.',
+  },
+  // Multi-Tenant Isolation Data: Tenant t-2 (Klin Laundry Express) Customers
+  {
+    id: 'cust-201',
+    tenantId: 't-2',
+    name: 'Hendra Wijaya (Pelanggan Klin Express)',
+    phone: '081299112233',
+    email: 'hendra.w@klin.id',
+    address: 'Jl. Raya Darmo Permai No. 45, Surabaya',
+    membershipTier: 'Gold',
+    loyaltyPoints: 310,
+    depositBalance: 250000,
+    totalOrders: 19,
+    totalSpent: 1250000,
+    joinedDate: '2025-03-12',
+    lastOrderDate: '2026-08-21',
+    referralCode: 'HENDRA01',
+    notes: 'Pelanggan khusus Tenant Klin Laundry Express',
+  },
+  {
+    id: 'cust-202',
+    tenantId: 't-2',
+    name: 'Dewi Lestari (Pelanggan Klin Express)',
+    phone: '085733445566',
+    email: 'dewi.lestari@gmail.com',
+    address: 'Jl. Manyar Kertoarjo No. 88, Surabaya',
+    membershipTier: 'Platinum',
+    loyaltyPoints: 520,
+    depositBalance: 400000,
+    totalOrders: 32,
+    totalSpent: 2400000,
+    joinedDate: '2025-01-20',
+    lastOrderDate: '2026-08-22',
+    referralCode: 'DEWI99',
+    notes: 'Pelanggan VIP Klin Laundry Express',
+  },
+  // Multi-Tenant Isolation Data: Tenant t-3 (Fresh & Clean Laundry) Customers
+  {
+    id: 'cust-301',
+    tenantId: 't-3',
+    name: 'Bagus Setiawan (Pelanggan Fresh & Clean)',
+    phone: '087811223344',
+    email: 'bagus.s@freshclean.id',
+    address: 'Jl. Gatot Subroto No. 101, Bandung',
+    membershipTier: 'Silver',
+    loyaltyPoints: 95,
+    depositBalance: 80000,
+    totalOrders: 8,
+    totalSpent: 520000,
+    joinedDate: '2025-06-01',
+    lastOrderDate: '2026-08-20',
+    referralCode: 'BAGUS77',
+    notes: 'Pelanggan khusus Tenant Fresh & Clean Laundry',
+  }
+];
+
+const INITIAL_ORDERS: Order[] = [
+  {
+    id: 'ord-101',
+    invoiceNumber: 'INV-20260822-001',
+    trackingCode: 'LBJ-8842',
+    tenantId: 't-1',
+    outletId: 'out-1',
+    customerId: 'cust-1',
+    customerName: 'Aisyah Putri',
+    customerPhone: '081234567890',
+    customerAddress: 'Jl. Melati Putih No. 12, Jakarta Selatan',
+    orderType: 'walk_in',
+    status: 'washing',
+    paymentStatus: 'paid',
+    paymentMethod: 'deposit',
+    items: [
+      { id: 'itm-1', serviceId: 'srv-1', serviceName: 'Cuci Setrika Reguler', category: 'kiloan', unit: 'kg', qty: 5.5, unitPrice: 10000, subtotal: 55000, notes: 'Pisahkan warna gelap' },
+      { id: 'itm-2', serviceId: 'srv-5', serviceName: 'Kemeja Formal Satuan', category: 'satuan', unit: 'pcs', qty: 2, unitPrice: 15000, subtotal: 30000, notes: 'Minta digantung' }
+    ],
+    totalWeightKg: 5.5,
+    totalPcs: 14,
+    subtotal: 85000,
+    discount: 5000,
+    deliveryFee: 0,
+    totalAmount: 80000,
+    paidAmount: 80000,
+    perfumeChoice: 'Sakura Blossom',
+    estimatedReady: '2026-08-24 14:00',
+    createdAt: '2026-08-22 09:15',
+    tags: ['VIP', 'Kemeja Gantung'],
+  },
+  {
+    id: 'ord-102',
+    invoiceNumber: 'INV-20260822-002',
+    trackingCode: 'LBJ-9123',
+    tenantId: 't-1',
+    outletId: 'out-1',
+    customerId: 'cust-2',
+    customerName: 'Siti Rahmawati',
+    customerPhone: '085711223344',
+    customerAddress: 'Jl. Tebet Barat Dalam VI No. 18, Jakarta Selatan',
+    orderType: 'pickup_delivery',
+    status: 'ready',
+    paymentStatus: 'paid',
+    paymentMethod: 'qris',
+    items: [
+      { id: 'itm-3', serviceId: 'srv-2', serviceName: 'Cuci Setrika Express (6 Jam)', category: 'kiloan', unit: 'kg', qty: 4.2, unitPrice: 18000, subtotal: 75600 },
+      { id: 'itm-4', serviceId: 'srv-4', serviceName: 'Bed Cover King / Jumbo', category: 'satuan', unit: 'pcs', qty: 1, unitPrice: 35000, subtotal: 35000 }
+    ],
+    totalWeightKg: 4.2,
+    totalPcs: 10,
+    subtotal: 110600,
+    discount: 0,
+    deliveryFee: 15000,
+    totalAmount: 125600,
+    paidAmount: 125600,
+    isExpress: true,
+    perfumeChoice: 'Ocean Soft',
+    estimatedReady: '2026-08-22 16:00',
+    createdAt: '2026-08-22 10:00',
+    assignedCourierId: 'cour-1',
+    qcStatus: 'passed',
+    tags: ['Express', 'Siap Antar'],
+  },
+];
+
+const INITIAL_COURIERS: Courier[] = [
+  { id: 'cour-1', name: 'Agus Setiawan', phone: '081211335577', vehicleType: 'motor', activeTasksCount: 2, status: 'on_delivery', rating: 4.9, completedDeliveries: 142 },
+  { id: 'cour-2', name: 'Rian Kurniawan', phone: '085622446688', vehicleType: 'motor', activeTasksCount: 0, status: 'available', rating: 4.8, completedDeliveries: 98 },
+];
+
+const INITIAL_DELIVERY_TASKS: DeliveryTask[] = [
+  {
+    id: 'del-1',
+    orderId: 'ord-102',
+    invoiceNumber: 'INV-20260822-002',
+    customerName: 'Siti Rahmawati',
+    customerPhone: '085711223344',
+    address: 'Jl. Tebet Barat Dalam VI No. 18, Jakarta Selatan',
+    type: 'delivery',
+    status: 'assigned',
+    courierId: 'cour-1',
+    courierName: 'Agus Setiawan',
+    scheduledTime: '2026-08-22 17:00',
+    notes: 'Hubungi jika sudah sampai di depan pagar hitam.'
+  }
+];
+
+const INITIAL_INVENTORY: InventoryItem[] = [
+  { id: 'inv-1', tenantId: 't-1', outletId: 'out-1', name: 'Deterjen Cair Konsentrat EcoClean', category: 'chemical', sku: 'DET-ECO-20L', currentStock: 8, unit: 'Jerigen (20L)', minStockThreshold: 5, costPerUnit: 140000, supplierName: 'PT Sukses Kimia Pratama', lastRestocked: '2026-08-15' },
+  { id: 'inv-2', tenantId: 't-1', outletId: 'out-1', name: 'Softener & Pelicin Pakaian Sakura', category: 'chemical', sku: 'SFT-SAK-20L', currentStock: 3, unit: 'Jerigen (20L)', minStockThreshold: 4, costPerUnit: 165000, supplierName: 'PT Sukses Kimia Pratama', lastRestocked: '2026-08-10' },
+  { id: 'inv-3', tenantId: 't-1', outletId: 'out-1', name: 'Parfum Laundry Ocean Fresh', category: 'chemical', sku: 'PRF-OCN-5L', currentStock: 2, unit: 'Jerigen (5L)', minStockThreshold: 3, costPerUnit: 190000, supplierName: 'Aroma Sejati Abadi', lastRestocked: '2026-08-01' },
+];
+
+const INITIAL_EMPLOYEES: Employee[] = [
+  { id: 'emp-1', tenantId: 't-1', outletId: 'out-1', name: 'Nurul Hidayah', role: 'Kasir & Front Office', division: 'Kasir', phone: '081299881122', email: 'nurul@bersihjaya.id', baseSalary: 3200000, commissionPerKg: 100, commissionPerItem: 500, joinedDate: '2025-01-10', status: 'active' },
+  { id: 'emp-2', tenantId: 't-1', outletId: 'out-1', name: 'Bambang Sudiro', role: 'Operator Cuci & Pengering', division: 'Produksi', phone: '085733221100', email: 'bambang@bersihjaya.id', baseSalary: 3000000, commissionPerKg: 200, commissionPerItem: 0, joinedDate: '2025-01-15', status: 'active' },
+  { id: 'emp-3', tenantId: 't-1', outletId: 'out-1', name: 'Sri Wahyuni', role: 'Staff Setrika & QC Packing', division: 'Produksi', phone: '087811992233', email: 'sri@bersihjaya.id', baseSalary: 3100000, commissionPerKg: 250, commissionPerItem: 1000, joinedDate: '2025-02-01', status: 'active' },
+  { id: 'emp-4', tenantId: 't-1', outletId: 'out-1', name: 'Agus Setiawan', role: 'Kurir Delivery & Pickup', division: 'Kurir', phone: '081211335577', email: 'agus@bersihjaya.id', baseSalary: 2800000, commissionPerItem: 3000, joinedDate: '2025-03-01', status: 'active' },
+];
+
+const INITIAL_ACCOUNTS: CashAccount[] = [
+  { id: 'acc-1', name: 'Kas Kasir Tunai (Laci)', type: 'cash', balance: 1450000 },
+  { id: 'acc-2', name: 'BCA Rekening Operasional', type: 'bank', balance: 18450000, accountNumber: '8830-192-881' },
+];
+
+const INITIAL_EXPENSES: ExpenseEntry[] = [
+  { id: 'exp-1', tenantId: 't-1', outletId: 'out-1', date: '2026-08-21', category: 'Bahan Baku', description: 'Restock Deterjen EcoClean & Softener Sakura (4 jerigen)', amount: 610000, accountId: 'acc-2', accountName: 'BCA Rekening Operasional' },
+];
+
+const INITIAL_VOUCHERS: Voucher[] = [
+  { id: 'vch-1', code: 'BERSIHHEMAT', title: 'Diskon Kiloan 15%', discountType: 'percentage', discountValue: 15, minOrder: 50000, validUntil: '2026-09-30', usageCount: 42, maxUsage: 100, isActive: true },
+];
+
+interface AppContextType {
+  // Auth state
+  isAuthenticated: boolean;
+  login: (role: UserRole, tenantId?: string, outletId?: string) => void;
+  logout: () => void;
+
+  // Roles & Multi-tenant state
+  currentRole: UserRole;
+  setCurrentRole: (role: UserRole) => void;
+  tenants: Tenant[];
+  currentTenant: Tenant;
+  setCurrentTenant: (tenant: Tenant) => void;
+  outlets: Outlet[];
+  currentOutlet: Outlet;
+  setCurrentOutlet: (outlet: Outlet) => void;
+
+  // Domain states
+  customers: Customer[];
+  orders: Order[];
+  services: ServiceItem[];
+  perfumes: string[];
+  couriers: Courier[];
+  deliveryTasks: DeliveryTask[];
+  inventory: InventoryItem[];
+  employees: Employee[];
+  attendance: AttendanceRecord[];
+  payrollSlips: PayrollSlip[];
+  cashAccounts: CashAccount[];
+  expenses: ExpenseEntry[];
+  vouchers: Voucher[];
+  whatsappMessages: WhatsAppMessage[];
+  cashierShifts: Array<{ id: string; cashierName: string; openTime: string; closeTime?: string; initialCash: number; totalCashCollected: number; status: 'open' | 'closed' }>;
+  currentShift: { id: string; cashierName: string; openTime: string; closeTime?: string; initialCash: number; totalCashCollected: number; status: 'open' | 'closed' } | null;
+  impersonatedTenant: Tenant | null;
+  impersonateTenant: (tenantId: string) => void;
+  exitImpersonation: () => void;
+
+  // Action methods
+  addService: (service: Omit<ServiceItem, 'id'>) => void;
+  updateService: (id: string, service: Partial<ServiceItem>) => void;
+  deleteService: (id: string) => void;
+  addPerfume: (name: string) => void;
+  deletePerfume: (name: string) => void;
+  openShift: (initialCash: number, cashierName: string) => void;
+  closeShift: (shiftId: string, cashCollected: number) => void;
+  addOrder: (order: Omit<Order, 'id' | 'invoiceNumber' | 'trackingCode' | 'createdAt'>) => Order;
+  updateOrderStatus: (orderId: string, status: OrderStatus, qcNotes?: string) => void;
+  recordPayment: (orderId: string, method: PaymentMethod, amount: number) => void;
+  addCustomer: (customer: Omit<Customer, 'id' | 'loyaltyPoints' | 'depositBalance' | 'totalOrders' | 'totalSpent' | 'joinedDate' | 'referralCode'>) => Customer;
+  topupDeposit: (customerId: string, amount: number, accountId: string) => void;
+  redeemPoints: (customerId: string, points: number) => void;
+  addDeliveryTask: (task: Omit<DeliveryTask, 'id'>) => void;
+  assignCourier: (taskId: string, courierId: string) => void;
+  completeDeliveryTask: (taskId: string, proofPhoto?: string, signatureName?: string) => void;
+  addInventoryItem: (item: Omit<InventoryItem, 'id' | 'lastRestocked'>) => void;
+  updateInventoryStock: (itemId: string, qtyDelta: number) => void;
+  recordAttendance: (employeeId: string, status: 'present' | 'late' | 'permit' | 'absent') => void;
+  addExpense: (expense: Omit<ExpenseEntry, 'id'>) => void;
+  sendWhatsAppNotification: (phone: string, recipientName: string, templateType: WhatsAppMessage['templateType'], content: string, orderId?: string) => void;
+  applyVoucherCode: (code: string, subtotal: number) => { valid: boolean; discount: number; message: string };
+  generateMonthlyPayroll: (period: string) => void;
+  markPayrollPaid: (slipId: string) => void;
+  createTenant: (tenant: Omit<Tenant, 'id' | 'createdAt' | 'outletsCount'>) => void;
+  updateTenantPlan: (tenantId: string, plan: 'starter' | 'growth' | 'business') => void;
+}
+
+const AppContext = createContext<AppContextType | undefined>(undefined);
+
+export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Authentication State
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    const saved = localStorage.getItem('ls_auth');
+    return saved === 'true';
+  });
+
+  const [currentRole, setCurrentRole] = useState<UserRole>(() => {
+    const saved = localStorage.getItem('ls_role');
+    return (saved as UserRole) || 'tenant_owner';
+  });
+
+  const [tenants, setTenants] = useState<Tenant[]>(() => {
+    const saved = localStorage.getItem('ls_tenants');
+    return saved ? JSON.parse(saved) : INITIAL_TENANTS;
+  });
+  const [currentTenant, setCurrentTenant] = useState<Tenant>(tenants[0] || INITIAL_TENANTS[0]);
+  const [impersonatedTenant, setImpersonatedTenant] = useState<Tenant | null>(null);
+
+  const [outlets, setOutlets] = useState<Outlet[]>(() => {
+    const saved = localStorage.getItem('ls_outlets');
+    return saved ? JSON.parse(saved) : INITIAL_OUTLETS;
+  });
+  const [currentOutlet, setCurrentOutlet] = useState<Outlet>(outlets[0] || INITIAL_OUTLETS[0]);
+
+  const [customers, setCustomers] = useState<Customer[]>(() => {
+    const saved = localStorage.getItem('ls_customers');
+    return saved ? JSON.parse(saved) : INITIAL_CUSTOMERS;
+  });
+
+  const [orders, setOrders] = useState<Order[]>(() => {
+    const saved = localStorage.getItem('ls_orders');
+    return saved ? JSON.parse(saved) : INITIAL_ORDERS;
+  });
+
+  const [couriers, setCouriers] = useState<Courier[]>(() => {
+    const saved = localStorage.getItem('ls_couriers');
+    return saved ? JSON.parse(saved) : INITIAL_COURIERS;
+  });
+
+  const [deliveryTasks, setDeliveryTasks] = useState<DeliveryTask[]>(() => {
+    const saved = localStorage.getItem('ls_delivery');
+    return saved ? JSON.parse(saved) : INITIAL_DELIVERY_TASKS;
+  });
+
+  const [inventory, setInventory] = useState<InventoryItem[]>(() => {
+    const saved = localStorage.getItem('ls_inventory');
+    return saved ? JSON.parse(saved) : INITIAL_INVENTORY;
+  });
+
+  const [employees, setEmployees] = useState<Employee[]>(() => {
+    const saved = localStorage.getItem('ls_employees');
+    return saved ? JSON.parse(saved) : INITIAL_EMPLOYEES;
+  });
+
+  const [services, setServices] = useState<ServiceItem[]>(() => {
+    const saved = localStorage.getItem('ls_services');
+    return saved ? JSON.parse(saved) : DEFAULT_SERVICES;
+  });
+
+  const [perfumes, setPerfumes] = useState<string[]>(() => {
+    const saved = localStorage.getItem('ls_perfumes');
+    return saved ? JSON.parse(saved) : [
+      'Sakura Blossom (Favorit)',
+      'Lavender Dream',
+      'Ocean Soft',
+      'Snappy Fresh',
+      'Vanilla Sweet',
+      'Baby Soft Downy',
+      'Non-Parfum (Alergi)'
+    ];
+  });
+
+  const [cashierShifts, setCashierShifts] = useState<Array<{ id: string; cashierName: string; openTime: string; closeTime?: string; initialCash: number; totalCashCollected: number; status: 'open' | 'closed' }>>(() => {
+    return [
+      { id: 'sh-1', cashierName: 'Nurul Hidayah', openTime: '2026-08-23 07:00', initialCash: 300000, totalCashCollected: 1450000, status: 'open' }
+    ];
+  });
+
+  const currentShift = cashierShifts.find(s => s.status === 'open') || null;
+
+  const [attendance, setAttendance] = useState<AttendanceRecord[]>([]);
+  const [payrollSlips, setPayrollSlips] = useState<PayrollSlip[]>([]);
+  const [cashAccounts, setCashAccounts] = useState<CashAccount[]>(INITIAL_ACCOUNTS);
+  const [expenses, setExpenses] = useState<ExpenseEntry[]>(INITIAL_EXPENSES);
+  const [vouchers] = useState<Voucher[]>(INITIAL_VOUCHERS);
+  const [whatsappMessages, setWhatsappMessages] = useState<WhatsAppMessage[]>([]);
+
+  // Service CRUD Actions
+  const addService = (serviceData: Omit<ServiceItem, 'id'>) => {
+    const newService: ServiceItem = {
+      ...serviceData,
+      id: `srv-${Date.now()}`
+    };
+    setServices(prev => [...prev, newService]);
+  };
+
+  const updateService = (id: string, updatedData: Partial<ServiceItem>) => {
+    setServices(prev => prev.map(s => s.id === id ? { ...s, ...updatedData } : s));
+  };
+
+  const deleteService = (id: string) => {
+    setServices(prev => prev.filter(s => s.id !== id));
+  };
+
+  // Perfume CRUD Actions
+  const addPerfume = (name: string) => {
+    if (!perfumes.includes(name.trim())) {
+      setPerfumes(prev => [...prev, name.trim()]);
+    }
+  };
+
+  const deletePerfume = (name: string) => {
+    setPerfumes(prev => prev.filter(p => p !== name));
+  };
+
+  // Cashier Shift Actions
+  const openShift = (initialCash: number, cashierName: string) => {
+    const newShift = {
+      id: `sh-${Date.now()}`,
+      cashierName,
+      openTime: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      initialCash,
+      totalCashCollected: 0,
+      status: 'open' as const
+    };
+    setCashierShifts(prev => [newShift, ...prev]);
+  };
+
+  const closeShift = (shiftId: string, cashCollected: number) => {
+    setCashierShifts(prev => prev.map(s => {
+      if (s.id === shiftId) {
+        return {
+          ...s,
+          closeTime: new Date().toISOString().slice(0, 16).replace('T', ' '),
+          totalCashCollected: cashCollected,
+          status: 'closed' as const
+        };
+      }
+      return s;
+    }));
+  };
+
+  // Auth Methods
+  const login = (role: UserRole, tenantId?: string, outletId?: string) => {
+    setCurrentRole(role);
+    if (tenantId) {
+      const matchT = tenants.find(t => t.id === tenantId);
+      if (matchT) setCurrentTenant(matchT);
+    }
+    if (outletId) {
+      const matchO = outlets.find(o => o.id === outletId);
+      if (matchO) setCurrentOutlet(matchO);
+    }
+    setIsAuthenticated(true);
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+  };
+
+  // Actions
+  const addOrder = (orderData: Omit<Order, 'id' | 'invoiceNumber' | 'trackingCode' | 'createdAt'>) => {
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0, 10).replace(/-/g, '');
+    const randNum = Math.floor(1000 + Math.random() * 9000);
+    const invoiceNumber = `INV-${dateStr}-${orders.length + 1}`.padStart(16, '0');
+    const trackingCode = `${currentTenant.code || 'LS'}-${randNum}`;
+    const newId = `ord-${Date.now()}`;
+
+    const newOrder: Order = {
+      ...orderData,
+      id: newId,
+      invoiceNumber,
+      trackingCode,
+      createdAt: now.toISOString().slice(0, 16).replace('T', ' '),
+    };
+
+    setOrders(prev => [newOrder, ...prev]);
+
+    setCustomers(prev => prev.map(c => {
+      if (c.id === orderData.customerId) {
+        const earnedPoints = Math.floor(orderData.totalAmount / 5000);
+        return {
+          ...c,
+          totalOrders: c.totalOrders + 1,
+          totalSpent: c.totalSpent + orderData.totalAmount,
+          loyaltyPoints: c.loyaltyPoints + earnedPoints,
+          lastOrderDate: now.toISOString().slice(0, 10),
+          depositBalance: orderData.paymentMethod === 'deposit' ? Math.max(0, c.depositBalance - orderData.totalAmount) : c.depositBalance
+        };
+      }
+      return c;
+    }));
+
+    if (orderData.paymentStatus === 'paid' && orderData.paymentMethod !== 'deposit') {
+      setCashAccounts(prev => prev.map(acc => {
+        if (orderData.paymentMethod === 'cash' && acc.type === 'cash') {
+          return { ...acc, balance: acc.balance + orderData.totalAmount };
+        }
+        return acc;
+      }));
+    }
+
+    sendWhatsAppNotification(
+      newOrder.customerPhone,
+      newOrder.customerName,
+      'order_received',
+      `Halo Kak ${newOrder.customerName}! Order #${newOrder.trackingCode} telah diterima di ${currentOutlet.name}. Total: Rp ${newOrder.totalAmount.toLocaleString('id-ID')}. Estimasi selesai: ${newOrder.estimatedReady}. Cek progres: https://laundrysuite.id/track/${newOrder.trackingCode}`,
+      newOrder.id
+    );
+
+    return newOrder;
+  };
+
+  const updateOrderStatus = (orderId: string, status: OrderStatus, qcNotes?: string) => {
+    setOrders(prev => prev.map(ord => {
+      if (ord.id === orderId) {
+        const updated = { 
+          ...ord, 
+          status, 
+          qcNotes: qcNotes || ord.qcNotes,
+          qcStatus: status === 'qc_pending' ? 'passed' : ord.qcStatus,
+          completedAt: status === 'completed' ? new Date().toISOString().slice(0, 16).replace('T', ' ') : ord.completedAt
+        };
+
+        if (status === 'ready') {
+          sendWhatsAppNotification(
+            ord.customerPhone,
+            ord.customerName,
+            'order_ready',
+            `Hore! Cucian Kak ${ord.customerName} (#${ord.trackingCode}) di ${currentOutlet.name} sudah selesai dan siap diambil/diantar! Silakan tunjukkan nota saat pengambilan.`,
+            ord.id
+          );
+        }
+
+        return updated;
+      }
+      return ord;
+    }));
+  };
+
+  const recordPayment = (orderId: string, method: PaymentMethod, amount: number) => {
+    setOrders(prev => prev.map(ord => {
+      if (ord.id === orderId) {
+        const newPaid = ord.paidAmount + amount;
+        return {
+          ...ord,
+          paymentMethod: method,
+          paidAmount: newPaid,
+          paymentStatus: newPaid >= ord.totalAmount ? 'paid' : 'partial'
+        };
+      }
+      return ord;
+    }));
+  };
+
+  const addCustomer = (customerData: Omit<Customer, 'id' | 'loyaltyPoints' | 'depositBalance' | 'totalOrders' | 'totalSpent' | 'joinedDate' | 'referralCode'>) => {
+    const randCode = customerData.name.split(' ')[0].toUpperCase() + Math.floor(10 + Math.random() * 90);
+    const newCustomer: Customer = {
+      ...customerData,
+      id: `cust-${Date.now()}`,
+      loyaltyPoints: 50,
+      depositBalance: 0,
+      totalOrders: 0,
+      totalSpent: 0,
+      joinedDate: new Date().toISOString().slice(0, 10),
+      referralCode: randCode,
+    };
+    setCustomers(prev => [newCustomer, ...prev]);
+    return newCustomer;
+  };
+
+  const topupDeposit = (customerId: string, amount: number, accountId: string) => {
+    setCustomers(prev => prev.map(c => {
+      if (c.id === customerId) {
+        return { ...c, depositBalance: c.depositBalance + amount };
+      }
+      return c;
+    }));
+
+    setCashAccounts(prev => prev.map(acc => {
+      if (acc.id === accountId) {
+        return { ...acc, balance: acc.balance + amount };
+      }
+      return acc;
+    }));
+  };
+
+  const redeemPoints = (customerId: string, points: number) => {
+    setCustomers(prev => prev.map(c => {
+      if (c.id === customerId && c.loyaltyPoints >= points) {
+        const bonusDeposit = points * 100;
+        return { 
+          ...c, 
+          loyaltyPoints: c.loyaltyPoints - points, 
+          depositBalance: c.depositBalance + bonusDeposit 
+        };
+      }
+      return c;
+    }));
+  };
+
+  const addDeliveryTask = (taskData: Omit<DeliveryTask, 'id'>) => {
+    const newTask: DeliveryTask = {
+      ...taskData,
+      id: `del-${Date.now()}`,
+    };
+    setDeliveryTasks(prev => [newTask, ...prev]);
+  };
+
+  const assignCourier = (taskId: string, courierId: string) => {
+    const courier = couriers.find(c => c.id === courierId);
+    setDeliveryTasks(prev => prev.map(t => {
+      if (t.id === taskId) {
+        return { ...t, courierId, courierName: courier?.name, status: 'assigned' };
+      }
+      return t;
+    }));
+
+    setCouriers(prev => prev.map(c => {
+      if (c.id === courierId) {
+        return { ...c, activeTasksCount: c.activeTasksCount + 1, status: 'on_delivery' };
+      }
+      return c;
+    }));
+  };
+
+  const completeDeliveryTask = (taskId: string, proofPhoto?: string, signatureName?: string) => {
+    setDeliveryTasks(prev => prev.map(t => {
+      if (t.id === taskId) {
+        return {
+          ...t,
+          status: 'completed',
+          proofPhoto: proofPhoto || 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=300&auto=format&fit=crop&q=60',
+          signatureName: signatureName || t.customerName
+        };
+      }
+      return t;
+    }));
+  };
+
+  const addInventoryItem = (itemData: Omit<InventoryItem, 'id' | 'lastRestocked'>) => {
+    const newItem: InventoryItem = {
+      ...itemData,
+      id: `inv-${Date.now()}`,
+      lastRestocked: new Date().toISOString().slice(0, 10),
+    };
+    setInventory(prev => [...prev, newItem]);
+  };
+
+  const updateInventoryStock = (itemId: string, qtyDelta: number) => {
+    setInventory(prev => prev.map(item => {
+      if (item.id === itemId) {
+        return { 
+          ...item, 
+          currentStock: Math.max(0, item.currentStock + qtyDelta),
+          lastRestocked: qtyDelta > 0 ? new Date().toISOString().slice(0, 10) : item.lastRestocked
+        };
+      }
+      return item;
+    }));
+  };
+
+  const recordAttendance = (employeeId: string, status: 'present' | 'late' | 'permit' | 'absent') => {
+    const emp = employees.find(e => e.id === employeeId);
+    const now = new Date();
+    const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    const dateStr = now.toISOString().slice(0, 10);
+
+    setAttendance(prev => [
+      {
+        id: `att-${Date.now()}`,
+        employeeId,
+        employeeName: emp?.name || 'Staff',
+        date: dateStr,
+        clockIn: timeStr,
+        status
+      },
+      ...prev
+    ]);
+  };
+
+  const addExpense = (expenseData: Omit<ExpenseEntry, 'id'>) => {
+    const newExpense: ExpenseEntry = {
+      ...expenseData,
+      id: `exp-${Date.now()}`,
+    };
+    setExpenses(prev => [newExpense, ...prev]);
+
+    setCashAccounts(prev => prev.map(acc => {
+      if (acc.id === expenseData.accountId) {
+        return { ...acc, balance: Math.max(0, acc.balance - expenseData.amount) };
+      }
+      return acc;
+    }));
+  };
+
+  const sendWhatsAppNotification = (
+    phone: string, 
+    recipientName: string, 
+    templateType: WhatsAppMessage['templateType'], 
+    content: string, 
+    orderId?: string
+  ) => {
+    const newMsg: WhatsAppMessage = {
+      id: `wa-${Date.now()}`,
+      orderId,
+      phone,
+      recipientName,
+      templateType,
+      content,
+      sentAt: new Date().toISOString().slice(0, 16).replace('T', ' '),
+      status: 'sent',
+    };
+    setWhatsappMessages(prev => [newMsg, ...prev]);
+  };
+
+  const applyVoucherCode = (code: string, subtotal: number) => {
+    const vch = vouchers.find(v => v.code.toUpperCase() === code.trim().toUpperCase() && v.isActive);
+    if (!vch) {
+      return { valid: false, discount: 0, message: 'Kode voucher tidak ditemukan atau sudah kadaluarsa.' };
+    }
+    if (subtotal < vch.minOrder) {
+      return { valid: false, discount: 0, message: `Minimal belanja untuk voucher ini adalah Rp ${vch.minOrder.toLocaleString('id-ID')}` };
+    }
+    const discount = vch.discountType === 'percentage' 
+      ? Math.round((subtotal * vch.discountValue) / 100)
+      : vch.discountValue;
+
+    return { valid: true, discount, message: `Voucher ${vch.title} berhasil digunakan!` };
+  };
+
+  const generateMonthlyPayroll = (period: string) => {
+    const newSlips: PayrollSlip[] = employees.map(emp => {
+      let commission = 0;
+      if (emp.division === 'Kasir') {
+        commission = (emp.commissionPerKg || 100) * 1450;
+      } else if (emp.division === 'Produksi') {
+        commission = (emp.commissionPerKg || 200) * 1200 + (emp.commissionPerItem || 500) * 120;
+      } else if (emp.division === 'Kurir') {
+        commission = (emp.commissionPerItem || 3000) * 85;
+      }
+      const bonus = 150000;
+      const deductions = 50000;
+      const net = emp.baseSalary + commission + bonus - deductions;
+
+      return {
+        id: `pay-${emp.id}-${period}`,
+        period,
+        employeeId: emp.id,
+        employeeName: emp.name,
+        role: emp.role,
+        division: emp.division,
+        baseSalary: emp.baseSalary,
+        totalCommission: commission,
+        bonus,
+        deductions,
+        netSalary: net,
+        paymentStatus: 'pending',
+        generatedAt: new Date().toISOString().slice(0, 10),
+      };
+    });
+
+    setPayrollSlips(newSlips);
+  };
+
+  const markPayrollPaid = (slipId: string) => {
+    setPayrollSlips(prev => prev.map(s => {
+      if (s.id === slipId) {
+        addExpense({
+          tenantId: currentTenant.id,
+          outletId: currentOutlet.id,
+          date: new Date().toISOString().slice(0, 10),
+          category: 'Gaji & Komisi',
+          description: `Gaji ${s.employeeName} (${s.period})`,
+          amount: s.netSalary,
+          accountId: cashAccounts[0]?.id || 'acc-1',
+          accountName: cashAccounts[0]?.name || 'Kas',
+        });
+        return { ...s, paymentStatus: 'paid' };
+      }
+      return s;
+    }));
+  };
+
+  const createTenant = (tenantData: Omit<Tenant, 'id' | 'createdAt' | 'outletsCount'>) => {
+    const newTenant: Tenant = {
+      ...tenantData,
+      id: `t-${Date.now()}`,
+      outletsCount: 1,
+      createdAt: new Date().toISOString().slice(0, 10),
+    };
+    setTenants(prev => [...prev, newTenant]);
+  };
+
+  const updateTenantPlan = (tenantId: string, plan: 'starter' | 'growth' | 'business') => {
+    const prices = { starter: 199000, growth: 499000, business: 1299000 };
+    setTenants(prev => prev.map(t => {
+      if (t.id === tenantId) {
+        return { ...t, plan, mrr: prices[plan] };
+      }
+      return t;
+    }));
+  };
+
+  const impersonateTenant = (tenantId: string) => {
+    const target = tenants.find(t => t.id === tenantId);
+    if (target) {
+      setImpersonatedTenant(target);
+      setCurrentTenant(target);
+      setCurrentRole('tenant_owner');
+      const targetOutlet = outlets.find(o => o.tenantId === target.id) || outlets[0];
+      if (targetOutlet) setCurrentOutlet(targetOutlet);
+    }
+  };
+
+  const exitImpersonation = () => {
+    setImpersonatedTenant(null);
+    setCurrentRole('super_admin');
+  };
+
+  const tenantScopedCustomers = useMemo(() => {
+    if (currentRole === 'super_admin') return customers;
+    return customers.filter(c => c.tenantId === currentTenant.id);
+  }, [customers, currentTenant.id, currentRole]);
+
+  const tenantScopedOrders = useMemo(() => {
+    if (currentRole === 'super_admin') return orders;
+    return orders.filter(o => o.tenantId === currentTenant.id);
+  }, [orders, currentTenant.id, currentRole]);
+
+  const tenantScopedInventory = useMemo(() => {
+    if (currentRole === 'super_admin') return inventory;
+    return inventory.filter(i => i.tenantId === currentTenant.id);
+  }, [inventory, currentTenant.id, currentRole]);
+
+  const tenantScopedEmployees = useMemo(() => {
+    if (currentRole === 'super_admin') return employees;
+    return employees.filter(e => e.tenantId === currentTenant.id);
+  }, [employees, currentTenant.id, currentRole]);
+
+  const tenantScopedExpenses = useMemo(() => {
+    if (currentRole === 'super_admin') return expenses;
+    return expenses.filter(e => e.tenantId === currentTenant.id);
+  }, [expenses, currentTenant.id, currentRole]);
+
+  const tenantScopedOutlets = useMemo(() => {
+    if (currentRole === 'super_admin') return outlets;
+    return outlets.filter(o => o.tenantId === currentTenant.id);
+  }, [outlets, currentTenant.id, currentRole]);
+
+  const value = useMemo(() => ({
+    isAuthenticated,
+    login,
+    logout,
+    currentRole,
+    setCurrentRole,
+    impersonatedTenant,
+    impersonateTenant,
+    exitImpersonation,
+    tenants,
+    currentTenant,
+    setCurrentTenant,
+    outlets: tenantScopedOutlets,
+    currentOutlet,
+    setCurrentOutlet,
+    customers: tenantScopedCustomers,
+    orders: tenantScopedOrders,
+    couriers,
+    deliveryTasks,
+    inventory: tenantScopedInventory,
+    employees: tenantScopedEmployees,
+    attendance,
+    payrollSlips,
+    cashAccounts,
+    expenses: tenantScopedExpenses,
+    vouchers,
+    whatsappMessages,
+    services,
+    addService,
+    updateService,
+    deleteService,
+    perfumes,
+    addPerfume,
+    deletePerfume,
+    cashierShifts,
+    currentShift,
+    openShift,
+    closeShift,
+    addOrder,
+    updateOrderStatus,
+    recordPayment,
+    addCustomer,
+    topupDeposit,
+    redeemPoints,
+    addDeliveryTask,
+    assignCourier,
+    completeDeliveryTask,
+    addInventoryItem,
+    updateInventoryStock,
+    recordAttendance,
+    addExpense,
+    sendWhatsAppNotification,
+    applyVoucherCode,
+    generateMonthlyPayroll,
+    markPayrollPaid,
+    createTenant,
+    updateTenantPlan,
+  }), [
+    isAuthenticated, currentRole, tenants, currentTenant, tenantScopedOutlets, currentOutlet,
+    tenantScopedCustomers, tenantScopedOrders, services, perfumes, couriers, deliveryTasks, tenantScopedInventory,
+    tenantScopedEmployees, attendance, payrollSlips, cashAccounts, tenantScopedExpenses,
+    vouchers, whatsappMessages, cashierShifts, currentShift
+  ]);
+
+  return (
+    <AppContext.Provider value={value}>
+      {children}
+    </AppContext.Provider>
+  );
+};
+
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useApp must be used within an AppProvider');
+  }
+  return context;
+};
