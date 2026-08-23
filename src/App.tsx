@@ -22,17 +22,38 @@ import { WhatsAppSimulatorDrawer } from './components/modals/WhatsAppSimulatorDr
 import { LandingPage } from './pages/Marketing/LandingPage';
 import { Order } from './types';
 
+const VALID_TABS = [
+  'dashboard', 'pos', 'orders', 'production', 'delivery',
+  'customers', 'inventory', 'payroll', 'finance', 'reports',
+  'settings', 'super-admin', 'customer-portal'
+];
+
 const MainApp: React.FC = () => {
   const { 
     isAuthenticated, currentRole, currentOutlet, 
     currentTenant, impersonatedTenant, exitImpersonation,
     login
   } = useApp();
-  const [activeTab, setActiveTab] = useState<string>('dashboard');
+
+  // Helper to parse URL hash or pathname
+  const getInitialTab = (): string => {
+    const hash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+    if (VALID_TABS.includes(hash)) return hash;
+    return 'dashboard';
+  };
+
+  const getInitialUnauthView = (): 'landing' | 'login' | 'register' => {
+    const hash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+    if (hash === 'login') return 'login';
+    if (hash === 'register') return 'register';
+    return 'landing';
+  };
+
+  const [activeTab, setActiveTab] = useState<string>(getInitialTab);
 
   // Marketing & Auth state
-  const [unauthView, setUnauthView] = useState<'landing' | 'login' | 'register'>('landing');
-  const [selectedPlan, setSelectedPlan] = useState<'starter' | 'growth' | 'business'>('growth');
+  const [unauthView, setUnauthView] = useState<'landing' | 'login' | 'register'>(getInitialUnauthView);
+  const [selectedPlan, setSelectedPlan] = useState<any>('trial');
 
   // Receipt & Tag Modals State
   const [receiptOrder, setReceiptOrder] = useState<Order | null>(null);
@@ -40,6 +61,53 @@ const MainApp: React.FC = () => {
 
   // WhatsApp Drawer State
   const [showWhatsAppDrawer, setShowWhatsAppDrawer] = useState<boolean>(false);
+
+  // Sync URL hash when unauthenticated state changes
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      const currentHash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+      if (unauthView === 'landing' && currentHash !== '' && currentHash !== 'landing') {
+        window.history.replaceState(null, '', window.location.pathname);
+      } else if (unauthView === 'login' && currentHash !== 'login') {
+        window.location.hash = '#login';
+      } else if (unauthView === 'register' && currentHash !== 'register') {
+        window.location.hash = '#register';
+      }
+    }
+  }, [unauthView, isAuthenticated]);
+
+  // Sync URL hash when authenticated tab changes
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      const currentHash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+      if (currentHash !== activeTab) {
+        window.location.hash = `#${activeTab}`;
+      }
+    }
+  }, [activeTab, isAuthenticated]);
+
+  // Listen to browser Back/Forward navigation (hashchange & popstate)
+  React.useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
+      if (!isAuthenticated) {
+        if (hash === 'login') setUnauthView('login');
+        else if (hash === 'register') setUnauthView('register');
+        else setUnauthView('landing');
+      } else {
+        if (VALID_TABS.includes(hash)) {
+          setActiveTab(hash);
+        }
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    window.addEventListener('popstate', handleHashChange);
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+      window.removeEventListener('popstate', handleHashChange);
+    };
+  }, [isAuthenticated]);
 
   // If role is switched to customer, redirect tab to customer portal
   React.useEffect(() => {
@@ -60,7 +128,9 @@ const MainApp: React.FC = () => {
       return (
         <LandingPage
           onOpenLogin={(view, plan) => {
-            setUnauthView(view || 'login');
+            const nextView = view || 'login';
+            setUnauthView(nextView);
+            window.location.hash = `#${nextView}`;
             if (plan) setSelectedPlan(plan);
           }}
           onExploreDemo={(role) => {
@@ -73,7 +143,11 @@ const MainApp: React.FC = () => {
       <LoginPortal
         initialView={unauthView}
         defaultPlan={selectedPlan}
-        onBackToLanding={() => setUnauthView('landing')}
+        onBackToLanding={() => {
+          setUnauthView('landing');
+          window.location.hash = '';
+          window.history.replaceState(null, '', window.location.pathname);
+        }}
       />
     );
   }
