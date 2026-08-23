@@ -23,42 +23,16 @@ const DEFAULT_SERVICES: ServiceItem[] = [
 const INITIAL_TENANTS: Tenant[] = [
   {
     id: 't-1',
-    name: 'Laundry Bersih Jaya',
-    code: 'LBJ',
-    plan: 'growth',
+    name: 'Laundry Bisnis Utama',
+    code: 'LND',
+    plan: 'trial',
     status: 'active',
-    mrr: 499000,
-    outletsCount: 3,
-    ownerName: 'Hendra Gunawan',
-    ownerEmail: 'owner@bersihjaya.id',
-    ownerPhone: '081234567890',
-    createdAt: '2025-01-10',
-  },
-  {
-    id: 't-2',
-    name: 'CleanFast Premium Laundry',
-    code: 'CFP',
-    plan: 'business',
-    status: 'active',
-    mrr: 1299000,
-    outletsCount: 6,
-    ownerName: 'Jessica Suryanto',
-    ownerEmail: 'jessica@cleanfast.co.id',
-    ownerPhone: '081198765432',
-    createdAt: '2024-11-05',
-  },
-  {
-    id: 't-3',
-    name: 'FreshKlin Kiloan Express',
-    code: 'FKE',
-    plan: 'starter',
-    status: 'active',
-    mrr: 199000,
+    mrr: 0,
     outletsCount: 1,
-    ownerName: 'Ahmad Fauzi',
-    ownerEmail: 'ahmad@freshklin.com',
-    ownerPhone: '085712349988',
-    createdAt: '2025-03-01',
+    ownerName: 'Pemilik Laundry',
+    ownerEmail: 'owner@laundrybisnis.com',
+    ownerPhone: '081234567890',
+    createdAt: new Date().toISOString().slice(0, 10),
   },
 ];
 
@@ -66,261 +40,29 @@ const INITIAL_OUTLETS: Outlet[] = [
   {
     id: 'out-1',
     tenantId: 't-1',
-    name: 'Outlet Tebet (Pusat)',
-    code: 'LBJ-TBT',
-    address: 'Jl. Tebet Raya No. 45, Jakarta Selatan',
-    city: 'Jakarta Selatan',
-    phone: '081288990011',
+    name: 'Outlet Pusat',
+    code: 'LND-01',
+    address: 'Jl. Raya Utama No. 1',
+    city: 'Jakarta',
+    phone: '081234567890',
     isMain: true,
     operationalHours: '07:00 - 21:00 WIB',
     services: DEFAULT_SERVICES,
   },
-  {
-    id: 'out-2',
-    tenantId: 't-1',
-    name: 'Outlet Bintaro Sektor 7',
-    code: 'LBJ-BIN',
-    address: 'Ruko Bintaro Arcade 2 No. 8, Tangerang Selatan',
-    city: 'Tangerang Selatan',
-    phone: '081288990022',
-    isMain: false,
-    operationalHours: '08:00 - 21:00 WIB',
-    services: DEFAULT_SERVICES,
-  },
-  {
-    id: 'out-3',
-    tenantId: 't-1',
-    name: 'Outlet Galaxy Bekasi',
-    code: 'LBJ-GLX',
-    address: 'Jl. Boulevard Galaxy No. 12, Bekasi Barat',
-    city: 'Bekasi',
-    phone: '081288990033',
-    isMain: false,
-    operationalHours: '07:30 - 21:30 WIB',
-    services: DEFAULT_SERVICES,
-  },
 ];
 
-const INITIAL_CUSTOMERS: Customer[] = [
-  {
-    id: 'cust-1',
-    tenantId: 't-1',
-    name: 'Aisyah Putri',
-    phone: '081234567890',
-    email: 'aisyah@example.com',
-    address: 'Jl. Melati Putih No. 12, RT 03/RW 04, Jakarta Selatan, 12345',
-    membershipTier: 'Platinum',
-    loyaltyPoints: 450,
-    depositBalance: 125000,
-    totalOrders: 28,
-    totalSpent: 1850000,
-    joinedDate: '2025-01-15',
-    lastOrderDate: '2026-08-20',
-    referralCode: 'AISYAH88',
-    notes: 'Suka aroma Sakura Blossom, kemeja minta digantung.',
-  },
-  {
-    id: 'cust-2',
-    tenantId: 't-1',
-    name: 'Siti Rahmawati',
-    phone: '085711223344',
-    email: 'siti.rahma@yahoo.com',
-    address: 'Jl. Tebet Barat Dalam VI No. 18, Jakarta Selatan',
-    membershipTier: 'Gold',
-    loyaltyPoints: 210,
-    depositBalance: 120000,
-    totalOrders: 14,
-    totalSpent: 920000,
-    joinedDate: '2025-02-10',
-    lastOrderDate: '2026-08-21',
-    referralCode: 'SITI99',
-    notes: 'Alergi deterjen wangi menyengat, pakai wangi Ocean Soft.',
-  },
-  {
-    id: 'cust-3',
-    tenantId: 't-1',
-    name: 'Dian Permata',
-    phone: '081377889900',
-    email: 'dian.permata@gmail.com',
-    address: 'Jl. Bintaro Utama 3 Blok AP No. 5, Tangerang Selatan',
-    membershipTier: 'Silver',
-    loyaltyPoints: 85,
-    depositBalance: 50000,
-    totalOrders: 6,
-    totalSpent: 410000,
-    joinedDate: '2025-05-18',
-    lastOrderDate: '2026-08-22',
-    referralCode: 'DIAN77',
-    notes: 'Langganan Cuci Kiloan & Bed Cover.',
-  },
-  // Multi-Tenant Isolation Data: Tenant t-2 (Klin Laundry Express) Customers
-  {
-    id: 'cust-201',
-    tenantId: 't-2',
-    name: 'Hendra Wijaya (Pelanggan Klin Express)',
-    phone: '081299112233',
-    email: 'hendra.w@klin.id',
-    address: 'Jl. Raya Darmo Permai No. 45, Surabaya',
-    membershipTier: 'Gold',
-    loyaltyPoints: 310,
-    depositBalance: 250000,
-    totalOrders: 19,
-    totalSpent: 1250000,
-    joinedDate: '2025-03-12',
-    lastOrderDate: '2026-08-21',
-    referralCode: 'HENDRA01',
-    notes: 'Pelanggan khusus Tenant Klin Laundry Express',
-  },
-  {
-    id: 'cust-202',
-    tenantId: 't-2',
-    name: 'Dewi Lestari (Pelanggan Klin Express)',
-    phone: '085733445566',
-    email: 'dewi.lestari@gmail.com',
-    address: 'Jl. Manyar Kertoarjo No. 88, Surabaya',
-    membershipTier: 'Platinum',
-    loyaltyPoints: 520,
-    depositBalance: 400000,
-    totalOrders: 32,
-    totalSpent: 2400000,
-    joinedDate: '2025-01-20',
-    lastOrderDate: '2026-08-22',
-    referralCode: 'DEWI99',
-    notes: 'Pelanggan VIP Klin Laundry Express',
-  },
-  // Multi-Tenant Isolation Data: Tenant t-3 (Fresh & Clean Laundry) Customers
-  {
-    id: 'cust-301',
-    tenantId: 't-3',
-    name: 'Bagus Setiawan (Pelanggan Fresh & Clean)',
-    phone: '087811223344',
-    email: 'bagus.s@freshclean.id',
-    address: 'Jl. Gatot Subroto No. 101, Bandung',
-    membershipTier: 'Silver',
-    loyaltyPoints: 95,
-    depositBalance: 80000,
-    totalOrders: 8,
-    totalSpent: 520000,
-    joinedDate: '2025-06-01',
-    lastOrderDate: '2026-08-20',
-    referralCode: 'BAGUS77',
-    notes: 'Pelanggan khusus Tenant Fresh & Clean Laundry',
-  }
-];
-
-const INITIAL_ORDERS: Order[] = [
-  {
-    id: 'ord-101',
-    invoiceNumber: 'INV-20260822-001',
-    trackingCode: 'LBJ-8842',
-    tenantId: 't-1',
-    outletId: 'out-1',
-    customerId: 'cust-1',
-    customerName: 'Aisyah Putri',
-    customerPhone: '081234567890',
-    customerAddress: 'Jl. Melati Putih No. 12, Jakarta Selatan',
-    orderType: 'walk_in',
-    status: 'washing',
-    paymentStatus: 'paid',
-    paymentMethod: 'deposit',
-    items: [
-      { id: 'itm-1', serviceId: 'srv-1', serviceName: 'Cuci Setrika Reguler', category: 'kiloan', unit: 'kg', qty: 5.5, unitPrice: 10000, subtotal: 55000, notes: 'Pisahkan warna gelap' },
-      { id: 'itm-2', serviceId: 'srv-5', serviceName: 'Kemeja Formal Satuan', category: 'satuan', unit: 'pcs', qty: 2, unitPrice: 15000, subtotal: 30000, notes: 'Minta digantung' }
-    ],
-    totalWeightKg: 5.5,
-    totalPcs: 14,
-    subtotal: 85000,
-    discount: 5000,
-    deliveryFee: 0,
-    totalAmount: 80000,
-    paidAmount: 80000,
-    perfumeChoice: 'Sakura Blossom',
-    estimatedReady: '2026-08-24 14:00',
-    createdAt: '2026-08-22 09:15',
-    tags: ['VIP', 'Kemeja Gantung'],
-  },
-  {
-    id: 'ord-102',
-    invoiceNumber: 'INV-20260822-002',
-    trackingCode: 'LBJ-9123',
-    tenantId: 't-1',
-    outletId: 'out-1',
-    customerId: 'cust-2',
-    customerName: 'Siti Rahmawati',
-    customerPhone: '085711223344',
-    customerAddress: 'Jl. Tebet Barat Dalam VI No. 18, Jakarta Selatan',
-    orderType: 'pickup_delivery',
-    status: 'ready',
-    paymentStatus: 'paid',
-    paymentMethod: 'qris',
-    items: [
-      { id: 'itm-3', serviceId: 'srv-2', serviceName: 'Cuci Setrika Express (6 Jam)', category: 'kiloan', unit: 'kg', qty: 4.2, unitPrice: 18000, subtotal: 75600 },
-      { id: 'itm-4', serviceId: 'srv-4', serviceName: 'Bed Cover King / Jumbo', category: 'satuan', unit: 'pcs', qty: 1, unitPrice: 35000, subtotal: 35000 }
-    ],
-    totalWeightKg: 4.2,
-    totalPcs: 10,
-    subtotal: 110600,
-    discount: 0,
-    deliveryFee: 15000,
-    totalAmount: 125600,
-    paidAmount: 125600,
-    isExpress: true,
-    perfumeChoice: 'Ocean Soft',
-    estimatedReady: '2026-08-22 16:00',
-    createdAt: '2026-08-22 10:00',
-    assignedCourierId: 'cour-1',
-    qcStatus: 'passed',
-    tags: ['Express', 'Siap Antar'],
-  },
-];
-
-const INITIAL_COURIERS: Courier[] = [
-  { id: 'cour-1', name: 'Agus Setiawan', phone: '081211335577', vehicleType: 'motor', activeTasksCount: 2, status: 'on_delivery', rating: 4.9, completedDeliveries: 142 },
-  { id: 'cour-2', name: 'Rian Kurniawan', phone: '085622446688', vehicleType: 'motor', activeTasksCount: 0, status: 'available', rating: 4.8, completedDeliveries: 98 },
-];
-
-const INITIAL_DELIVERY_TASKS: DeliveryTask[] = [
-  {
-    id: 'del-1',
-    orderId: 'ord-102',
-    invoiceNumber: 'INV-20260822-002',
-    customerName: 'Siti Rahmawati',
-    customerPhone: '085711223344',
-    address: 'Jl. Tebet Barat Dalam VI No. 18, Jakarta Selatan',
-    type: 'delivery',
-    status: 'assigned',
-    courierId: 'cour-1',
-    courierName: 'Agus Setiawan',
-    scheduledTime: '2026-08-22 17:00',
-    notes: 'Hubungi jika sudah sampai di depan pagar hitam.'
-  }
-];
-
-const INITIAL_INVENTORY: InventoryItem[] = [
-  { id: 'inv-1', tenantId: 't-1', outletId: 'out-1', name: 'Deterjen Cair Konsentrat EcoClean', category: 'chemical', sku: 'DET-ECO-20L', currentStock: 8, unit: 'Jerigen (20L)', minStockThreshold: 5, costPerUnit: 140000, supplierName: 'PT Sukses Kimia Pratama', lastRestocked: '2026-08-15' },
-  { id: 'inv-2', tenantId: 't-1', outletId: 'out-1', name: 'Softener & Pelicin Pakaian Sakura', category: 'chemical', sku: 'SFT-SAK-20L', currentStock: 3, unit: 'Jerigen (20L)', minStockThreshold: 4, costPerUnit: 165000, supplierName: 'PT Sukses Kimia Pratama', lastRestocked: '2026-08-10' },
-  { id: 'inv-3', tenantId: 't-1', outletId: 'out-1', name: 'Parfum Laundry Ocean Fresh', category: 'chemical', sku: 'PRF-OCN-5L', currentStock: 2, unit: 'Jerigen (5L)', minStockThreshold: 3, costPerUnit: 190000, supplierName: 'Aroma Sejati Abadi', lastRestocked: '2026-08-01' },
-];
-
-const INITIAL_EMPLOYEES: Employee[] = [
-  { id: 'emp-1', tenantId: 't-1', outletId: 'out-1', name: 'Nurul Hidayah', role: 'Kasir & Front Office', division: 'Kasir', phone: '081299881122', email: 'nurul@bersihjaya.id', baseSalary: 3200000, commissionPerKg: 100, commissionPerItem: 500, joinedDate: '2025-01-10', status: 'active' },
-  { id: 'emp-2', tenantId: 't-1', outletId: 'out-1', name: 'Bambang Sudiro', role: 'Operator Cuci & Pengering', division: 'Produksi', phone: '085733221100', email: 'bambang@bersihjaya.id', baseSalary: 3000000, commissionPerKg: 200, commissionPerItem: 0, joinedDate: '2025-01-15', status: 'active' },
-  { id: 'emp-3', tenantId: 't-1', outletId: 'out-1', name: 'Sri Wahyuni', role: 'Staff Setrika & QC Packing', division: 'Produksi', phone: '087811992233', email: 'sri@bersihjaya.id', baseSalary: 3100000, commissionPerKg: 250, commissionPerItem: 1000, joinedDate: '2025-02-01', status: 'active' },
-  { id: 'emp-4', tenantId: 't-1', outletId: 'out-1', name: 'Agus Setiawan', role: 'Kurir Delivery & Pickup', division: 'Kurir', phone: '081211335577', email: 'agus@bersihjaya.id', baseSalary: 2800000, commissionPerItem: 3000, joinedDate: '2025-03-01', status: 'active' },
-];
-
+const INITIAL_CUSTOMERS: Customer[] = [];
+const INITIAL_ORDERS: Order[] = [];
+const INITIAL_COURIERS: Courier[] = [];
+const INITIAL_DELIVERY_TASKS: DeliveryTask[] = [];
+const INITIAL_INVENTORY: InventoryItem[] = [];
+const INITIAL_EMPLOYEES: Employee[] = [];
 const INITIAL_ACCOUNTS: CashAccount[] = [
-  { id: 'acc-1', name: 'Kas Kasir Tunai (Laci)', type: 'cash', balance: 1450000 },
-  { id: 'acc-2', name: 'BCA Rekening Operasional', type: 'bank', balance: 18450000, accountNumber: '8830-192-881' },
+  { id: 'acc-1', name: 'Kas Kasir Tunai (Laci)', type: 'cash', balance: 0 },
+  { id: 'acc-2', name: 'Rekening Bank / QRIS', type: 'bank', balance: 0 },
 ];
-
-const INITIAL_EXPENSES: ExpenseEntry[] = [
-  { id: 'exp-1', tenantId: 't-1', outletId: 'out-1', date: '2026-08-21', category: 'Bahan Baku', description: 'Restock Deterjen EcoClean & Softener Sakura (4 jerigen)', amount: 610000, accountId: 'acc-2', accountName: 'BCA Rekening Operasional' },
-];
-
-const INITIAL_VOUCHERS: Voucher[] = [
-  { id: 'vch-1', code: 'BERSIHHEMAT', title: 'Diskon Kiloan 15%', discountType: 'percentage', discountValue: 15, minOrder: 50000, validUntil: '2026-09-30', usageCount: 42, maxUsage: 100, isActive: true },
-];
+const INITIAL_EXPENSES: ExpenseEntry[] = [];
+const INITIAL_VOUCHERS: Voucher[] = [];
 
 interface AppContextType {
   // Auth state

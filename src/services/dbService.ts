@@ -119,10 +119,23 @@ export class DatabaseEngine {
    * Clear local database to factory defaults
    */
   static clearStorage(): void {
-    localStorage.removeItem(DB_STORAGE_KEY);
-    localStorage.removeItem('ls_auth');
-    localStorage.removeItem('ls_role');
-    localStorage.removeItem('ls_tenant_id');
-    localStorage.removeItem('ls_outlet_id');
+    const keysToRemove = [
+      DB_STORAGE_KEY,
+      'ls_auth',
+      'ls_role',
+      'ls_tenant_id',
+      'ls_outlet_id',
+      'ls_tenants',
+      'ls_outlets',
+      'ls_customers',
+      'ls_orders',
+      'ls_couriers',
+      'ls_delivery',
+      'ls_inventory',
+      'ls_employees',
+      'ls_services',
+      'ls_perfumes'
+    ];
+    keysToRemove.forEach(k => localStorage.removeItem(k));
   }
 }
