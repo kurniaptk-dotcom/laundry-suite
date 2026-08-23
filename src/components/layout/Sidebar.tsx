@@ -16,6 +16,13 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
   const { currentRole, orders, deliveryTasks, inventory, logout } = useApp();
 
+  const handleNav = (e: React.MouseEvent, tab: string) => {
+    e.preventDefault();
+    setActiveTab(tab);
+    const targetPath = tab === 'dashboard' ? '/dashboard' : `/${tab}`;
+    window.history.pushState(null, '', targetPath);
+  };
+
   // Badge calculations
   const pendingOrdersCount = orders.filter(o => ['received', 'washing', 'drying', 'ironing', 'packing'].includes(o.status)).length;
   const readyOrdersCount = orders.filter(o => o.status === 'ready').length;
@@ -33,17 +40,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
     <aside className="w-64 bg-white border-r border-slate-200/80 flex flex-col h-screen shrink-0 sticky top-0 overflow-y-auto">
       {/* Brand Header */}
       <div className="h-16 flex items-center px-6 border-b border-slate-100 gap-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 to-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20 font-black tracking-wider">
-          LS
-        </div>
-        <div>
-          <div className="font-extrabold text-base tracking-tight text-slate-900 leading-none flex items-center gap-1.5">
-            Laundry Suite
+        <a 
+          href="/dashboard"
+          onClick={(e) => handleNav(e, 'dashboard')}
+          className="flex items-center gap-3 group"
+        >
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-700 to-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20 font-black tracking-wider group-hover:scale-105 transition-transform">
+            LS
           </div>
-          <div className="text-[10px] text-slate-400 font-medium tracking-wide mt-0.5">
-            Operating Suite for Laundry
+          <div>
+            <div className="font-extrabold text-base tracking-tight text-slate-900 leading-none flex items-center gap-1.5">
+              Laundry Suite
+            </div>
+            <div className="text-[10px] text-slate-400 font-medium tracking-wide mt-0.5">
+              Operating Suite for Laundry
+            </div>
           </div>
-        </div>
+        </a>
       </div>
 
       {/* Navigation Groups */}
@@ -65,8 +78,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
               <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                 Business & Revenue
               </div>
-              <button
-                onClick={() => setActiveTab('super-admin')}
+              <a
+                href="/super-admin"
+                onClick={(e) => handleNav(e, 'super-admin')}
                 className={`w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
                   activeTab === 'super-admin'
                     ? 'bg-purple-700 text-white font-bold shadow-sm'
@@ -75,28 +89,31 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
               >
                 <PieChart className="w-4 h-4" />
                 <span>Platform Overview</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('super-admin')}
+              </a>
+              <a
+                href="/super-admin"
+                onClick={(e) => handleNav(e, 'super-admin')}
                 className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
               >
                 <Building2 className="w-4 h-4 text-purple-600" />
                 <span>Tenants Management</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('super-admin')}
+              </a>
+              <a
+                href="/super-admin"
+                onClick={(e) => handleNav(e, 'super-admin')}
                 className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
               >
                 <CreditCard className="w-4 h-4 text-blue-600" />
                 <span>Subscriptions & MRR</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('super-admin')}
+              </a>
+              <a
+                href="/super-admin"
+                onClick={(e) => handleNav(e, 'super-admin')}
                 className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
               >
                 <DollarSign className="w-4 h-4 text-emerald-600" />
                 <span>Billing & Invoices</span>
-              </button>
+              </a>
             </div>
 
             {/* PRODUCT */}
@@ -104,20 +121,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
               <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                 Product & Usage
               </div>
-              <button
-                onClick={() => setActiveTab('super-admin')}
+              <a
+                href="/super-admin"
+                onClick={(e) => handleNav(e, 'super-admin')}
                 className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
               >
                 <Activity className="w-4 h-4 text-indigo-600" />
                 <span>Usage & Platform Metrics</span>
-              </button>
-              <button
-                onClick={() => setActiveTab('super-admin')}
+              </a>
+              <a
+                href="/super-admin"
+                onClick={(e) => handleNav(e, 'super-admin')}
                 className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
               >
                 <Layers className="w-4 h-4 text-purple-600" />
                 <span>Feature Adoption</span>
-              </button>
+              </a>
             </div>
 
             {/* CUSTOMER SUCCESS */}
@@ -125,8 +144,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
               <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                 Customer Success
               </div>
-              <button
-                onClick={() => setActiveTab('super-admin')}
+              <a
+                href="/super-admin"
+                onClick={(e) => handleNav(e, 'super-admin')}
                 className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
               >
                 <div className="flex items-center gap-2.5">
@@ -136,9 +156,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <span className="px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-700 text-[10px] font-black">
                   3
                 </span>
-              </button>
-              <button
-                onClick={() => setActiveTab('super-admin')}
+              </a>
+              <a
+                href="/super-admin"
+                onClick={(e) => handleNav(e, 'super-admin')}
                 className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
               >
                 <div className="flex items-center gap-2.5">
@@ -148,7 +169,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <span className="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-700 text-[10px] font-black">
                   12
                 </span>
-              </button>
+              </a>
             </div>
 
             {/* PLATFORM HEALTH */}
@@ -156,8 +177,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
               <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                 Infrastructure
               </div>
-              <button
-                onClick={() => setActiveTab('super-admin')}
+              <a
+                href="/super-admin"
+                onClick={(e) => handleNav(e, 'super-admin')}
                 className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
               >
                 <div className="flex items-center gap-2.5">
@@ -165,7 +187,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                   <span>System Health</span>
                 </div>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              </button>
+              </a>
             </div>
           </div>
         ) : isCustomer ? (
@@ -173,8 +195,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
             <div className="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
               Customer Portal
             </div>
-            <button
-              onClick={() => setActiveTab('customer-portal')}
+            <a
+              href="/customer-portal"
+              onClick={(e) => handleNav(e, 'customer-portal')}
               className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
                 activeTab === 'customer-portal'
                   ? 'bg-brand-50 text-brand-700 font-bold shadow-sm'
@@ -183,14 +206,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
             >
               <Smartphone className="w-4 h-4 text-brand-600" />
               <span>Lacak Cucian & Booking</span>
-            </button>
+            </a>
           </div>
         ) : (
           <>
             {/* Main Dashboard */}
             <div className="space-y-1">
-              <button
-                onClick={() => setActiveTab('dashboard')}
+              <a
+                href="/dashboard"
+                onClick={(e) => handleNav(e, 'dashboard')}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition ${
                   activeTab === 'dashboard'
                     ? 'bg-brand-50 text-brand-700 font-bold shadow-sm'
@@ -201,7 +225,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                   <LayoutDashboard className="w-4 h-4 text-brand-600" />
                   <span>Dashboard Overview</span>
                 </div>
-              </button>
+              </a>
             </div>
 
             {/* Operasional Module */}
@@ -210,8 +234,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Operasional
                 </div>
-                <button
-                  onClick={() => setActiveTab('pos')}
+                <a
+                  href="/pos"
+                  onClick={(e) => handleNav(e, 'pos')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'pos'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -223,10 +248,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                     <span>POS / Kasir Baru</span>
                   </div>
                   <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-100 text-amber-700 font-bold">POS</span>
-                </button>
+                </a>
 
-                <button
-                  onClick={() => setActiveTab('orders')}
+                <a
+                  href="/orders"
+                  onClick={(e) => handleNav(e, 'orders')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'orders'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -242,10 +268,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                       {pendingOrdersCount}
                     </span>
                   )}
-                </button>
+                </a>
 
-                <button
-                  onClick={() => setActiveTab('production')}
+                <a
+                  href="/production"
+                  onClick={(e) => handleNav(e, 'production')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'production'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -261,7 +288,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                       {readyOrdersCount} Siap
                     </span>
                   )}
-                </button>
+                </a>
               </div>
             )}
 
@@ -271,8 +298,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Logistik & Kurir
                 </div>
-                <button
-                  onClick={() => setActiveTab('delivery')}
+                <a
+                  href="/delivery"
+                  onClick={(e) => handleNav(e, 'delivery')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'delivery'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -288,7 +316,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                       {pendingDeliveryCount}
                     </span>
                   )}
-                </button>
+                </a>
               </div>
             )}
 
@@ -298,8 +326,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Pelanggan & CRM
                 </div>
-                <button
-                  onClick={() => setActiveTab('customers')}
+                <a
+                  href="/customers"
+                  onClick={(e) => handleNav(e, 'customers')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'customers'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -310,7 +339,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                     <Users className="w-4 h-4 text-slate-500" />
                     <span>Data Pelanggan & CRM</span>
                   </div>
-                </button>
+                </a>
               </div>
             )}
 
@@ -320,8 +349,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Stok & Bahan Baku
                 </div>
-                <button
-                  onClick={() => setActiveTab('inventory')}
+                <a
+                  href="/inventory"
+                  onClick={(e) => handleNav(e, 'inventory')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'inventory'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -337,7 +367,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                       {lowStockCount} Menipis
                     </span>
                   )}
-                </button>
+                </a>
               </div>
             )}
 
@@ -347,8 +377,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                   SDM & Penggajian
                 </div>
-                <button
-                  onClick={() => setActiveTab('payroll')}
+                <a
+                  href="/payroll"
+                  onClick={(e) => handleNav(e, 'payroll')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'payroll'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -359,7 +390,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                     <UserCheck className="w-4 h-4 text-slate-500" />
                     <span>Presensi & Payroll</span>
                   </div>
-                </button>
+                </a>
               </div>
             )}
 
@@ -369,8 +400,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Keuangan & ERP
                 </div>
-                <button
-                  onClick={() => setActiveTab('finance')}
+                <a
+                  href="/finance"
+                  onClick={(e) => handleNav(e, 'finance')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'finance'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -381,7 +413,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                     <DollarSign className="w-4 h-4 text-slate-500" />
                     <span>Kas, Biaya & Laba Rugi</span>
                   </div>
-                </button>
+                </a>
               </div>
             )}
 
@@ -391,8 +423,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <div className="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                   Laporan & BI
                 </div>
-                <button
-                  onClick={() => setActiveTab('reports')}
+                <a
+                  href="/reports"
+                  onClick={(e) => handleNav(e, 'reports')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'reports'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -403,15 +436,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                     <BarChart3 className="w-4 h-4 text-slate-500" />
                     <span>Analisis Performa</span>
                   </div>
-                </button>
+                </a>
               </div>
             )}
 
             {/* Settings & Whitelabel */}
             {(!isCourier && !isProduction && !isCashier) && (
               <div className="space-y-1">
-                <button
-                  onClick={() => setActiveTab('settings')}
+                <a
+                  href="/settings"
+                  onClick={(e) => handleNav(e, 'settings')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium transition ${
                     activeTab === 'settings'
                       ? 'bg-brand-50 text-brand-700 font-semibold'
@@ -422,15 +456,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                     <Sparkles className="w-4 h-4 text-brand-600" />
                     <span>Pengaturan & Whitelabel</span>
                   </div>
-                </button>
+                </a>
               </div>
             )}
 
             {/* Platform Super Admin Module (Super Admin Only) */}
             {isSuperAdmin && (
               <div className="pt-2 border-t border-slate-100 space-y-1">
-                <button
-                  onClick={() => setActiveTab('super-admin')}
+                <a
+                  href="/super-admin"
+                  onClick={(e) => handleNav(e, 'super-admin')}
                   className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
                     activeTab === 'super-admin'
                       ? 'bg-purple-50 text-purple-700 font-bold'
@@ -444,7 +479,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-700 font-bold">
                     SaaS
                   </span>
-                </button>
+                </a>
               </div>
             )}
           </>

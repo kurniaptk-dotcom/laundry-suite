@@ -30,7 +30,19 @@ const VALID_TABS = [
 
 const TAB_ALIAS_MAP: Record<string, string> = {
   'admin': 'super-admin',
+  'superadmin': 'super-admin',
   'track': 'customer-portal',
+  'lacak': 'customer-portal',
+  'crm': 'customers',
+  'stok': 'inventory',
+  'kasir': 'pos',
+  'pesanan': 'orders',
+  'order': 'orders',
+  'kanban': 'production',
+  'kurir': 'delivery',
+  'keuangan': 'finance',
+  'laporan': 'reports',
+  'pengaturan': 'settings',
 };
 
 const getPathSlug = (): string => {
@@ -54,15 +66,16 @@ const MainApp: React.FC = () => {
     return 'dashboard';
   };
 
-  const getInitialUnauthView = (): 'landing' | 'login' | 'register' => {
+  const getInitialUnauthView = (): 'landing' | 'login' | 'register' | 'track' => {
     const slug = getPathSlug();
     if (slug === 'login') return 'login';
     if (slug === 'register') return 'register';
+    if (slug === 'customer-portal' || slug === 'track' || slug === 'lacak') return 'track';
     return 'landing';
   };
 
   const [activeTab, setActiveTab] = useState<string>(getInitialTab);
-  const [unauthView, setUnauthView] = useState<'landing' | 'login' | 'register'>(getInitialUnauthView);
+  const [unauthView, setUnauthView] = useState<'landing' | 'login' | 'register' | 'track'>(getInitialUnauthView);
   const [selectedPlan, setSelectedPlan] = useState<any>('trial');
 
   // Receipt & Tag Modals State
@@ -88,6 +101,10 @@ const MainApp: React.FC = () => {
         if (slug !== 'register') {
           window.history.pushState(null, '', '/register');
         }
+      } else if (unauthView === 'track') {
+        if (slug !== 'track' && slug !== 'customer-portal') {
+          window.history.pushState(null, '', '/track');
+        }
       }
     }
   }, [unauthView, isAuthenticated]);
@@ -110,6 +127,7 @@ const MainApp: React.FC = () => {
       if (!isAuthenticated) {
         if (slug === 'login') setUnauthView('login');
         else if (slug === 'register') setUnauthView('register');
+        else if (slug === 'customer-portal' || slug === 'track' || slug === 'lacak') setUnauthView('track');
         else setUnauthView('landing');
       } else {
         if (VALID_TABS.includes(slug)) {
@@ -139,8 +157,11 @@ const MainApp: React.FC = () => {
     }
   }, [currentRole]);
 
-  // If user is not logged in, show Landing Page or Login Portal
+  // If user is not logged in, show Landing Page, Login Portal, or Customer Tracker
   if (!isAuthenticated) {
+    if (unauthView === 'track') {
+      return <CustomerTrackingPWA />;
+    }
     if (unauthView === 'landing') {
       return (
         <LandingPage
@@ -158,7 +179,7 @@ const MainApp: React.FC = () => {
     }
     return (
       <LoginPortal
-        initialView={unauthView}
+        initialView={unauthView === 'register' ? 'register' : 'login'}
         defaultPlan={selectedPlan}
         onBackToLanding={() => {
           setUnauthView('landing');
