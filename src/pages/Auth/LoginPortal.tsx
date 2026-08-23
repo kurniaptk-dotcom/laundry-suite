@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { UserRole, PlanType } from '../../types';
 import { 
   ArrowLeft, Eye, EyeOff, Sparkles, MessageSquare, 
   Store, CheckCircle2, ShieldCheck, HelpCircle, PhoneCall,
-  Lock, Mail, Phone, ChevronDown, Check, Zap, Layers, Award, UserCheck, AlertCircle
+  Lock, Mail, Phone, ChevronDown, Check, Zap, Layers, Award, UserCheck, AlertCircle,
+  Monitor, Receipt, BarChart3, TrendingUp, Smartphone, Truck, FileText, Wallet, QrCode
 } from 'lucide-react';
 
 interface LoginPortalProps {
@@ -22,6 +23,16 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
 
   // Screen View: 'welcome' | 'login' | 'register'
   const [viewState, setViewState] = useState<'welcome' | 'login' | 'register'>(initialView);
+
+  // Dynamic Multi-Scene Hero Carousel (0: Machine, 1: POS Computer, 2: Finance/ERP, 3: WhatsApp/Kurir)
+  const [activeHeroScene, setActiveHeroScene] = useState<number>(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveHeroScene(prev => (prev + 1) % 4);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
   
   // Login Tab: 'wa' | 'email'
   const [loginMethod, setLoginMethod] = useState<'wa' | 'email'>('email');
@@ -226,116 +237,208 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
             </p>
           </div>
 
-          {/* Center Visual Mockup: Animated Smart Laundry Machine & Operations Hub */}
-          <div className="relative z-10 my-auto py-6 flex items-center justify-center">
-            <div className="relative w-72 h-72 flex items-center justify-center">
+          {/* Center Visual Mockup: Dynamic Multi-Scene Operational Carousel */}
+          <div className="relative z-10 my-auto py-4 flex flex-col items-center justify-center">
+            <div className="relative w-72 h-64 flex items-center justify-center">
               
-              {/* Outer Decorative Rotating Tech Ring */}
-              <div className="absolute inset-0 rounded-full border-2 border-dashed border-sky-300/30 animate-spin-slow" />
-              <div className="absolute inset-4 rounded-full border border-white/20" />
+              {/* Outer Decorative Tech Ring */}
+              <div className="absolute inset-0 rounded-full border-2 border-dashed border-sky-300/30 animate-spin-slow pointer-events-none" />
+              <div className="absolute inset-4 rounded-full border border-white/20 pointer-events-none" />
 
-              {/* Central Smart Washing Machine Unit (Glassmorphism & Realistic Metallic Finish) */}
-              <div className="w-44 h-52 bg-gradient-to-b from-white/95 via-blue-50/90 to-slate-100/95 backdrop-blur-md rounded-2xl shadow-2xl border-2 border-white/60 p-3 flex flex-col justify-between relative group transform transition hover:scale-105 duration-300">
-                
-                {/* Machine Top Control Panel */}
-                <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-                    <div className="text-[9px] font-black text-slate-800 tracking-wider uppercase font-mono">
-                      SMART WASH
+              {/* ================= SCENE 0: SMART WASHING MACHINE ================= */}
+              {activeHeroScene === 0 && (
+                <div className="w-48 h-56 bg-gradient-to-b from-white/95 via-blue-50/90 to-slate-100/95 backdrop-blur-md rounded-2xl shadow-2xl border-2 border-white/60 p-3 flex flex-col justify-between relative animate-in zoom-in-95 duration-300">
+                  <div className="flex items-center justify-between border-b border-slate-200/80 pb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+                      <div className="text-[9px] font-black text-slate-800 tracking-wider font-mono">
+                        SMART WASHER
+                      </div>
+                    </div>
+                    <div className="bg-slate-900 text-sky-400 font-mono text-[9px] font-black px-1.5 py-0.5 rounded-md border border-slate-700 shadow-inner flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
+                      <span>24:00</span>
                     </div>
                   </div>
-                  {/* Digital LED Timer Screen */}
-                  <div className="bg-slate-900 text-sky-400 font-mono text-[9px] font-black px-1.5 py-0.5 rounded-md border border-slate-700 shadow-inner flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse" />
-                    <span>24:00</span>
-                  </div>
-                </div>
 
-                {/* Main Washing Drum (Front Load Animated Glass Porthole) */}
-                <div className="relative my-auto flex items-center justify-center">
-                  {/* Outer Chrome Rim */}
-                  <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-slate-400 via-white to-slate-300 p-1.5 shadow-xl flex items-center justify-center relative">
-                    {/* Dark Glass Door Interior */}
-                    <div className="w-full h-full rounded-full bg-gradient-to-b from-blue-950 via-sky-900 to-blue-900 overflow-hidden relative flex items-center justify-center shadow-inner">
-                      
-                      {/* Water Wave Gradient Effect */}
-                      <div className="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-sky-400/50 via-cyan-300/30 to-transparent animate-pulse" />
-                      
-                      {/* Spinning Drum Perforations & Laundry Bubbles */}
-                      <div className="absolute inset-1 rounded-full border border-dashed border-sky-300/40 animate-spin" style={{ animationDuration: '6s' }} />
-                      <div className="absolute inset-3 rounded-full border border-white/20 animate-spin" style={{ animationDuration: '3s', animationDirection: 'reverse' }} />
-                      
-                      {/* Laundry Foam / Bubble Particles */}
-                      <div className="absolute w-4 h-4 rounded-full bg-white/70 blur-[0.5px] top-4 left-5 animate-bounce-gentle" />
-                      <div className="absolute w-3 h-3 rounded-full bg-sky-200/80 blur-[0.5px] bottom-5 right-6 animate-pulse" />
-                      <div className="absolute w-2 h-2 rounded-full bg-white/90 top-8 right-5" />
-                      
-                      {/* Center Hub Glass Reflection */}
-                      <div className="w-9 h-9 rounded-full bg-gradient-to-br from-white/40 via-sky-200/20 to-transparent backdrop-blur-xs border border-white/40 flex items-center justify-center shadow-sm">
-                        <Sparkles className="w-4 h-4 text-sky-200 animate-spin-slow" />
+                  {/* Washing Drum */}
+                  <div className="relative my-auto flex items-center justify-center">
+                    <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-slate-400 via-white to-slate-300 p-1.5 shadow-xl flex items-center justify-center relative">
+                      <div className="w-full h-full rounded-full bg-gradient-to-b from-blue-950 via-sky-900 to-blue-900 overflow-hidden relative flex items-center justify-center shadow-inner">
+                        <div className="absolute bottom-0 inset-x-0 h-14 bg-gradient-to-t from-sky-400/50 via-cyan-300/30 to-transparent animate-pulse" />
+                        <div className="absolute inset-1 rounded-full border border-dashed border-sky-300/40 animate-spin" style={{ animationDuration: '5s' }} />
+                        <div className="absolute w-4 h-4 rounded-full bg-white/70 blur-[0.5px] top-4 left-5 animate-bounce-gentle" />
+                        <div className="absolute w-3 h-3 rounded-full bg-sky-200/80 blur-[0.5px] bottom-5 right-6 animate-pulse" />
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-white/40 via-sky-200/20 to-transparent backdrop-blur-xs border border-white/40 flex items-center justify-center shadow-sm">
+                          <Sparkles className="w-4 h-4 text-sky-200 animate-spin-slow" />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Machine Bottom Drawer / Filter Cap */}
-                <div className="flex items-center justify-between pt-1 border-t border-slate-200/60">
-                  <div className="flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 text-[8px] font-bold text-slate-500">
+                    <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-blue-600" /> Putaran Cuci</span>
+                    <span className="text-emerald-600 font-extrabold">Otomatis 100%</span>
                   </div>
-                  <span className="text-[8px] font-bold text-slate-500">Auto Detergent 100%</span>
                 </div>
+              )}
+
+              {/* ================= SCENE 1: POS COMPUTER & SCANNER ================= */}
+              {activeHeroScene === 1 && (
+                <div className="w-52 h-56 bg-slate-900 text-white rounded-2xl shadow-2xl border-2 border-slate-700/80 p-3 flex flex-col justify-between relative animate-in zoom-in-95 duration-300">
+                  {/* Computer Screen Frame */}
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <Monitor className="w-3.5 h-3.5 text-sky-400" />
+                      <span className="text-[10px] font-black text-sky-300 font-mono">POS KASIR V2</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <span className="text-[8px] font-mono text-emerald-400">ONLINE</span>
+                    </div>
+                  </div>
+
+                  {/* Order Cart Simulation */}
+                  <div className="space-y-1.5 my-auto bg-slate-950/80 p-2 rounded-xl border border-slate-800">
+                    <div className="flex items-center justify-between text-[9px] text-slate-300">
+                      <span>Cuci Setrika Reguler</span>
+                      <span className="font-mono text-sky-400">4.5 Kg</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[9px] text-slate-300">
+                      <span>Bed Cover Jumbo</span>
+                      <span className="font-mono text-sky-400">1 Pcs</span>
+                    </div>
+                    <div className="h-px bg-slate-800 my-1" />
+                    <div className="flex items-center justify-between text-[11px] font-black text-white">
+                      <span>Total Transaksi</span>
+                      <span className="text-emerald-400 font-mono">Rp 80.000</span>
+                    </div>
+                  </div>
+
+                  {/* Receipt Print Strip */}
+                  <div className="bg-white text-slate-900 p-1.5 rounded-lg flex items-center justify-between shadow-md">
+                    <div className="flex items-center gap-1">
+                      <Receipt className="w-3.5 h-3.5 text-brand-600" />
+                      <span className="text-[9px] font-extrabold">Cetak Struk Thermal</span>
+                    </div>
+                    <span className="text-[8px] font-mono bg-emerald-100 text-emerald-700 px-1 py-0.2 rounded font-bold">QRIS LUNAS</span>
+                  </div>
+                </div>
+              )}
+
+              {/* ================= SCENE 2: FINANCE, ERP & LABA RUGI ================= */}
+              {activeHeroScene === 2 && (
+                <div className="w-52 h-56 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white rounded-2xl shadow-2xl border-2 border-emerald-500/40 p-3 flex flex-col justify-between relative animate-in zoom-in-95 duration-300">
+                  <div className="flex items-center justify-between border-b border-slate-700 pb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <BarChart3 className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-[10px] font-black text-emerald-300 font-mono">KEUANGAN & P&L</span>
+                    </div>
+                    <span className="text-[8px] font-bold bg-emerald-500/20 text-emerald-300 px-1.5 py-0.5 rounded-full">+34.8% Omzet</span>
+                  </div>
+
+                  {/* Growing Bar Chart Simulation */}
+                  <div className="my-auto bg-slate-950/70 p-2.5 rounded-xl border border-slate-800 space-y-2">
+                    <div className="text-[9px] text-slate-400 flex items-center justify-between">
+                      <span>Laba Bersih Bulan Ini</span>
+                      <TrendingUp className="w-3.5 h-3.5 text-emerald-400" />
+                    </div>
+                    <div className="text-base font-black text-emerald-400 font-mono">
+                      Rp 48.520.000
+                    </div>
+                    {/* Visual Mini Bars */}
+                    <div className="flex items-end gap-1.5 h-8 pt-1">
+                      <div className="flex-1 bg-slate-700 rounded-t h-[40%]" />
+                      <div className="flex-1 bg-slate-600 rounded-t h-[60%]" />
+                      <div className="flex-1 bg-sky-500 rounded-t h-[75%]" />
+                      <div className="flex-1 bg-emerald-400 rounded-t h-[100%] shadow-lg shadow-emerald-400/30" />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[8px] text-slate-300 pt-1 border-t border-slate-800">
+                    <span className="flex items-center gap-1"><Wallet className="w-3 h-3 text-sky-400" /> Kas Kasir Realtime</span>
+                    <span className="text-sky-300 font-mono">Laporan Otomatis</span>
+                  </div>
+                </div>
+              )}
+
+              {/* ================= SCENE 3: WHATSAPP & KURIR LIVE ================= */}
+              {activeHeroScene === 3 && (
+                <div className="w-52 h-56 bg-white text-slate-900 rounded-2xl shadow-2xl border-2 border-emerald-400/60 p-3 flex flex-col justify-between relative animate-in zoom-in-95 duration-300">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="text-[10px] font-black text-slate-800">WhatsApp Gateway</span>
+                    </div>
+                    <span className="text-[8px] bg-emerald-100 text-emerald-700 font-bold px-1.5 py-0.5 rounded-full">Terkirim</span>
+                  </div>
+
+                  {/* Chat Bubble Simulation */}
+                  <div className="my-auto space-y-2">
+                    <div className="bg-emerald-50 border border-emerald-200/80 p-2 rounded-xl text-[9px] text-slate-800 leading-relaxed shadow-xs">
+                      <p className="font-extrabold text-emerald-800 mb-0.5">🧺 Laundry Suite Notification</p>
+                      <p className="text-[8px] text-slate-600">Halo Kak Maya, cucian <span className="font-mono font-bold text-slate-800">#LND-8821</span> sudah selesai & siap diantar kurir!</p>
+                    </div>
+
+                    <div className="bg-sky-50 border border-sky-200/80 p-1.5 rounded-xl flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <Truck className="w-3.5 h-3.5 text-blue-600" />
+                        <span className="text-[9px] font-extrabold text-slate-800">Kurir On the Way</span>
+                      </div>
+                      <span className="text-[8px] font-mono text-blue-700 font-bold">Live GPS</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[8px] text-slate-500 pt-1 border-t border-slate-100">
+                    <span>Bukti Foto Serah Terima (POD)</span>
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                  </div>
+                </div>
+              )}
+
+              {/* Floating Dynamic Badges */}
+              <div className="absolute -top-2 right-0 bg-white/95 text-slate-800 px-3 py-1.5 rounded-xl shadow-xl text-[10px] font-extrabold flex items-center gap-1.5 border border-white/80 animate-bounce-gentle">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>
+                  {activeHeroScene === 0 ? 'Mesin Cuci Cerdas' :
+                   activeHeroScene === 1 ? 'Kasir POS & Struk' :
+                   activeHeroScene === 2 ? 'Laporan Laba Rugi' : 'WhatsApp Autosender'}
+                </span>
               </div>
 
-              {/* Floating Operational Management Badges */}
-              
-              {/* Badge 1: WhatsApp Autosender */}
-              <div className="absolute -top-2 right-0 bg-white/95 text-slate-800 px-3 py-1.5 rounded-xl shadow-xl text-[11px] font-extrabold flex items-center gap-1.5 border border-white/80 animate-bounce-gentle">
-                <div className="w-5 h-5 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
-                  <MessageSquare className="w-3 h-3" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-800 leading-none">WhatsApp Otomatis</div>
-                  <div className="text-[8px] text-emerald-600 font-semibold">Resi & Notif Siap Ambil</div>
-                </div>
+              <div className="absolute -bottom-2 -left-2 bg-white/95 text-slate-800 px-3 py-1.5 rounded-xl shadow-xl text-[10px] font-extrabold flex items-center gap-1.5 border border-white/80">
+                <div className="w-2 h-2 rounded-full bg-blue-600" />
+                <span>
+                  {activeHeroScene === 0 ? 'Kanban Produksi' :
+                   activeHeroScene === 1 ? 'Integrasi QRIS' :
+                   activeHeroScene === 2 ? 'Multi-Outlet ERP' : 'Kurir Antar Jemput'}
+                </span>
               </div>
 
-              {/* Badge 2: POS Kasir & QRIS */}
-              <div className="absolute -bottom-2 -left-2 bg-white/95 text-slate-800 px-3 py-1.5 rounded-xl shadow-xl text-[11px] font-extrabold flex items-center gap-1.5 border border-white/80">
-                <div className="w-5 h-5 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
-                  <Store className="w-3 h-3" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-800 leading-none">POS & Timbangan</div>
-                  <div className="text-[8px] text-blue-600 font-semibold">Cetak Struk & QRIS</div>
-                </div>
-              </div>
+            </div>
 
-              {/* Badge 3: Kurir Live Tracking */}
-              <div className="absolute top-1/2 -right-8 -translate-y-1/2 bg-white/95 text-slate-800 px-2.5 py-1.5 rounded-xl shadow-xl text-[10px] font-bold flex items-center gap-1.5 border border-white/80">
-                <div className="w-5 h-5 rounded-lg bg-amber-100 flex items-center justify-center text-amber-600">
-                  <Zap className="w-3 h-3" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-800 leading-none">Manajemen Kurir</div>
-                  <div className="text-[8px] text-amber-600 font-semibold">Pickup & Antar Jemput</div>
-                </div>
-              </div>
-
-              {/* Badge 4: Produksi & Kanban */}
-              <div className="absolute top-1/2 -left-8 -translate-y-1/2 bg-white/95 text-slate-800 px-2.5 py-1.5 rounded-xl shadow-xl text-[10px] font-bold flex items-center gap-1.5 border border-white/80">
-                <div className="w-5 h-5 rounded-lg bg-indigo-100 flex items-center justify-center text-indigo-600">
-                  <Layers className="w-3 h-3" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-800 leading-none">Kanban Mesin</div>
-                  <div className="text-[8px] text-indigo-600 font-semibold">Cuci, Kering, Setrika</div>
-                </div>
-              </div>
-
+            {/* Carousel Scene Navigation Indicator Pills */}
+            <div className="flex items-center gap-2 mt-4">
+              {[
+                { label: 'Mesin Cuci' },
+                { label: 'POS Kasir' },
+                { label: 'Keuangan' },
+                { label: 'WA & Kurir' }
+              ].map((scene, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setActiveHeroScene(idx)}
+                  className={`px-2.5 py-1 rounded-full text-[9px] font-extrabold transition-all flex items-center gap-1 ${
+                    activeHeroScene === idx
+                      ? 'bg-white text-blue-800 shadow-md scale-105'
+                      : 'bg-white/20 text-blue-100 hover:bg-white/30'
+                  }`}
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${activeHeroScene === idx ? 'bg-blue-600 animate-pulse' : 'bg-white/50'}`} />
+                  <span>{scene.label}</span>
+                </button>
+              ))}
             </div>
           </div>
 
