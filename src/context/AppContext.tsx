@@ -126,7 +126,7 @@ interface AppContextType {
   applyVoucherCode: (code: string, subtotal: number) => { valid: boolean; discount: number; message: string };
   generateMonthlyPayroll: (period: string) => void;
   markPayrollPaid: (slipId: string) => void;
-  createTenant: (tenant: Omit<Tenant, 'id' | 'createdAt' | 'outletsCount'>) => void;
+  createTenant: (tenant: Omit<Tenant, 'id' | 'createdAt' | 'outletsCount'>) => Tenant;
   updateTenantPlan: (tenantId: string, plan: PlanType) => void;
   exportDatabaseBackup: () => string;
   importDatabaseBackup: (jsonStr: string) => boolean;
@@ -629,14 +629,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
-  const createTenant = (tenantData: Omit<Tenant, 'id' | 'createdAt' | 'outletsCount'>) => {
+  const createTenant = (tenantData: Omit<Tenant, 'id' | 'createdAt' | 'outletsCount'>): Tenant => {
+    const newTenantId = `t-${Date.now()}`;
     const newTenant: Tenant = {
       ...tenantData,
-      id: `t-${Date.now()}`,
+      id: newTenantId,
       outletsCount: 1,
       createdAt: new Date().toISOString().slice(0, 10),
     };
+
+    const newOutlet: Outlet = {
+      id: `out-${Date.now()}`,
+      tenantId: newTenantId,
+      name: 'Outlet Pusat',
+      code: `${newTenant.code || 'LND'}-01`,
+      address: 'Jl. Utama Bisnis No. 1',
+      city: 'Jakarta',
+      phone: newTenant.ownerPhone,
+      isMain: true,
+      operationalHours: '07:00 - 21:00 WIB',
+      services: DEFAULT_SERVICES,
+    };
+
     setTenants(prev => [...prev, newTenant]);
+    setOutlets(prev => [...prev, newOutlet]);
+    setCurrentTenant(newTenant);
+    setCurrentOutlet(newOutlet);
+
+    // Sync to Supabase Cloud
+    SupabaseService.syncTenant(newTenant).catch(() => {});
+
+    return newTenant;
   };
 
   const updateTenantPlan = (tenantId: string, plan: PlanType) => {

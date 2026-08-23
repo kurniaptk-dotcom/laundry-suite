@@ -23,6 +23,7 @@ export interface Tenant {
   ownerName: string;
   ownerEmail: string;
   ownerPhone: string;
+  password?: string;
   logoUrl?: string;
   createdAt: string;
 }
