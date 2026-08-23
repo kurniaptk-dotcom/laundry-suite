@@ -565,65 +565,130 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                 )}
 
                 <form onSubmit={handlePerformRegister} className="space-y-2.5">
-                  {/* Plan Selector with 4 Options (Trial + Starter + Growth + Business) */}
+                  {/* Plan Selector - Modern Card Design */}
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-700 mb-1">
+                    <label className="block text-[11px] font-bold text-slate-700 mb-2">
                       Pilihan Paket Berlangganan
                     </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                    <div className="grid grid-cols-2 gap-2">
                       {[
                         { 
                           key: 'trial', 
-                          name: 'Trial 14 Hari', 
-                          badge: 'Gratis',
+                          icon: '🎁',
+                          name: 'Free Trial', 
+                          duration: '14 Hari',
+                          badge: 'GRATIS',
+                          badgeColor: 'bg-emerald-500',
                           price: 'Rp 0', 
-                          desc: 'Sama Fitur Starter' 
+                          priceNote: '/14 hari',
+                          features: ['Semua fitur Starter', 'Tanpa kartu kredit'],
+                          activeGradient: 'from-emerald-500 to-teal-600',
+                          activeBorder: 'border-emerald-500',
+                          activeRing: 'ring-emerald-500/25',
+                          activeBg: 'bg-gradient-to-br from-emerald-50 to-teal-50',
                         },
                         { 
                           key: 'starter', 
+                          icon: '🚀',
                           name: 'Starter', 
-                          price: 'Rp 199k/bln', 
-                          desc: '1 Outlet • POS & Resi' 
+                          price: 'Rp 199k', 
+                          priceNote: '/bulan',
+                          features: ['1 Outlet', 'POS & Nota Digital'],
+                          activeGradient: 'from-blue-500 to-indigo-600',
+                          activeBorder: 'border-blue-500',
+                          activeRing: 'ring-blue-500/25',
+                          activeBg: 'bg-gradient-to-br from-blue-50 to-indigo-50',
                         },
                         { 
                           key: 'growth', 
-                          name: 'Growth ⭐', 
-                          price: 'Rp 499k/bln', 
-                          desc: '5 Outlet • Produksi' 
+                          icon: '⭐',
+                          name: 'Growth', 
+                          price: 'Rp 499k', 
+                          priceNote: '/bulan',
+                          badge: 'POPULER',
+                          badgeColor: 'bg-amber-500',
+                          features: ['5 Outlet', 'Produksi & Delivery'],
+                          activeGradient: 'from-amber-500 to-orange-600',
+                          activeBorder: 'border-amber-500',
+                          activeRing: 'ring-amber-500/25',
+                          activeBg: 'bg-gradient-to-br from-amber-50 to-orange-50',
                         },
                         { 
                           key: 'business', 
+                          icon: '💎',
                           name: 'Business', 
-                          price: 'Rp 1.2jt/bln', 
-                          desc: 'Unlimited • Multi ERP' 
+                          price: 'Rp 1.2jt', 
+                          priceNote: '/bulan',
+                          features: ['Unlimited Outlet', 'Multi-ERP & API'],
+                          activeGradient: 'from-violet-500 to-purple-600',
+                          activeBorder: 'border-violet-500',
+                          activeRing: 'ring-violet-500/25',
+                          activeBg: 'bg-gradient-to-br from-violet-50 to-purple-50',
                         }
-                      ].map(plan => (
-                        <button
-                          key={plan.key}
-                          type="button"
-                          onClick={() => setRegPlan(plan.key as any)}
-                          className={`p-2 rounded-xl border text-left transition relative ${
-                            regPlan === plan.key
-                              ? plan.key === 'trial'
-                                ? 'border-emerald-600 bg-emerald-50/80 ring-2 ring-emerald-500/30 shadow-xs'
-                                : 'border-brand-600 bg-brand-50/70 ring-2 ring-brand-500/20 shadow-xs'
-                              : 'border-slate-200 hover:border-slate-300 bg-white'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="font-extrabold text-[11px] text-slate-900">{plan.name}</span>
+                      ].map(plan => {
+                        const isActive = regPlan === plan.key;
+                        return (
+                          <button
+                            key={plan.key}
+                            type="button"
+                            onClick={() => setRegPlan(plan.key as any)}
+                            className={`relative p-2.5 rounded-xl border-2 text-left transition-all duration-200 group overflow-hidden ${
+                              isActive
+                                ? `${plan.activeBorder} ${plan.activeBg} ${plan.activeRing} ring-4 shadow-md scale-[1.02]`
+                                : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+                            }`}
+                          >
+                            {/* Active indicator gradient bar */}
+                            {isActive && (
+                              <div className={`absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r ${plan.activeGradient}`} />
+                            )}
+
+                            {/* Badge */}
                             {plan.badge && (
-                              <span className="text-[8px] bg-emerald-600 text-white font-black px-1.5 py-0.2 rounded-full uppercase">
+                              <span className={`absolute top-1.5 right-1.5 text-[7px] ${plan.badgeColor} text-white font-black px-1.5 py-0.5 rounded-md uppercase tracking-wider shadow-sm`}>
                                 {plan.badge}
                               </span>
                             )}
-                          </div>
-                          <div className={`text-[10px] font-extrabold mt-0.5 ${plan.key === 'trial' ? 'text-emerald-700' : 'text-brand-700'}`}>
-                            {plan.price}
-                          </div>
-                          <div className="text-[9px] text-slate-400 mt-0.5 leading-tight">{plan.desc}</div>
-                        </button>
-                      ))}
+
+                            {/* Check circle */}
+                            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mb-1.5 transition-all ${
+                              isActive
+                                ? `bg-gradient-to-br ${plan.activeGradient} border-transparent shadow-sm`
+                                : 'border-slate-300 group-hover:border-slate-400'
+                            }`}>
+                              {isActive && (
+                                <Check className="w-2.5 h-2.5 text-white" strokeWidth={3} />
+                              )}
+                            </div>
+
+                            {/* Plan icon + name */}
+                            <div className="flex items-center gap-1.5 mb-1">
+                              <span className="text-sm">{plan.icon}</span>
+                              <span className={`font-extrabold text-[11px] ${isActive ? 'text-slate-900' : 'text-slate-700'}`}>
+                                {plan.name}
+                              </span>
+                            </div>
+
+                            {/* Price */}
+                            <div className="flex items-baseline gap-0.5 mb-1">
+                              <span className={`text-sm font-black ${isActive ? 'text-slate-900' : 'text-slate-800'}`}>
+                                {plan.price}
+                              </span>
+                              <span className="text-[9px] text-slate-400 font-medium">{plan.priceNote}</span>
+                            </div>
+
+                            {/* Features */}
+                            <div className="space-y-0.5">
+                              {plan.features.map((f, i) => (
+                                <div key={i} className="flex items-center gap-1">
+                                  <CheckCircle2 className={`w-2.5 h-2.5 flex-shrink-0 ${isActive ? 'text-emerald-500' : 'text-slate-300'}`} />
+                                  <span className={`text-[9px] leading-tight ${isActive ? 'text-slate-600 font-medium' : 'text-slate-400'}`}>{f}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
 
