@@ -20,36 +20,9 @@ const DEFAULT_SERVICES: ServiceItem[] = [
   { id: 'srv-8', name: 'Karpet Bulu / Permadani (m²)', category: 'karpet_linen', unit: 'm2', price: 18000, durationHours: 72, description: 'Pencucian debu mendalam + anti tungau' },
 ];
 
-const INITIAL_TENANTS: Tenant[] = [
-  {
-    id: 't-1',
-    name: 'Laundry Bisnis Utama',
-    code: 'LND',
-    plan: 'trial',
-    status: 'active',
-    mrr: 0,
-    outletsCount: 1,
-    ownerName: 'Pemilik Laundry',
-    ownerEmail: 'owner@laundrybisnis.com',
-    ownerPhone: '081234567890',
-    createdAt: new Date().toISOString().slice(0, 10),
-  },
-];
+const INITIAL_TENANTS: Tenant[] = [];
 
-const INITIAL_OUTLETS: Outlet[] = [
-  {
-    id: 'out-1',
-    tenantId: 't-1',
-    name: 'Outlet Pusat',
-    code: 'LND-01',
-    address: 'Jl. Raya Utama No. 1',
-    city: 'Jakarta',
-    phone: '081234567890',
-    isMain: true,
-    operationalHours: '07:00 - 21:00 WIB',
-    services: DEFAULT_SERVICES,
-  },
-];
+const INITIAL_OUTLETS: Outlet[] = [];
 
 const INITIAL_CUSTOMERS: Customer[] = [];
 const INITIAL_ORDERS: Order[] = [];
@@ -210,9 +183,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const [cashierShifts, setCashierShifts] = useState<Array<{ id: string; cashierName: string; openTime: string; closeTime?: string; initialCash: number; totalCashCollected: number; status: 'open' | 'closed' }>>(() => {
-    return [
-      { id: 'sh-1', cashierName: 'Nurul Hidayah', openTime: '2026-08-23 07:00', initialCash: 300000, totalCashCollected: 1450000, status: 'open' }
-    ];
+    return [];
   });
 
   const currentShift = cashierShifts.find(s => s.status === 'open') || null;
