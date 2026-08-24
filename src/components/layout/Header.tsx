@@ -215,48 +215,13 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewOrder, onOpenWhatsApp }
           </span>
         </button>
 
-        {/* Role Persona Switcher Button (Demo Multi-Role Persona) */}
-        <div className="relative">
-          <button
-            onClick={() => setShowRoleMenu(!showRoleMenu)}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold shadow-sm transition ${ROLE_LABELS[currentRole].color}`}
-          >
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <div className="text-left">
-              <span className="hidden lg:inline text-[10px] block opacity-70">Persona Role:</span>
-              <span className="font-bold">{ROLE_LABELS[currentRole].title}</span>
-            </div>
-            <ChevronDown className="w-3.5 h-3.5 opacity-70" />
-          </button>
-
-          {showRoleMenu && (
-            <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-              <div className="px-3 py-2 border-b border-slate-100">
-                <div className="text-xs font-bold text-slate-800">Simulasi Ganti Role Persona</div>
-                <div className="text-[11px] text-slate-500">Uji coba tampilan & hak akses per peran pengguna</div>
-              </div>
-              <div className="py-1 max-h-[380px] overflow-y-auto space-y-0.5">
-                {(Object.keys(ROLE_LABELS) as UserRole[]).map((role) => (
-                  <button
-                    key={role}
-                    onClick={() => {
-                      setCurrentRole(role);
-                      setShowRoleMenu(false);
-                    }}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-left transition ${
-                      currentRole === role ? 'bg-brand-50 text-brand-700 font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div>
-                      <div className="font-medium">{ROLE_LABELS[role].title}</div>
-                      <div className="text-[10px] text-slate-400">{ROLE_LABELS[role].badge}</div>
-                    </div>
-                    {currentRole === role && <Check className="w-4 h-4 text-brand-600" />}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+        {/* Role Persona Badge (Static, No longer a switcher) */}
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-semibold shadow-sm ${ROLE_LABELS[currentRole].color}`}>
+          <ShieldCheck className="w-3.5 h-3.5" />
+          <div className="text-left">
+            <span className="hidden lg:inline text-[10px] block opacity-70">Role Anda:</span>
+            <span className="font-bold">{ROLE_LABELS[currentRole].title}</span>
+          </div>
         </div>
 
         {/* Logout Button */}
