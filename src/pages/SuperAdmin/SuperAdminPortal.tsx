@@ -12,16 +12,39 @@ import {
   Flame, HelpCircle, Phone, Send, Search, Filter
 } from 'lucide-react';
 
-export const SuperAdminPortal: React.FC = () => {
+export type AdminTabType = 
+  | 'overview' 
+  | 'tenants' 
+  | 'subscriptions' 
+  | 'billing' 
+  | 'usage' 
+  | 'adoption' 
+  | 'at_risk' 
+  | 'health' 
+  | 'support';
+
+interface SuperAdminPortalProps {
+  activeTab?: AdminTabType;
+  onTabChange?: (tab: AdminTabType) => void;
+}
+
+export const SuperAdminPortal: React.FC<SuperAdminPortalProps> = ({ 
+  activeTab: controlledTab, 
+  onTabChange 
+}) => {
   const { 
     tenants, createTenant, updateTenantPlan, 
     impersonateTenant 
   } = useApp();
 
   // Active SaaS Admin Sub-Module
-  const [adminTab, setAdminTab] = useState<
-    'overview' | 'tenants' | 'subscriptions' | 'billing' | 'usage' | 'adoption' | 'at_risk' | 'health' | 'support'
-  >('overview');
+  const [internalTab, setInternalTab] = useState<AdminTabType>('overview');
+
+  const adminTab = controlledTab || internalTab;
+  const setAdminTab = (tab: AdminTabType) => {
+    setInternalTab(tab);
+    onTabChange?.(tab);
+  };
 
   // Tenant Modal & Drawer State
   const [showAddTenantModal, setShowAddTenantModal] = useState(false);

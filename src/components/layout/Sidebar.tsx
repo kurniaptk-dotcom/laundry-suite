@@ -11,9 +11,16 @@ import {
 interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  adminSubTab?: string;
+  setAdminSubTab?: (subTab: any) => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ 
+  activeTab, 
+  setActiveTab, 
+  adminSubTab = 'overview', 
+  setAdminSubTab 
+}) => {
   const { currentRole, orders, deliveryTasks, inventory, logout } = useApp();
 
   const handleNav = (e: React.MouseEvent, tab: string) => {
@@ -21,6 +28,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
     setActiveTab(tab);
     const targetPath = tab === 'dashboard' ? '/dashboard' : `/${tab}`;
     window.history.pushState(null, '', targetPath);
+  };
+
+  const handleAdminNav = (e: React.MouseEvent, subTab: string) => {
+    e.preventDefault();
+    setActiveTab('super-admin');
+    setAdminSubTab?.(subTab);
+    const subPath = subTab === 'overview' ? '/super-admin' : `/super-admin/${subTab.replace('_', '-')}`;
+    window.history.pushState(null, '', subPath);
   };
 
   // Badge calculations
@@ -80,9 +95,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
               </div>
               <a
                 href="/super-admin"
-                onClick={(e) => handleNav(e, 'super-admin')}
+                onClick={(e) => handleAdminNav(e, 'overview')}
                 className={`w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
-                  activeTab === 'super-admin'
+                  adminSubTab === 'overview'
                     ? 'bg-purple-700 text-white font-bold shadow-sm'
                     : 'text-slate-600 hover:bg-slate-50'
                 }`}
@@ -91,27 +106,39 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 <span>Platform Overview</span>
               </a>
               <a
-                href="/super-admin"
-                onClick={(e) => handleNav(e, 'super-admin')}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                href="/super-admin/tenants"
+                onClick={(e) => handleAdminNav(e, 'tenants')}
+                className={`w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
+                  adminSubTab === 'tenants'
+                    ? 'bg-purple-700 text-white font-bold shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
               >
-                <Building2 className="w-4 h-4 text-purple-600" />
+                <Building2 className={`w-4 h-4 ${adminSubTab === 'tenants' ? 'text-white' : 'text-purple-600'}`} />
                 <span>Tenants Management</span>
               </a>
               <a
-                href="/super-admin"
-                onClick={(e) => handleNav(e, 'super-admin')}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                href="/super-admin/subscriptions"
+                onClick={(e) => handleAdminNav(e, 'subscriptions')}
+                className={`w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
+                  adminSubTab === 'subscriptions'
+                    ? 'bg-purple-700 text-white font-bold shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
               >
-                <CreditCard className="w-4 h-4 text-blue-600" />
+                <CreditCard className={`w-4 h-4 ${adminSubTab === 'subscriptions' ? 'text-white' : 'text-blue-600'}`} />
                 <span>Subscriptions & MRR</span>
               </a>
               <a
-                href="/super-admin"
-                onClick={(e) => handleNav(e, 'super-admin')}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                href="/super-admin/billing"
+                onClick={(e) => handleAdminNav(e, 'billing')}
+                className={`w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
+                  adminSubTab === 'billing'
+                    ? 'bg-purple-700 text-white font-bold shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
               >
-                <DollarSign className="w-4 h-4 text-emerald-600" />
+                <DollarSign className={`w-4 h-4 ${adminSubTab === 'billing' ? 'text-white' : 'text-emerald-600'}`} />
                 <span>Billing & Invoices</span>
               </a>
             </div>
@@ -122,19 +149,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 Product & Usage
               </div>
               <a
-                href="/super-admin"
-                onClick={(e) => handleNav(e, 'super-admin')}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                href="/super-admin/usage"
+                onClick={(e) => handleAdminNav(e, 'usage')}
+                className={`w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
+                  adminSubTab === 'usage'
+                    ? 'bg-purple-700 text-white font-bold shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
               >
-                <Activity className="w-4 h-4 text-indigo-600" />
+                <Activity className={`w-4 h-4 ${adminSubTab === 'usage' ? 'text-white' : 'text-indigo-600'}`} />
                 <span>Usage & Platform Metrics</span>
               </a>
               <a
-                href="/super-admin"
-                onClick={(e) => handleNav(e, 'super-admin')}
-                className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                href="/super-admin/adoption"
+                onClick={(e) => handleAdminNav(e, 'adoption')}
+                className={`w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
+                  adminSubTab === 'adoption'
+                    ? 'bg-purple-700 text-white font-bold shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
               >
-                <Layers className="w-4 h-4 text-purple-600" />
+                <Layers className={`w-4 h-4 ${adminSubTab === 'adoption' ? 'text-white' : 'text-purple-600'}`} />
                 <span>Feature Adoption</span>
               </a>
             </div>
@@ -145,28 +180,40 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 Customer Success
               </div>
               <a
-                href="/super-admin"
-                onClick={(e) => handleNav(e, 'super-admin')}
-                className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                href="/super-admin/at-risk"
+                onClick={(e) => handleAdminNav(e, 'at_risk')}
+                className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
+                  adminSubTab === 'at_risk'
+                    ? 'bg-purple-700 text-white font-bold shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <AlertTriangle className="w-4 h-4 text-rose-600" />
+                  <AlertTriangle className={`w-4 h-4 ${adminSubTab === 'at_risk' ? 'text-white' : 'text-rose-600'}`} />
                   <span>At-Risk & Churn</span>
                 </div>
-                <span className="px-1.5 py-0.2 rounded-full bg-rose-100 text-rose-700 text-[10px] font-black">
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
+                  adminSubTab === 'at_risk' ? 'bg-white text-purple-900' : 'bg-rose-100 text-rose-700'
+                }`}>
                   3
                 </span>
               </a>
               <a
-                href="/super-admin"
-                onClick={(e) => handleNav(e, 'super-admin')}
-                className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                href="/super-admin/support"
+                onClick={(e) => handleAdminNav(e, 'support')}
+                className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
+                  adminSubTab === 'support'
+                    ? 'bg-purple-700 text-white font-bold shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <Sparkles className={`w-4 h-4 ${adminSubTab === 'support' ? 'text-white' : 'text-amber-600'}`} />
                   <span>Support Desk</span>
                 </div>
-                <span className="px-1.5 py-0.2 rounded-full bg-purple-100 text-purple-700 text-[10px] font-black">
+                <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
+                  adminSubTab === 'support' ? 'bg-white text-purple-900' : 'bg-purple-100 text-purple-700'
+                }`}>
                   12
                 </span>
               </a>
@@ -178,12 +225,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab }) => 
                 Infrastructure
               </div>
               <a
-                href="/super-admin"
-                onClick={(e) => handleNav(e, 'super-admin')}
-                className="w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-medium text-slate-600 hover:bg-slate-50"
+                href="/super-admin/health"
+                onClick={(e) => handleAdminNav(e, 'health')}
+                className={`w-full flex items-center justify-between px-3.5 py-2 rounded-xl text-xs font-semibold transition ${
+                  adminSubTab === 'health'
+                    ? 'bg-purple-700 text-white font-bold shadow-sm'
+                    : 'text-slate-600 hover:bg-slate-50'
+                }`}
               >
                 <div className="flex items-center gap-2.5">
-                  <Server className="w-4 h-4 text-emerald-600" />
+                  <Server className={`w-4 h-4 ${adminSubTab === 'health' ? 'text-white' : 'text-emerald-600'}`} />
                   <span>System Health</span>
                 </div>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>

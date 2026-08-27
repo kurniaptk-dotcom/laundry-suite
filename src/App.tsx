@@ -12,7 +12,7 @@ import { InventoryManagement } from './pages/Inventory/InventoryManagement';
 import { PayrollHR } from './pages/People/PayrollHR';
 import { FinanceAccounting } from './pages/Finance/FinanceAccounting';
 import { ReportsAnalytics } from './pages/Reports/ReportsAnalytics';
-import { SuperAdminPortal } from './pages/SuperAdmin/SuperAdminPortal';
+import { SuperAdminPortal, AdminTabType } from './pages/SuperAdmin/SuperAdminPortal';
 import { CustomerTrackingPWA } from './pages/CustomerPortal/CustomerTrackingPWA';
 import { OutletSettings } from './pages/Settings/OutletSettings';
 import { LoginPortal } from './pages/Auth/LoginPortal';
@@ -45,12 +45,18 @@ const TAB_ALIAS_MAP: Record<string, string> = {
   'pengaturan': 'settings',
 };
 
-const getPathSlug = (): string => {
-  const path = window.location.pathname.replace(/^\/+|\/+$/g, '').split('?')[0];
-  if (path) return TAB_ALIAS_MAP[path] || path;
-  const hash = window.location.hash.replace(/^#\/?/, '').split('?')[0];
-  if (hash) return TAB_ALIAS_MAP[hash] || hash;
-  return '';
+const getPathInfo = (): { tab: string; subTab: AdminTabType } => {
+  const parts = window.location.pathname.replace(/^\/+|\/+$/g, '').split('/');
+  const rawTab = parts[0] || '';
+  const tab = TAB_ALIAS_MAP[rawTab] || rawTab;
+  let subTab: AdminTabType = 'overview';
+  if (parts[1]) {
+    const rawSub = parts[1].replace('-', '_') as AdminTabType;
+    if (['overview', 'tenants', 'subscriptions', 'billing', 'usage', 'adoption', 'at_risk', 'health', 'support'].includes(rawSub)) {
+      subTab = rawSub;
+    }
+  }
+  return { tab, subTab };
 };
 
 const MainApp: React.FC = () => {
@@ -60,14 +66,15 @@ const MainApp: React.FC = () => {
     login
   } = useApp();
 
+  const initialPath = getPathInfo();
+
   const getInitialTab = (): string => {
-    const slug = getPathSlug();
-    if (VALID_TABS.includes(slug)) return slug;
+    if (VALID_TABS.includes(initialPath.tab)) return initialPath.tab;
     return 'dashboard';
   };
 
   const getInitialUnauthView = (): 'landing' | 'login' | 'register' | 'track' => {
-    const slug = getPathSlug();
+    const slug = initialPath.tab;
     if (slug === 'login') return 'login';
     if (slug === 'register') return 'register';
     if (slug === 'customer-portal' || slug === 'track' || slug === 'lacak') return 'track';
@@ -75,6 +82,7 @@ const MainApp: React.FC = () => {
   };
 
   const [activeTab, setActiveTab] = useState<string>(getInitialTab);
+  const [adminSubTab, setAdminSubTab] = useState<AdminTabType>(initialPath.subTab);
   const [unauthView, setUnauthView] = useState<'landing' | 'login' | 'register' | 'track'>(getInitialUnauthView);
   const [selectedPlan, setSelectedPlan] = useState<any>('trial');
 
@@ -87,72 +95,77 @@ const MainApp: React.FC = () => {
 
   // Initial route handling & auto-login for direct URL access (/super-admin, /pos, /orders, etc.)
   React.useEffect(() => {
-    const slug = getPathSlug();
-    if (slug === 'super-admin') {
+    const { tab, subTab } = getPathInfo();
+    if (tab === 'super-admin') {
       login('super_admin');
       setActiveTab('super-admin');
-    } else if (VALID_TABS.includes(slug) && slug !== 'customer-portal') {
+      setAdminSubTab(subTab);
+    } else if (VALID_TABS.includes(tab) && tab !== 'customer-portal') {
       if (!isAuthenticated) {
         login('tenant_owner');
       }
-      setActiveTab(slug);
+      setActiveTab(tab);
     }
   }, []);
 
   // Sync clean URL pathname when unauthenticated view changes
   React.useEffect(() => {
     if (!isAuthenticated) {
-      const slug = getPathSlug();
-      if (slug === 'super-admin' || (VALID_TABS.includes(slug) && slug !== 'customer-portal')) {
+      const { tab } = getPathInfo();
+      if (tab === 'super-admin' || (VALID_TABS.includes(tab) && tab !== 'customer-portal')) {
         return; // Handled by direct access
       }
       if (unauthView === 'landing') {
-        if (slug !== '') {
+        if (tab !== '') {
           window.history.pushState(null, '', '/');
         }
       } else if (unauthView === 'login') {
-        if (slug !== 'login') {
+        if (tab !== 'login') {
           window.history.pushState(null, '', '/login');
         }
       } else if (unauthView === 'register') {
-        if (slug !== 'register') {
+        if (tab !== 'register') {
           window.history.pushState(null, '', '/register');
         }
       } else if (unauthView === 'track') {
-        if (slug !== 'track' && slug !== 'customer-portal') {
+        if (tab !== 'track' && tab !== 'customer-portal') {
           window.history.pushState(null, '', '/track');
         }
       }
     }
   }, [unauthView, isAuthenticated]);
 
-  // Sync clean URL pathname when authenticated tab changes
+  // Sync clean URL pathname when authenticated tab or adminSubTab changes
   React.useEffect(() => {
     if (isAuthenticated) {
-      const slug = getPathSlug();
-      const targetPath = activeTab === 'dashboard' ? '/dashboard' : `/${activeTab}`;
-      if (slug !== activeTab) {
+      const { tab, subTab } = getPathInfo();
+      let targetPath = activeTab === 'dashboard' ? '/dashboard' : `/${activeTab}`;
+      if (activeTab === 'super-admin' && adminSubTab !== 'overview') {
+        targetPath = `/super-admin/${adminSubTab.replace('_', '-')}`;
+      }
+      if (tab !== activeTab || (activeTab === 'super-admin' && subTab !== adminSubTab)) {
         window.history.pushState(null, '', targetPath);
       }
     }
-  }, [activeTab, isAuthenticated]);
+  }, [activeTab, adminSubTab, isAuthenticated]);
 
   // Listen to browser Back/Forward navigation (popstate)
   React.useEffect(() => {
     const handlePopState = () => {
-      const slug = getPathSlug();
-      if (slug === 'super-admin') {
+      const { tab, subTab } = getPathInfo();
+      if (tab === 'super-admin') {
         login('super_admin');
         setActiveTab('super-admin');
+        setAdminSubTab(subTab);
       } else if (!isAuthenticated) {
-        if (slug === 'login') setUnauthView('login');
-        else if (slug === 'register') setUnauthView('register');
-        else if (slug === 'customer-portal' || slug === 'track' || slug === 'lacak') setUnauthView('track');
+        if (tab === 'login') setUnauthView('login');
+        else if (tab === 'register') setUnauthView('register');
+        else if (tab === 'customer-portal' || tab === 'track' || tab === 'lacak') setUnauthView('track');
         else setUnauthView('landing');
       } else {
-        if (VALID_TABS.includes(slug)) {
-          setActiveTab(slug);
-        } else if (slug === '' || slug === 'dashboard') {
+        if (VALID_TABS.includes(tab)) {
+          setActiveTab(tab);
+        } else if (tab === '' || tab === 'dashboard') {
           setActiveTab('dashboard');
         }
       }
@@ -239,7 +252,14 @@ const MainApp: React.FC = () => {
       case 'settings':
         return <OutletSettings />;
       case 'super-admin':
-        return <SuperAdminPortal />;
+        return (
+          <SuperAdminPortal 
+            activeTab={adminSubTab} 
+            onTabChange={(tab) => {
+              setAdminSubTab(tab);
+            }} 
+          />
+        );
       case 'customer-portal':
         return <CustomerTrackingPWA />;
       default:
@@ -269,7 +289,12 @@ const MainApp: React.FC = () => {
 
       <div className="flex flex-1 min-h-0 overflow-hidden">
         {/* Sidebar Navigation */}
-        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <Sidebar 
+          activeTab={activeTab} 
+          setActiveTab={setActiveTab} 
+          adminSubTab={adminSubTab} 
+          setAdminSubTab={setAdminSubTab} 
+        />
 
         {/* Main View Area */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
