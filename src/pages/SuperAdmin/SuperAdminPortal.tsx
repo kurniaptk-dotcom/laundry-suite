@@ -754,9 +754,77 @@ export const SuperAdminPortal: React.FC<SuperAdminPortalProps> = ({
               );
             })}
           </div>
+
+          {/* Midtrans SaaS Payment Gateway Configuration */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-card space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-2xl bg-blue-50 text-blue-700 flex items-center justify-center font-bold">
+                  <CreditCard className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm text-slate-900">Konfigurasi Midtrans Payment Gateway</h3>
+                  <p className="text-[11px] text-slate-400">Pengaturan API Key Snap Checkout untuk penerimaan pembayaran langganan SaaS</p>
+                </div>
+              </div>
+              <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-full">
+                Snap API Ready
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Midtrans Client Key</label>
+                <input
+                  type="text"
+                  defaultValue={localStorage.getItem('midtrans_client_key') || 'SB-Mid-client-DEMO-SAMPLE'}
+                  onChange={(e) => localStorage.setItem('midtrans_client_key', e.target.value)}
+                  placeholder="SB-Mid-client-xxxx..."
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl font-mono text-xs text-slate-800 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Midtrans Server Key</label>
+                <input
+                  type="password"
+                  defaultValue={localStorage.getItem('midtrans_server_key') || 'SB-Mid-server-••••••••'}
+                  onChange={(e) => localStorage.setItem('midtrans_server_key', e.target.value)}
+                  placeholder="SB-Mid-server-xxxx..."
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl font-mono text-xs text-slate-800 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 mb-1">Mode Environment</label>
+                <select
+                  defaultValue={localStorage.getItem('midtrans_is_production') === 'true' ? 'production' : 'sandbox'}
+                  onChange={(e) => {
+                    localStorage.setItem('midtrans_is_production', e.target.value === 'production' ? 'true' : 'false');
+                    alert(`Mode Midtrans berhasil diubah ke: ${e.target.value.toUpperCase()}`);
+                  }}
+                  className="w-full px-3.5 py-2 border border-slate-300 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-500"
+                >
+                  <option value="sandbox">🛠️ Sandbox / Testing</option>
+                  <option value="production">🚀 Production (Live Payments)</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-[11px] text-slate-500 flex items-center justify-between">
+              <span>💳 Saluran Aktif: <strong>QRIS (GoPay, ShopeePay), BCA VA, Mandiri Bill, BNI/BRI VA, Kartu Kredit 3DS</strong></span>
+              <a 
+                href="https://dashboard.midtrans.com/" 
+                target="_blank" 
+                rel="noreferrer" 
+                className="text-purple-700 font-bold hover:underline inline-flex items-center gap-1"
+              >
+                <span>Buka Dashboard Midtrans ↗</span>
+              </a>
+            </div>
+          </div>
         </div>
       )}
-
 
       {/* ======================================================== */}
       {/* 6. VIEW: SUPPORT DESK & TICKETS                          */}
