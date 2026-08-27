@@ -4,7 +4,8 @@ import { UserRole, PlanType } from '../../types';
 import { 
   ArrowLeft, Eye, EyeOff, Sparkles, MessageSquare, 
   Store, CheckCircle2, ShieldCheck, HelpCircle, PhoneCall,
-  Lock, Mail, Phone, ChevronDown, Check, Zap, Layers, Award, UserCheck, AlertCircle
+  Lock, Mail, Phone, ChevronDown, Check, Zap, Layers, Award, UserCheck, AlertCircle,
+  CreditCard, QrCode, Building, Copy, Clock, Wallet, Shield
 } from 'lucide-react';
 
 interface LoginPortalProps {
@@ -42,6 +43,12 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
   const [regPassword, setRegPassword] = useState('');
   const [regPlan, setRegPlan] = useState<PlanType>(defaultPlan);
   const [showRegPassword, setShowRegPassword] = useState(false);
+
+  // Payment Gateway & Checkout States
+  const [paymentMethod, setPaymentMethod] = useState<'qris' | 'va_bca' | 'va_mandiri' | 'va_bni' | 'va_bri' | 'credit_card'>('qris');
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [pendingTenant, setPendingTenant] = useState<any>(null);
+  const [copiedVa, setCopiedVa] = useState(false);
 
   // Handle Strict Authentication
   const handlePerformLogin = (e: React.FormEvent) => {
@@ -195,8 +202,21 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
       password: password,
     });
 
-    // Auto login to the newly registered business
-    login('tenant_owner', newTenant.id);
+    if (regPlan === 'trial') {
+      // Free trial instant login
+      login('tenant_owner', newTenant.id);
+    } else {
+      // Open Payment Checkout Simulator Modal for paid plans
+      setPendingTenant(newTenant);
+      setShowCheckoutModal(true);
+    }
+  };
+
+  const handleCompletePaymentCheckout = () => {
+    if (pendingTenant) {
+      setShowCheckoutModal(false);
+      login('tenant_owner', pendingTenant.id);
+    }
   };
 
   return (
@@ -764,6 +784,44 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                     </div>
                   </div>
 
+                  {/* Payment Method Selector (Only for Paid Plans) */}
+                  {regPlan !== 'trial' && (
+                    <div className="space-y-1.5 pt-1 border-t border-slate-100">
+                      <div className="flex items-center justify-between">
+                        <label className="block text-[10px] font-bold text-slate-700">
+                          Pilih Metode Pembayaran Langganan
+                        </label>
+                        <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded">
+                          ✓ Otomatis Aktif
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-1.5 text-left">
+                        {[
+                          { key: 'qris', label: 'QRIS Instan', icon: '📱', sub: 'GoPay/OVO/Dana/BCA' },
+                          { key: 'va_bca', label: 'BCA Virtual Acc', icon: '🏦', sub: 'Cek Otomatis 24 Jam' },
+                          { key: 'va_mandiri', label: 'Mandiri VA', icon: '🏦', sub: 'Livin by Mandiri' },
+                          { key: 'va_bri', label: 'BRI / BNI VA', icon: '🏦', sub: 'BRIMO / BNI Mobile' },
+                          { key: 'credit_card', label: 'Kartu Kredit', icon: '💳', sub: 'Visa & Mastercard' },
+                          { key: 'va_bni', label: 'E-Wallet', icon: '⚡', sub: 'ShopeePay & QR' },
+                        ].map(pm => (
+                          <button
+                            key={pm.key}
+                            type="button"
+                            onClick={() => setPaymentMethod(pm.key as any)}
+                            className={`p-2 rounded-xl border text-left transition ${
+                              paymentMethod === pm.key
+                                ? 'border-brand-500 bg-brand-50/70 ring-2 ring-brand-500/20 text-brand-900 font-bold'
+                                : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700 font-medium'
+                            }`}
+                          >
+                            <div className="text-xs">{pm.icon} <span className="text-[10px] font-bold">{pm.label}</span></div>
+                            <div className="text-[8px] text-slate-400 truncate mt-0.5">{pm.sub}</div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
                     className={`w-full py-3 text-white rounded-xl text-xs font-black shadow-lg transition active:scale-[0.99] mt-1 flex items-center justify-center gap-1.5 ${
@@ -775,7 +833,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                     <span>
                       {regPlan === 'trial' 
                         ? '🎁 Mulai Trial 14 Hari Gratis Sekarang ➔' 
-                        : 'Daftar & Masuk ke Dashboard ➔'
+                        : `Lanjut ke Pembayaran (${regPlan === 'starter' ? 'Rp 199k' : regPlan === 'growth' ? 'Rp 499k' : 'Rp 1.2jt'}/bln) ➔`
                       }
                     </span>
                   </button>
@@ -814,6 +872,151 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
         </div>
 
       </div>
+
+      {/* ======================================================== */}
+      {/* SAAS PAYMENT CHECKOUT INVOICE MODAL                      */}
+      {/* ======================================================== */}
+      {showCheckoutModal && pendingTenant && (
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in">
+          <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden space-y-0">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-brand-700 via-brand-600 to-blue-600 p-5 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-sm leading-tight">Payment Gateway & Billing SaaS</h3>
+                  <p className="text-[10px] text-blue-100 font-mono">Invoice #{`INV-SUB-${new Date().getFullYear()}${(new Date().getMonth()+1).toString().padStart(2,'0')}-${Math.floor(1000 + Math.random()*9000)}`}</p>
+                </div>
+              </div>
+              <span className="px-2 py-0.5 rounded-full bg-amber-400/30 text-amber-200 text-[10px] font-extrabold uppercase border border-amber-300/40">
+                Menunggu Pembayaran
+              </span>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-5 text-slate-800 text-xs">
+              {/* Tenant & Plan Summary */}
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/90 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold block">Langganan Bisnis Laundry</span>
+                  <span className="font-black text-sm text-slate-900">{pendingTenant.name}</span>
+                  <span className="text-[10px] text-slate-500 block">{pendingTenant.ownerName} • {pendingTenant.ownerPhone}</span>
+                </div>
+                <div className="text-right">
+                  <span className="px-2.5 py-0.5 rounded-full bg-brand-100 text-brand-800 font-black text-[11px] uppercase">
+                    Paket {pendingTenant.plan.toUpperCase()}
+                  </span>
+                  <div className="font-black text-base text-slate-900 mt-1">
+                    Rp {(pendingTenant.mrr || 499000).toLocaleString('id-ID')}
+                    <span className="text-[10px] text-slate-400 font-normal"> /bln</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Payment Details per Method */}
+              {paymentMethod === 'qris' ? (
+                <div className="text-center p-5 bg-gradient-to-b from-blue-50/50 to-white rounded-2xl border border-blue-100 space-y-3">
+                  <div className="flex items-center justify-center gap-1.5 text-xs font-black text-slate-800">
+                    <QrCode className="w-4 h-4 text-brand-600" />
+                    <span>Scan QRIS untuk Pembayaran Instan</span>
+                  </div>
+
+                  {/* QRIS Code Canvas Box */}
+                  <div className="inline-block p-4 bg-white rounded-2xl border-2 border-slate-800 shadow-md">
+                    <div className="w-36 h-36 bg-slate-900 rounded-lg flex flex-col items-center justify-center text-white p-2 relative overflow-hidden">
+                      {/* Stylized QR Matrix Simulation */}
+                      <div className="absolute inset-2 border-2 border-white grid grid-cols-4 gap-1 p-1 opacity-90">
+                        <div className="bg-white rounded-xs"></div>
+                        <div className="bg-transparent"></div>
+                        <div className="bg-white rounded-xs"></div>
+                        <div className="bg-white rounded-xs"></div>
+                        <div className="bg-white rounded-xs"></div>
+                        <div className="bg-white rounded-xs"></div>
+                        <div className="bg-transparent"></div>
+                        <div className="bg-white rounded-xs"></div>
+                        <div className="bg-transparent"></div>
+                        <div className="bg-white rounded-xs"></div>
+                        <div className="bg-white rounded-xs"></div>
+                        <div className="bg-white rounded-xs"></div>
+                      </div>
+                      <div className="z-10 bg-brand-600 text-[8px] font-black px-1.5 py-0.5 rounded shadow-sm">
+                        QRIS
+                      </div>
+                    </div>
+                  </div>
+
+                  <p className="text-[10px] text-slate-500 max-w-xs mx-auto">
+                    Mendukung semua aplikasi e-wallet (GoPay, OVO, Dana, ShopeePay) dan Mobile Banking (BCA, Mandiri, BRI, BNI).
+                  </p>
+                </div>
+              ) : (
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2.5">
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+                    <span>Nomor Virtual Account:</span>
+                    <span className="text-[10px] text-slate-400 uppercase font-mono">Batas: 23:59 WIB</span>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-brand-200 font-mono text-base font-black text-brand-900">
+                    <span>8808 1293 8472 9910</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCopiedVa(true);
+                        setTimeout(() => setCopiedVa(false), 2000);
+                      }}
+                      className="px-2.5 py-1 bg-brand-50 hover:bg-brand-100 text-brand-700 rounded-lg text-[10px] font-bold flex items-center gap-1 transition"
+                    >
+                      <Copy className="w-3 h-3" />
+                      <span>{copiedVa ? 'Tersalin ✓' : 'Salin VA'}</span>
+                    </button>
+                  </div>
+                  <div className="text-[10px] text-slate-500">
+                    Transfer sesuai nominal ke atas via ATM / M-Banking. Pembayaran akan terverifikasi secara otomatis dalam hitungan detik.
+                  </div>
+                </div>
+              )}
+
+              {/* Price Breakdown */}
+              <div className="space-y-1.5 pt-2 border-t border-slate-100 text-[11px] text-slate-600">
+                <div className="flex justify-between">
+                  <span>Biaya Langganan ({pendingTenant.plan})</span>
+                  <span className="font-semibold text-slate-800">Rp {(pendingTenant.mrr || 499000).toLocaleString('id-ID')}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>PPN 11%</span>
+                  <span className="font-semibold text-slate-800">Rp {Math.round((pendingTenant.mrr || 499000) * 0.11).toLocaleString('id-ID')}</span>
+                </div>
+                <div className="flex justify-between text-xs font-black text-slate-900 pt-1.5 border-t border-slate-100">
+                  <span>Total Tagihan Pembayaran</span>
+                  <span className="text-brand-700 text-sm">
+                    Rp {Math.round((pendingTenant.mrr || 499000) * 1.11).toLocaleString('id-ID')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 space-y-2">
+                <button
+                  type="button"
+                  onClick={handleCompletePaymentCheckout}
+                  className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-lg shadow-emerald-600/25 transition active:scale-[0.99] flex items-center justify-center gap-1.5"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Simulasi Konfirmasi Pembayaran Berhasil & Masuk ➔</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowCheckoutModal(false)}
+                  className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold transition"
+                >
+                  Batal / Ubah Paket
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
