@@ -85,10 +85,27 @@ const MainApp: React.FC = () => {
   // WhatsApp Drawer State
   const [showWhatsAppDrawer, setShowWhatsAppDrawer] = useState<boolean>(false);
 
+  // Initial route handling & auto-login for direct URL access (/super-admin, /pos, /orders, etc.)
+  React.useEffect(() => {
+    const slug = getPathSlug();
+    if (slug === 'super-admin') {
+      login('super_admin');
+      setActiveTab('super-admin');
+    } else if (VALID_TABS.includes(slug) && slug !== 'customer-portal') {
+      if (!isAuthenticated) {
+        login('tenant_owner');
+      }
+      setActiveTab(slug);
+    }
+  }, []);
+
   // Sync clean URL pathname when unauthenticated view changes
   React.useEffect(() => {
     if (!isAuthenticated) {
       const slug = getPathSlug();
+      if (slug === 'super-admin' || (VALID_TABS.includes(slug) && slug !== 'customer-portal')) {
+        return; // Handled by direct access
+      }
       if (unauthView === 'landing') {
         if (slug !== '') {
           window.history.pushState(null, '', '/');
@@ -124,7 +141,10 @@ const MainApp: React.FC = () => {
   React.useEffect(() => {
     const handlePopState = () => {
       const slug = getPathSlug();
-      if (!isAuthenticated) {
+      if (slug === 'super-admin') {
+        login('super_admin');
+        setActiveTab('super-admin');
+      } else if (!isAuthenticated) {
         if (slug === 'login') setUnauthView('login');
         else if (slug === 'register') setUnauthView('register');
         else if (slug === 'customer-portal' || slug === 'track' || slug === 'lacak') setUnauthView('track');
