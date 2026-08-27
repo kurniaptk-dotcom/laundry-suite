@@ -295,11 +295,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const login = (role: UserRole, tenantId?: string, outletId?: string) => {
     setCurrentRole(role);
     if (tenantId) {
-      const matchT = tenants.find(t => t.id === tenantId);
+      const matchT = tenants.find(t => t.id === tenantId) || (currentTenant?.id === tenantId ? currentTenant : undefined);
       if (matchT) setCurrentTenant(matchT);
     }
     if (outletId) {
-      const matchO = outlets.find(o => o.id === outletId);
+      const matchO = outlets.find(o => o.id === outletId) || (currentOutlet?.id === outletId ? currentOutlet : undefined);
       if (matchO) setCurrentOutlet(matchO);
     }
     setIsAuthenticated(true);

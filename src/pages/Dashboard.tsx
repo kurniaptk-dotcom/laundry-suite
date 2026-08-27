@@ -310,40 +310,54 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {orders.slice(0, 5).map(order => (
-                  <tr key={order.id} className="hover:bg-slate-50/70 transition">
-                    <td className="py-3 px-3">
-                      <span className="font-mono font-bold text-slate-900">#{order.trackingCode}</span>
-                      <div className="text-[10px] text-slate-400">{order.invoiceNumber}</div>
-                    </td>
-                    <td className="py-3 px-3">
-                      <div className="font-semibold text-slate-800">{order.customerName}</div>
-                      <div className="text-[10px] text-slate-400">{order.customerPhone}</div>
-                    </td>
-                    <td className="py-3 px-3">
-                      <div className="text-slate-700">{order.items[0]?.serviceName}</div>
-                      <div className="text-[10px] text-slate-400">{order.totalWeightKg ? `${order.totalWeightKg} kg` : `${order.totalPcs} pcs`}</div>
-                    </td>
-                    <td className="py-3 px-3 text-center">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
-                        order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' :
-                        order.status === 'washing' ? 'bg-sky-100 text-sky-800' :
-                        order.status === 'ironing' ? 'bg-purple-100 text-purple-800' :
-                        'bg-slate-100 text-slate-700'
-                      }`}>
-                        {order.status}
-                      </span>
-                    </td>
-                    <td className="py-3 px-3 text-right">
-                      <div className="font-extrabold text-slate-900">
-                        Rp {order.totalAmount.toLocaleString('id-ID')}
-                      </div>
-                      <span className="text-[10px] text-emerald-600 font-bold uppercase">
-                        {order.paymentStatus}
-                      </span>
+                {orders.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-10 text-center text-slate-400">
+                      <p className="text-xs">Belum ada riwayat transaksi pada cabang ini.</p>
+                      <button
+                        onClick={onOpenNewOrder}
+                        className="mt-2 inline-flex items-center gap-1 px-3.5 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold text-xs rounded-xl transition"
+                      >
+                        <span>+ Buat Transaksi POS Baru</span>
+                      </button>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  orders.slice(0, 5).map(order => (
+                    <tr key={order.id} className="hover:bg-slate-50/70 transition">
+                      <td className="py-3 px-3">
+                        <span className="font-mono font-bold text-slate-900">#{order.trackingCode}</span>
+                        <div className="text-[10px] text-slate-400">{order.invoiceNumber}</div>
+                      </td>
+                      <td className="py-3 px-3">
+                        <div className="font-semibold text-slate-800">{order.customerName}</div>
+                        <div className="text-[10px] text-slate-400">{order.customerPhone}</div>
+                      </td>
+                      <td className="py-3 px-3">
+                        <div className="text-slate-700">{order.items[0]?.serviceName}</div>
+                        <div className="text-[10px] text-slate-400">{order.totalWeightKg ? `${order.totalWeightKg} kg` : `${order.totalPcs} pcs`}</div>
+                      </td>
+                      <td className="py-3 px-3 text-center">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase ${
+                          order.status === 'ready' ? 'bg-emerald-100 text-emerald-800' :
+                          order.status === 'washing' ? 'bg-sky-100 text-sky-800' :
+                          order.status === 'ironing' ? 'bg-purple-100 text-purple-800' :
+                          'bg-slate-100 text-slate-700'
+                        }`}>
+                          {order.status}
+                        </span>
+                      </td>
+                      <td className="py-3 px-3 text-right">
+                        <div className="font-extrabold text-slate-900">
+                          Rp {order.totalAmount.toLocaleString('id-ID')}
+                        </div>
+                        <span className="text-[10px] text-emerald-600 font-bold uppercase">
+                          {order.paymentStatus}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
