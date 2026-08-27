@@ -65,8 +65,8 @@ export const FinanceAccounting: React.FC = () => {
     const acc = cashAccounts.find(a => a.id === expAccount) || cashAccounts[0];
 
     addExpense({
-      tenantId: currentTenant.id,
-      outletId: currentOutlet.id,
+      tenantId: currentTenant?.id || 't-demo',
+      outletId: currentOutlet?.id || 'out-1',
       date: new Date().toISOString().slice(0, 10),
       category: expCategory,
       description: expDesc,

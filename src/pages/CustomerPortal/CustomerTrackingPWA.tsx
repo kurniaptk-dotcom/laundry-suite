@@ -52,10 +52,10 @@ export const CustomerTrackingPWA: React.FC = () => {
   const [activeBottomNav, setActiveBottomNav] = useState<'home' | 'orders' | 'create' | 'promo' | 'account'>('home');
 
   // Selected Order for Detail View
-  const [selectedOrder, setSelectedOrder] = useState<Order>(orders[0]);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(orders[0] || null);
 
   // Booking Flow State
-  const [bookingService, setBookingService] = useState<ServiceItem>(currentOutlet.services[0]);
+  const [bookingService, setBookingService] = useState<ServiceItem | null>(currentOutlet?.services?.[0] || null);
   const [bookingWeight, setBookingWeight] = useState<number>(5.0);
   const [bookingNotes, setBookingNotes] = useState<string>('Tolong pisahkan pakaian putih.');
   const [bookingAddress, setBookingAddress] = useState<string>(currentUser.address);
@@ -91,9 +91,13 @@ export const CustomerTrackingPWA: React.FC = () => {
 
   // Submit Booking
   const handleConfirmBooking = () => {
+    if (!bookingService) {
+      alert('Harap pilih layanan laundry terlebih dahulu.');
+      return;
+    }
     const created = addOrder({
-      tenantId: currentTenant.id,
-      outletId: currentOutlet.id,
+      tenantId: currentTenant?.id || 't-demo',
+      outletId: currentOutlet?.id || 'out-1',
       customerId: currentUser.id,
       customerName: currentUser.name,
       customerPhone: currentUser.phone,
@@ -123,8 +127,9 @@ export const CustomerTrackingPWA: React.FC = () => {
       totalAmount: totalPay,
       paidAmount: bookingPaymentMethod === 'deposit' ? totalPay : 0,
       estimatedReady: 'Besok, 18:00 WIB',
+      perfumeChoice: 'Sakura Blossom (Favorit)',
       notes: bookingNotes,
-      tags: ['Online PWA', 'Delivery'],
+      tags: ['Online PWA Booking', 'Antar Jemput'],
     });
 
     // Also add to dispatch delivery
@@ -497,7 +502,7 @@ export const CustomerTrackingPWA: React.FC = () => {
                 <span className="text-xs font-extrabold text-slate-900">Pilih Layanan Laundry</span>
 
                 <div className="space-y-2.5">
-                  {currentOutlet.services.map(srv => (
+                  {(currentOutlet?.services || []).map(srv => (
                     <div
                       key={srv.id}
                       onClick={() => setBookingService(srv)}
@@ -787,7 +792,7 @@ export const CustomerTrackingPWA: React.FC = () => {
                   <div className="flex items-start justify-between border-b border-slate-100 pb-2.5">
                     <div>
                       <span className="text-[10px] text-slate-400 font-bold uppercase">Layanan</span>
-                      <div className="font-bold text-xs text-slate-900">{bookingService.name}</div>
+                      <div className="font-bold text-xs text-slate-900">{bookingService?.name || 'Layanan Laundry'}</div>
                       <div className="text-[11px] text-slate-500">Estimasi: {bookingWeight} Kg</div>
                     </div>
                     <button onClick={() => navigateTo('booking_step1')} className="text-[10px] font-bold text-brand-600">Ubah</button>

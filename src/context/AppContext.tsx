@@ -20,22 +20,61 @@ const DEFAULT_SERVICES: ServiceItem[] = [
   { id: 'srv-8', name: 'Karpet Bulu / Permadani (m²)', category: 'karpet_linen', unit: 'm2', price: 18000, durationHours: 72, description: 'Pencucian debu mendalam + anti tungau' },
 ];
 
-const INITIAL_TENANTS: Tenant[] = [];
+export const DEFAULT_TENANT: Tenant = {
+  id: 't-demo',
+  name: 'Laundry Bersih Jaya',
+  code: 'LBJ',
+  plan: 'growth',
+  status: 'active',
+  mrr: 499000,
+  outletsCount: 1,
+  ownerName: 'Hendra Gunawan',
+  ownerEmail: 'owner@bersihjaya.id',
+  ownerPhone: '081234567890',
+  createdAt: '2026-08-01',
+};
 
-const INITIAL_OUTLETS: Outlet[] = [];
+export const DEFAULT_OUTLET: Outlet = {
+  id: 'out-1',
+  tenantId: 't-demo',
+  name: 'Outlet Tebet (Pusat)',
+  code: 'LBJ-TBT',
+  address: 'Jl. Tebet Raya No. 45, Jakarta Selatan',
+  city: 'Jakarta Selatan',
+  phone: '081234567890',
+  isMain: true,
+  operationalHours: '07:00 - 21:00 WIB',
+  services: DEFAULT_SERVICES,
+};
+
+const INITIAL_TENANTS: Tenant[] = [DEFAULT_TENANT];
+const INITIAL_OUTLETS: Outlet[] = [DEFAULT_OUTLET];
 
 const INITIAL_CUSTOMERS: Customer[] = [];
 const INITIAL_ORDERS: Order[] = [];
-const INITIAL_COURIERS: Courier[] = [];
+const INITIAL_COURIERS: Courier[] = [
+  { id: 'cur-1', name: 'Rian Pratama', phone: '081299881122', vehicleType: 'motor', activeTasksCount: 0, status: 'available', rating: 4.9, completedDeliveries: 124 },
+  { id: 'cur-2', name: 'Dimas Setiawan', phone: '081388776655', vehicleType: 'motor', activeTasksCount: 0, status: 'available', rating: 4.8, completedDeliveries: 98 },
+];
 const INITIAL_DELIVERY_TASKS: DeliveryTask[] = [];
-const INITIAL_INVENTORY: InventoryItem[] = [];
-const INITIAL_EMPLOYEES: Employee[] = [];
+const INITIAL_INVENTORY: InventoryItem[] = [
+  { id: 'inv-1', tenantId: 't-demo', outletId: 'out-1', name: 'Deterjen Liquid Konsentrat EcoClean (20L)', category: 'chemical', sku: 'DET-ECO-20L', currentStock: 8, unit: 'Jerigen (20L)', minStockThreshold: 3, costPerUnit: 140000, supplierName: 'PT Sukses Kimia Pratama', lastRestocked: '2026-08-20' },
+  { id: 'inv-2', tenantId: 't-demo', outletId: 'out-1', name: 'Parfum Sakura Blossom Premium (5L)', category: 'chemical', sku: 'PRF-SKR-5L', currentStock: 4, unit: 'Jerigen (5L)', minStockThreshold: 2, costPerUnit: 185000, supplierName: 'PT Aroma Wangi Indonesia', lastRestocked: '2026-08-18' },
+  { id: 'inv-3', tenantId: 't-demo', outletId: 'out-1', name: 'Plastik Packing Jinjing Tebal 35x50', category: 'packaging', sku: 'PLS-3550-100', currentStock: 15, unit: 'Pack (100 pcs)', minStockThreshold: 5, costPerUnit: 35000, supplierName: 'CV Plastik Mandiri', lastRestocked: '2026-08-22' },
+];
+const INITIAL_EMPLOYEES: Employee[] = [
+  { id: 'emp-1', tenantId: 't-demo', outletId: 'out-1', name: 'Siti Rahayu', role: 'Kasir Front Office', division: 'Kasir', baseSalary: 2800000, commissionPerKg: 100, phone: '081288990011', email: 'siti@bersihjaya.id', status: 'active', joinedDate: '2025-02-01' },
+  { id: 'emp-2', tenantId: 't-demo', outletId: 'out-1', name: 'Bambang Sudirgo', role: 'Operator Cuci & Dry', division: 'Produksi', baseSalary: 2900000, commissionPerKg: 200, phone: '081377889900', email: 'bambang@bersihjaya.id', status: 'active', joinedDate: '2025-01-15' },
+];
 const INITIAL_ACCOUNTS: CashAccount[] = [
-  { id: 'acc-1', name: 'Kas Kasir Tunai (Laci)', type: 'cash', balance: 0 },
-  { id: 'acc-2', name: 'Rekening Bank / QRIS', type: 'bank', balance: 0 },
+  { id: 'acc-1', name: 'Kas Kasir Tunai (Laci)', type: 'cash', balance: 1500000 },
+  { id: 'acc-2', name: 'Rekening Bank / QRIS', type: 'bank', balance: 8500000 },
 ];
 const INITIAL_EXPENSES: ExpenseEntry[] = [];
-const INITIAL_VOUCHERS: Voucher[] = [];
+const INITIAL_VOUCHERS: Voucher[] = [
+  { id: 'vch-1', code: 'BERSIHHEMAT', title: 'Diskon Spesial Rp 5.000', discountType: 'fixed', discountValue: 5000, minOrder: 30000, validUntil: '2026-12-31', usageCount: 14, maxUsage: 100, isActive: true },
+  { id: 'vch-2', code: 'DISKON10', title: 'Diskon 10% Semua Layanan', discountType: 'percentage', discountValue: 10, minOrder: 40000, validUntil: '2026-12-31', usageCount: 28, maxUsage: 500, isActive: true },
+];
 
 interface AppContextType {
   // Auth state
@@ -123,16 +162,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [tenants, setTenants] = useState<Tenant[]>(() => {
     const saved = localStorage.getItem('ls_tenants');
-    return saved ? JSON.parse(saved) : INITIAL_TENANTS;
+    const parsed = saved ? JSON.parse(saved) : [];
+    return parsed.length > 0 ? parsed : INITIAL_TENANTS;
   });
-  const [currentTenant, setCurrentTenant] = useState<Tenant>(tenants[0] || INITIAL_TENANTS[0]);
+  const [currentTenant, setCurrentTenant] = useState<Tenant>(() => tenants[0] || DEFAULT_TENANT);
   const [impersonatedTenant, setImpersonatedTenant] = useState<Tenant | null>(null);
 
   const [outlets, setOutlets] = useState<Outlet[]>(() => {
     const saved = localStorage.getItem('ls_outlets');
-    return saved ? JSON.parse(saved) : INITIAL_OUTLETS;
+    const parsed = saved ? JSON.parse(saved) : [];
+    return parsed.length > 0 ? parsed : INITIAL_OUTLETS;
   });
-  const [currentOutlet, setCurrentOutlet] = useState<Outlet>(outlets[0] || INITIAL_OUTLETS[0]);
+  const [currentOutlet, setCurrentOutlet] = useState<Outlet>(() => outlets[0] || DEFAULT_OUTLET);
 
   const [customers, setCustomers] = useState<Customer[]>(() => {
     const saved = localStorage.getItem('ls_customers');

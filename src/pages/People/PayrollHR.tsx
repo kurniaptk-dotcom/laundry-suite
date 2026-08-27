@@ -311,7 +311,7 @@ export const PayrollHR: React.FC = () => {
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <h3 className="text-sm font-bold text-slate-900">Slip Gaji & Komisi Karyawan</h3>
-                <div className="text-[11px] text-slate-500">Laundry Bersih Jaya • Periode {selectedSlipForModal.period}</div>
+                <div className="text-[11px] text-slate-500">{currentTenant.name} • Periode {selectedSlipForModal.period}</div>
               </div>
               <button onClick={() => setSelectedSlipForModal(null)} className="text-slate-400 hover:text-slate-600">✕</button>
             </div>

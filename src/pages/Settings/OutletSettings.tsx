@@ -18,17 +18,17 @@ export const OutletSettings: React.FC = () => {
   const { currentTenant, currentOutlet, setCurrentTenant, setCurrentOutlet } = useApp();
 
   // Tenant Whitelabel Form
-  const [tenantName, setTenantName] = useState(currentTenant.name);
-  const [tenantCode, setTenantCode] = useState(currentTenant.code);
-  const [ownerEmail, setOwnerEmail] = useState(currentTenant.ownerEmail);
-  const [ownerPhone, setOwnerPhone] = useState(currentTenant.ownerPhone);
+  const [tenantName, setTenantName] = useState(currentTenant?.name || 'Laundry Bersih Jaya');
+  const [tenantCode, setTenantCode] = useState(currentTenant?.code || 'LBJ');
+  const [ownerEmail, setOwnerEmail] = useState(currentTenant?.ownerEmail || 'owner@bersihjaya.id');
+  const [ownerPhone, setOwnerPhone] = useState(currentTenant?.ownerPhone || '081234567890');
   const [selectedTheme, setSelectedTheme] = useState('blue');
 
   // Outlet Profile Form
-  const [outletName, setOutletName] = useState(currentOutlet.name);
-  const [outletAddress, setOutletAddress] = useState(currentOutlet.address);
-  const [outletPhone, setOutletPhone] = useState(currentOutlet.phone);
-  const [outletHours, setOutletHours] = useState(currentOutlet.operationalHours);
+  const [outletName, setOutletName] = useState(currentOutlet?.name || 'Outlet Tebet (Pusat)');
+  const [outletAddress, setOutletAddress] = useState(currentOutlet?.address || 'Jl. Tebet Raya No. 45');
+  const [outletPhone, setOutletPhone] = useState(currentOutlet?.phone || '081234567890');
+  const [outletHours, setOutletHours] = useState(currentOutlet?.operationalHours || '07:00 - 21:00 WIB');
 
   // Thermal Receipt Customization
   const [receiptHeaderMsg, setReceiptHeaderMsg] = useState('Terima kasih atas kunjungan Anda');
@@ -37,7 +37,7 @@ export const OutletSettings: React.FC = () => {
   const [autoPrintTags, setAutoPrintTags] = useState(true);
 
   // Services Catalog list
-  const [servicesList, setServicesList] = useState(currentOutlet.services);
+  const [servicesList, setServicesList] = useState(currentOutlet?.services || []);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   const handleSaveSettings = (e: React.FormEvent) => {

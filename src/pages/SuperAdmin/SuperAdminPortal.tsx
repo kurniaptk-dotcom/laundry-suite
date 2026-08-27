@@ -54,7 +54,16 @@ export const SuperAdminPortal: React.FC = () => {
     { id: 't-7', name: 'Diva Dry Cleaning & Care', code: 'DDC', plan: 'growth' as PlanType, status: 'suspended' as const, mrr: 499000, outletsCount: 3, ownerName: 'Siti Maryam', ownerEmail: 'siti@divadry.id', ownerPhone: '087811990022', createdAt: '2025-02-20', ordersCount: 920, activeUsers: 0, lastActive: '21 hari lalu', healthScore: '15%' },
   ];
 
-  const allTenantsList = EXTENDED_TENANTS;
+  const allTenantsList = [
+    ...tenants.map(t => ({
+      ...t,
+      ordersCount: 0,
+      activeUsers: 1,
+      lastActive: 'Baru saja',
+      healthScore: '100%'
+    })),
+    ...EXTENDED_TENANTS.filter(et => !tenants.some(t => t.id === et.id || t.code === et.code))
+  ];
 
   // Filtered Tenants
   const filteredTenants = allTenantsList.filter(t => {

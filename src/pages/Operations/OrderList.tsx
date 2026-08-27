@@ -14,7 +14,7 @@ interface OrderListProps {
 }
 
 export const OrderList: React.FC<OrderListProps> = ({ onPrintReceipt, onPrintTag }) => {
-  const { orders, updateOrderStatus, recordPayment, sendWhatsAppNotification, currentOutlet } = useApp();
+  const { orders, updateOrderStatus, recordPayment, sendWhatsAppNotification, currentTenant, currentOutlet } = useApp();
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -224,7 +224,7 @@ export const OrderList: React.FC<OrderListProps> = ({ onPrintReceipt, onPrintTag
                               ord.customerPhone,
                               ord.customerName,
                               'order_ready',
-                              `Halo Kak ${ord.customerName}! Cucian Anda di Laundry Bersih Jaya (#${ord.trackingCode}) dengan total Rp ${ord.totalAmount.toLocaleString('id-ID')} saat ini berstatus ${ord.status.toUpperCase()}. Cek di: https://laundrysuite.id/track/${ord.trackingCode}`,
+                              `Halo Kak ${ord.customerName}! Cucian Anda di ${currentTenant.name} (${currentOutlet.name}) [#${ord.trackingCode}] dengan total Rp ${ord.totalAmount.toLocaleString('id-ID')} saat ini berstatus ${ord.status.toUpperCase()}. Cek di: https://laundrysuite.id/track/${ord.trackingCode}`,
                               ord.id
                             );
                             alert(`Notifikasi WhatsApp terkirim ke ${ord.customerName} (${ord.customerPhone})!`);
