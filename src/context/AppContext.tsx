@@ -47,8 +47,59 @@ export const DEFAULT_OUTLET: Outlet = {
   services: DEFAULT_SERVICES,
 };
 
-const INITIAL_TENANTS: Tenant[] = [DEFAULT_TENANT];
-const INITIAL_OUTLETS: Outlet[] = [DEFAULT_OUTLET];
+export const INITIAL_TENANTS: Tenant[] = [
+  { id: 't-1', name: 'Berkah Laundry Express', code: 'BLE', plan: 'business', status: 'active', mrr: 1299000, outletsCount: 3, ownerName: 'Hendra Gunawan', ownerEmail: 'hendra@berkahlaundry.id', ownerPhone: '081234567890', createdAt: '2025-01-10' },
+  { id: 't-2', name: 'Kurnia Wash & Dry Clean', code: 'KDC', plan: 'business', status: 'active', mrr: 1299000, outletsCount: 3, ownerName: 'Kurnia Pratama', ownerEmail: 'kurnia@kurniaptk.com', ownerPhone: '081198765432', createdAt: '2024-11-05' },
+  { id: 't-3', name: 'Klin Laundry Kilat', code: 'KLN', plan: 'growth', status: 'active', mrr: 499000, outletsCount: 2, ownerName: 'Ahmad Fauzi', ownerEmail: 'ahmad@klinlaundry.id', ownerPhone: '085712349988', createdAt: '2025-03-01' },
+  { id: 't-4', name: 'Sakura Eco Laundry', code: 'SEL', plan: 'growth', status: 'active', mrr: 499000, outletsCount: 2, ownerName: 'David Santoso', ownerEmail: 'david@sakuralaundry.id', ownerPhone: '081399887711', createdAt: '2024-09-12' },
+  { id: 't-5', name: 'Bintang Cleaners Premium', code: 'BCP', plan: 'growth', status: 'active', mrr: 499000, outletsCount: 2, ownerName: 'Jessica Suryanto', ownerEmail: 'jessica@bintangclean.com', ownerPhone: '081244556677', createdAt: '2025-05-15' },
+  { id: 't-6', name: 'Fresh & Clean Laundromat', code: 'FCL', plan: 'growth', status: 'active', mrr: 499000, outletsCount: 2, ownerName: 'Budi Wicaksono', ownerEmail: 'budi@freshclean.id', ownerPhone: '085611223399', createdAt: '2025-04-18' },
+  { id: 't-7', name: 'Melati Family Laundry', code: 'MFL', plan: 'starter', status: 'active', mrr: 199000, outletsCount: 1, ownerName: 'Siti Maryam', ownerEmail: 'siti@melatilaundry.com', ownerPhone: '087811990022', createdAt: '2025-02-20' },
+  { id: 't-8', name: 'Pelangi Laundry Kiloan', code: 'PLK', plan: 'starter', status: 'active', mrr: 199000, outletsCount: 1, ownerName: 'Rian Hidayat', ownerEmail: 'rian@pelangilaundry.id', ownerPhone: '081255667788', createdAt: '2025-06-01' },
+  { id: 't-9', name: 'Sentosa Dry Cleaning & Shoes', code: 'SDC', plan: 'growth', status: 'active', mrr: 499000, outletsCount: 2, ownerName: 'Ketut Wijaya', ownerEmail: 'ketut@sentosadry.com', ownerPhone: '081366778899', createdAt: '2025-07-10' },
+  { id: 't-10', name: 'Amanah Laundry Express', code: 'ALE', plan: 'trial', status: 'trial', mrr: 0, outletsCount: 1, ownerName: 'Zulkifli Lubis', ownerEmail: 'zulkifli@amanahlaundry.id', ownerPhone: '081277889900', createdAt: '2026-08-15' },
+];
+
+export const INITIAL_OUTLETS: Outlet[] = [
+  // Tenant 1 (3 Cabang - Jakarta Selatan)
+  { id: 'out-1', tenantId: 't-1', name: 'Outlet Tebet (Pusat)', code: 'BLE-TBT', address: 'Jl. Tebet Raya No. 45, Jakarta Selatan', city: 'Jakarta Selatan', phone: '081234567890', isMain: true, operationalHours: '07:00 - 21:00 WIB', services: DEFAULT_SERVICES },
+  { id: 'out-2', tenantId: 't-1', name: 'Outlet Kemang', code: 'BLE-KMG', address: 'Jl. Kemang Raya No. 12, Jakarta Selatan', city: 'Jakarta Selatan', phone: '081234567891', isMain: false, operationalHours: '08:00 - 22:00 WIB', services: DEFAULT_SERVICES },
+  { id: 'out-3', tenantId: 't-1', name: 'Outlet Blok M', code: 'BLE-BLM', address: 'Jl. Melawai No. 8, Jakarta Selatan', city: 'Jakarta Selatan', phone: '081234567892', isMain: false, operationalHours: '07:30 - 21:30 WIB', services: DEFAULT_SERVICES },
+
+  // Tenant 2 (3 Cabang - Pontianak)
+  { id: 'out-4', tenantId: 't-2', name: 'Outlet Gajah Mada (Pusat)', code: 'KDC-GJM', address: 'Jl. Gajah Mada No. 88, Pontianak', city: 'Pontianak', phone: '081198765432', isMain: true, operationalHours: '07:00 - 22:00 WIB', services: DEFAULT_SERVICES },
+  { id: 'out-5', tenantId: 't-2', name: 'Outlet Purnama', code: 'KDC-PNM', address: 'Jl. Purnama No. 25, Pontianak', city: 'Pontianak', phone: '081198765433', isMain: false, operationalHours: '07:00 - 21:00 WIB', services: DEFAULT_SERVICES },
+  { id: 'out-6', tenantId: 't-2', name: 'Outlet Sungai Jawi', code: 'KDC-SJW', address: 'Jl. H. Rais A. Rahman No. 50, Pontianak', city: 'Pontianak', phone: '081198765434', isMain: false, operationalHours: '07:30 - 21:00 WIB', services: DEFAULT_SERVICES },
+
+  // Tenant 3 (2 Cabang - Bandung)
+  { id: 'out-7', tenantId: 't-3', name: 'Outlet Dago (Pusat)', code: 'KLN-DGO', address: 'Jl. Ir. H. Juanda No. 110, Bandung', city: 'Bandung', phone: '085712349988', isMain: true, operationalHours: '07:00 - 21:00 WIB', services: DEFAULT_SERVICES },
+  { id: 'out-8', tenantId: 't-3', name: 'Outlet Buah Batu', code: 'KLN-BBT', address: 'Jl. Buah Batu No. 76, Bandung', city: 'Bandung', phone: '085712349989', isMain: false, operationalHours: '07:30 - 21:00 WIB', services: DEFAULT_SERVICES },
+
+  // Tenant 4 (2 Cabang - Surabaya)
+  { id: 'out-9', tenantId: 't-4', name: 'Outlet Rungkut (Pusat)', code: 'SEL-RKT', address: 'Jl. Rungkut Madya No. 42, Surabaya', city: 'Surabaya', phone: '081399887711', isMain: true, operationalHours: '07:00 - 21:30 WIB', services: DEFAULT_SERVICES },
+  { id: 'out-10', tenantId: 't-4', name: 'Outlet Gubeng', code: 'SEL-GBG', address: 'Jl. Gubeng Kertajaya No. 18, Surabaya', city: 'Surabaya', phone: '081399887712', isMain: false, operationalHours: '07:00 - 21:00 WIB', services: DEFAULT_SERVICES },
+
+  // Tenant 5 (2 Cabang - Semarang)
+  { id: 'out-11', tenantId: 't-5', name: 'Outlet Simpang Lima (Pusat)', code: 'BCP-SPL', address: 'Jl. Pandanaran No. 30, Semarang', city: 'Semarang', phone: '081244556677', isMain: true, operationalHours: '07:00 - 21:00 WIB', services: DEFAULT_SERVICES },
+  { id: 'out-12', tenantId: 't-5', name: 'Outlet Tembalang', code: 'BCP-TMG', address: 'Jl. Prof. Soedarto No. 55, Semarang', city: 'Semarang', phone: '081244556678', isMain: false, operationalHours: '07:00 - 22:00 WIB', services: DEFAULT_SERVICES },
+
+  // Tenant 6 (2 Cabang - Yogyakarta)
+  { id: 'out-13', tenantId: 't-6', name: 'Outlet Gejayan (Pusat)', code: 'FCL-GJY', address: 'Jl. Affandi (Gejayan) No. 22, Yogyakarta', city: 'Yogyakarta', phone: '085611223399', isMain: true, operationalHours: '07:00 - 22:00 WIB', services: DEFAULT_SERVICES },
+  { id: 'out-14', tenantId: 't-6', name: 'Outlet Seturan', code: 'FCL-STR', address: 'Jl. Seturan Raya No. 9, Yogyakarta', city: 'Yogyakarta', phone: '085611223390', isMain: false, operationalHours: '07:00 - 23:00 WIB', services: DEFAULT_SERVICES },
+
+  // Tenant 7 (1 Cabang - Tangerang Selatan)
+  { id: 'out-15', tenantId: 't-7', name: 'Outlet BSD City', code: 'MFL-BSD', address: 'Ruko Golden Boulevard Blok W2/15, BSD City', city: 'Tangerang Selatan', phone: '087811990022', isMain: true, operationalHours: '07:00 - 21:00 WIB', services: DEFAULT_SERVICES },
+
+  // Tenant 8 (1 Cabang - Bekasi)
+  { id: 'out-16', tenantId: 't-8', name: 'Outlet Harapan Indah', code: 'PLK-HPI', address: 'Ruko Harapan Indah Blok FB No. 12, Bekasi', city: 'Bekasi', phone: '081255667788', isMain: true, operationalHours: '07:00 - 21:00 WIB', services: DEFAULT_SERVICES },
+
+  // Tenant 9 (2 Cabang - Denpasar Bali)
+  { id: 'out-17', tenantId: 't-9', name: 'Outlet Sanur (Pusat)', code: 'SDC-SNR', address: 'Jl. Danau Tamblingan No. 64, Sanur', city: 'Denpasar', phone: '081366778899', isMain: true, operationalHours: '07:30 - 21:30 WIB', services: DEFAULT_SERVICES },
+  { id: 'out-18', tenantId: 't-9', name: 'Outlet Seminyak', code: 'SDC-SMY', address: 'Jl. Kayu Aya No. 38, Seminyak', city: 'Badung', phone: '081366778890', isMain: false, operationalHours: '08:00 - 22:00 WIB', services: DEFAULT_SERVICES },
+
+  // Tenant 10 (1 Cabang - Medan)
+  { id: 'out-19', tenantId: 't-10', name: 'Outlet Ringroad', code: 'ALE-RRD', address: 'Jl. Ring Road No. 88A, Medan', city: 'Medan', phone: '081277889900', isMain: true, operationalHours: '07:00 - 21:00 WIB', services: DEFAULT_SERVICES },
+];
 
 const INITIAL_CUSTOMERS: Customer[] = [];
 const INITIAL_ORDERS: Order[] = [];
