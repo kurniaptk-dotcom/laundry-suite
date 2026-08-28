@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { 
   Sparkles, Store, CheckCircle2, ArrowRight, ArrowLeft, 
-  DollarSign, Shirt, Droplets, Printer, Check, ShoppingBag, 
-  LayoutDashboard, ShieldCheck, Clock, MapPin, Phone
+  Droplets, Printer, Check, ShoppingBag, 
+  LayoutDashboard, MapPin, Phone, Clock
 } from 'lucide-react';
 
-interface OnboardingWizardProps {
+export interface OnboardingWizardProps {
   onFinish: (targetScreen: 'pos' | 'dashboard') => void;
 }
 
@@ -18,20 +18,18 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onFinish }) 
     setCurrentOutlet, 
     services, 
     updateService,
-    perfumes,
-    addPerfume
   } = useApp();
 
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
-  // Step 1 State: Profile
+  // Step 1: Profile
   const [tenantName, setTenantName] = useState(currentTenant?.name || 'Laundry Saya');
   const [outletName, setOutletName] = useState(currentOutlet?.name || 'Outlet Pusat');
   const [outletAddress, setOutletAddress] = useState(currentOutlet?.address || 'Jl. Sudirman No. 88');
   const [outletPhone, setOutletPhone] = useState(currentOutlet?.phone || currentTenant?.ownerPhone || '081234567890');
   const [operationalHours, setOperationalHours] = useState(currentOutlet?.operationalHours || '07:00 - 21:00 WIB');
 
-  // Step 2 State: Pricing
+  // Step 2: Pricing
   const [servicePrices, setServicePrices] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
     services.forEach(s => {
@@ -40,7 +38,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onFinish }) 
     return initial;
   });
 
-  // Step 3 State: Perfume & Receipt
+  // Step 3: Perfume & Receipt
   const [selectedPerfumes, setSelectedPerfumes] = useState<string[]>([
     'Sakura Blossom (Favorit)',
     'Lavender Dream',
@@ -57,7 +55,6 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onFinish }) 
   };
 
   const handleCompleteSetup = (target: 'pos' | 'dashboard') => {
-    // 1. Save Tenant & Outlet updates
     if (currentTenant) {
       setCurrentTenant({
         ...currentTenant,
@@ -75,15 +72,11 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onFinish }) 
       });
     }
 
-    // 2. Save modified service prices
     Object.entries(servicePrices).forEach(([id, price]) => {
       updateService(id, { price });
     });
 
-    // 3. Mark onboarding as completed for this tenant
     localStorage.setItem(`ls_onboarding_done_${currentTenant?.id || 'default'}`, 'true');
-
-    // 4. Navigate
     onFinish(target);
   };
 
@@ -414,3 +407,5 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onFinish }) 
     </div>
   );
 };
+
+export default OnboardingWizard;

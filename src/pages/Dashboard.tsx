@@ -7,7 +7,7 @@ import {
   Banknote, Wallet, Building2, Layers, BarChart3, Activity
 } from 'lucide-react';
 
-interface DashboardProps {
+export interface DashboardProps {
   onNavigate: (tab: string) => void;
   onOpenNewOrder: () => void;
   onOpenOnboarding?: () => void;
@@ -39,15 +39,22 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder
   const lowStockItems = inventory
     .filter(i => i.currentStock <= i.minStockThreshold);
 
-  // Multi-outlet comparison mock data
-  const OUTLET_PERFORMANCE = [
-    { name: 'Outlet Tebet (Pusat)', code: 'LBJ-TBT', revenue: 351600, orders: 5, sla: '98.8%', status: 'Optimal', share: 45 },
-    { name: 'Outlet Bintaro Sektor 7', code: 'LBJ-BIN', revenue: 421500, orders: 6, sla: '97.5%', status: 'Optimal', share: 35 },
-    { name: 'Outlet Galaxy Bekasi', code: 'LBJ-GLX', revenue: 280000, orders: 4, sla: '99.1%', status: 'Optimal', share: 20 },
-  ];
+  // Multi-Outlet Comparison Model
+  const outletPerformance = tenantOutlets.map(o => {
+    const outletOrders = orders.filter(ord => ord.outletId === o.id);
+    const rev = outletOrders.filter(ord => ord.paymentStatus === 'paid').reduce((s, ord) => s + ord.totalAmount, 0);
+    return {
+      id: o.id,
+      name: o.name,
+      city: o.city,
+      revenue: rev,
+      orders: outletOrders.length,
+      sla: '98.4%',
+      share: totalRevenue > 0 ? Math.round((rev / totalRevenue) * 100) : 0
+    };
+  });
 
-  const consolidatedRevenue = OUTLET_PERFORMANCE.reduce((a, b) => a + b.revenue, 0);
-  const consolidatedOrders = OUTLET_PERFORMANCE.reduce((a, b) => a + b.orders, 0);
+  const consolidatedRevenue = outletPerformance.reduce((s, op) => s + op.revenue, 0);
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6 animate-in fade-in duration-200">
@@ -186,19 +193,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500">Volume Cucian Diproses</span>
-            <div className="w-8 h-8 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
               <Weight className="w-4 h-4" />
             </div>
           </div>
           <div className="text-2xl font-extrabold text-slate-900 mt-2">
-            {isAllOutlets ? '72.4' : totalKgProcessed.toFixed(1)} <span className="text-base font-semibold text-slate-500">Kg</span>
+            {totalKgProcessed.toFixed(1)} <span className="text-sm font-normal text-slate-500">Kg</span>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-slate-500 mt-1">
-            <span>Rata-rata 4.8 Kg per transaksi</span>
+          <div className="text-[11px] text-slate-400 mt-1">
+            Rata-rata 4.8 Kg per transaksi
           </div>
         </div>
 
-        {/* Active In-Progress Orders */}
+        {/* Active Production */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500">Sedang Dikerjakan</span>
@@ -207,14 +214,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder
             </div>
           </div>
           <div className="text-2xl font-extrabold text-slate-900 mt-2">
-            {isAllOutlets ? consolidatedOrders : activeOrdersCount} <span className="text-base font-semibold text-slate-500">Order</span>
+            {activeOrdersCount} <span className="text-sm font-normal text-slate-500">Order</span>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-amber-600 font-semibold mt-1">
-            <span>{readyOrdersCount} order siap diambil</span>
+          <div className="text-[11px] text-amber-600 font-semibold mt-1">
+            {readyOrdersCount} order siap diambil
           </div>
         </div>
 
-        {/* Kurir & Delivery */}
+        {/* Pending Courier Tasks */}
         <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-card hover:shadow-card-hover transition">
           <div className="flex items-center justify-between">
             <span className="text-xs font-medium text-slate-500">Tugas Kurir Aktif</span>
@@ -223,39 +230,39 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder
             </div>
           </div>
           <div className="text-2xl font-extrabold text-slate-900 mt-2">
-            {isAllOutlets ? '4' : pendingDeliveryCount} <span className="text-base font-semibold text-slate-500">Tugas</span>
+            {pendingDeliveryCount} <span className="text-sm font-normal text-slate-500">Tugas</span>
           </div>
-          <div className="flex items-center gap-1 text-[11px] text-cyan-700 font-semibold mt-1">
-            <span>Pickup & Pengantaran siap jalan</span>
+          <div className="text-[11px] text-cyan-600 font-semibold mt-1">
+            Pickup & Pengantaran siap jalan
           </div>
         </div>
       </div>
 
-      {/* Multi-Outlet Consolidated Performance Card (Visible when All Outlets is selected or for Owner) */}
-      {isAllOutlets && (
-        <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-card space-y-4 animate-in fade-in">
+      {/* Multi-Outlet Consolidated Breakdown (When in All-Outlets Mode) */}
+      {isAllOutlets && tenantOutlets.length > 0 && (
+        <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-card space-y-4">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div>
-              <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-brand-600" />
-                Perbandingan Performa Antar Cabang (Multi-Outlet Overview)
+            <div className="flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-brand-600" />
+              <h2 className="text-sm font-bold text-slate-900">
+                Peringkat & Performa Seluruh Cabang ({tenantOutlets.length} Outlet)
               </h2>
-              <p className="text-xs text-slate-500">
-                Peringkat omzet, volume, dan pemenuhan SLA dari seluruh cabang di bawah naungan {currentTenant.name}.
-              </p>
             </div>
-            <span className="text-xs font-bold bg-brand-50 text-brand-700 px-3 py-1 rounded-full border border-brand-200">
-              Total 3 Cabang
+            <span className="text-xs text-slate-500">
+              Data Real-Time Live Sync
             </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {OUTLET_PERFORMANCE.map((op, idx) => (
-              <div key={idx} className="p-4 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {outletPerformance.map((op, idx) => (
+              <div key={op.id} className="p-4 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-3 hover:border-brand-300 transition">
                 <div className="flex items-center justify-between">
-                  <div className="font-extrabold text-xs text-slate-900">{op.name}</div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
-                    {op.status}
+                  <div>
+                    <span className="text-xs font-extrabold text-slate-900">{op.name}</span>
+                    <span className="text-[10px] text-slate-500 block">{op.city}</span>
+                  </div>
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-brand-100 text-brand-700">
+                    Rank #{idx + 1}
                   </span>
                 </div>
 
@@ -285,7 +292,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder
         </div>
       )}
 
-      {/* Inventory Low-Stock Alert (Action-Oriented Alert) */}
+      {/* Inventory Low-Stock Alert */}
       {lowStockItems.length > 0 && (
         <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-rose-900 animate-in fade-in">
           <div className="flex items-start gap-3">
@@ -428,42 +435,17 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder
                   <span>Selesai / Siap Diambil</span>
                 </div>
                 <span className="font-extrabold text-emerald-900">
-                  {readyOrdersCount} order
+                  {orders.filter(o => o.status === 'ready').length} order
                 </span>
               </div>
             </div>
 
             <button
               onClick={() => onNavigate('production')}
-              className="w-full py-2.5 bg-brand-50 hover:bg-brand-100 text-brand-700 rounded-xl text-xs font-extrabold transition text-center block"
+              className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-200 transition"
             >
               Buka Layar Kanban Produksi
             </button>
-          </div>
-
-          {/* CRM & Loyalty Quick Glance */}
-          <div className="bg-white p-5 rounded-3xl border border-slate-200/90 shadow-card space-y-3">
-            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider block">
-              Status Pelanggan & Loyalty
-            </span>
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between text-slate-600">
-                <span>Total Pelanggan Terdaftar</span>
-                <span className="font-extrabold text-slate-900">{customers.length} Orang</span>
-              </div>
-              <div className="flex justify-between text-slate-600">
-                <span>Member Platinum / VIP</span>
-                <span className="font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full text-[10px]">
-                  {customers.filter(c => c.membershipTier === 'Platinum').length} Member
-                </span>
-              </div>
-              <div className="flex justify-between text-slate-600">
-                <span>Total Saldo Deposit Mengendap</span>
-                <span className="font-bold text-emerald-600">
-                  Rp {customers.reduce((s, c) => s + c.depositBalance, 0).toLocaleString('id-ID')}
-                </span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -471,3 +453,5 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder
     </div>
   );
 };
+
+export default Dashboard;

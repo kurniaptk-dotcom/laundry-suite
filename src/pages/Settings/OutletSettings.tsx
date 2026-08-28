@@ -300,6 +300,108 @@ export const OutletSettings: React.FC = () => {
             ))}
           </div>
         </div>
+
+        {/* Section 5: Automated WhatsApp Template Editor & Live Preview */}
+        <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-card space-y-5">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center gap-2 font-bold text-sm text-slate-900">
+              <span className="text-base">💬</span>
+              <span>5. Template Pesan Notifikasi WhatsApp Otomatis</span>
+            </div>
+            <span className="text-[10px] font-extrabold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+              Live Dynamic Tags Active
+            </span>
+          </div>
+
+          <div className="bg-emerald-50 border border-emerald-100 p-3.5 rounded-xl text-xs text-emerald-900 space-y-1.5">
+            <p className="font-bold">💡 Variabel Dinamis yang Dapat Anda Gunakan di Pesan:</p>
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              {['{nama_pelanggan}', '{nomor_resi}', '{total_biaya}', '{status_pembayaran}', '{nama_outlet}', '{telepon_outlet}', '{link_tracking}'].map(tag => (
+                <code key={tag} className="bg-white px-2 py-0.5 rounded-md border border-emerald-200 font-mono text-[10px] text-emerald-800 font-bold">
+                  {tag}
+                </code>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {/* Editor Area */}
+            <div className="space-y-4">
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  1. Template: Nota Masuk / Pesanan Baru Diterima
+                </label>
+                <textarea
+                  rows={4}
+                  defaultValue="Halo *{nama_pelanggan}*, terima kasih telah mencuci di *{nama_outlet}*! 🧺&#10;&#10;Nomor Resi: *#{nomor_resi}*&#10;Total Biaya: *Rp {total_biaya}* ({status_pembayaran})&#10;&#10;Pantau status cucian Anda secara real-time di:&#10;{link_tracking}&#10;&#10;Terima kasih atas kepercayaan Anda! ✨"
+                  className="w-full text-xs p-3 font-mono bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  2. Template: Cucian Selesai (Siap Diambil / Diantar)
+                </label>
+                <textarea
+                  rows={4}
+                  defaultValue="Kabar gembira, *{nama_pelanggan}*! 🎉&#10;Cucian Anda dengan nomor resi *#{nomor_resi}* di *{nama_outlet}* telah *SELESAI & WANGI*.&#10;&#10;Silakan diambil di outlet kami atau hubungi kami di {telepon_outlet} untuk pengantaran kurir.&#10;&#10;Terima kasih! 🌸"
+                  className="w-full text-xs p-3 font-mono bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold text-slate-700 block mb-1">
+                  3. Template: Pengingat Pembayaran / Tagihan Belum Lunas
+                </label>
+                <textarea
+                  rows={3}
+                  defaultValue="Halo *{nama_pelanggan}*, tagihan cucian *#{nomor_resi}* sebesar *Rp {total_biaya}* belum terlunasi.&#10;&#10;Pembayaran dapat dilakukan melalui QRIS atau transfer bank. Terima kasih! 🙏"
+                  className="w-full text-xs p-3 font-mono bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-2 focus:ring-emerald-500 outline-none"
+                />
+              </div>
+            </div>
+
+            {/* Live WhatsApp Chat Bubble Preview */}
+            <div className="bg-[#E5DDD5] p-4 sm:p-5 rounded-2xl border border-slate-300 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center gap-2 bg-[#075E54] text-white p-2.5 rounded-xl shadow-xs mb-4">
+                  <div className="w-7 h-7 rounded-full bg-emerald-400 flex items-center justify-center text-slate-900 font-bold text-xs">
+                    LS
+                  </div>
+                  <div>
+                    <div className="text-xs font-bold">{tenantName} (Official WA)</div>
+                    <div className="text-[10px] text-emerald-200">Online • Layanan Otomatis</div>
+                  </div>
+                </div>
+
+                {/* Bubble 1 */}
+                <div className="bg-white p-3.5 rounded-2xl rounded-tl-none shadow-xs text-xs text-slate-800 space-y-1.5 max-w-[90%] border border-slate-100 mb-3">
+                  <p>Halo <strong>Budi Santoso</strong>, terima kasih telah mencuci di <strong>{tenantName}</strong>! 🧺</p>
+                  <p className="font-mono text-[11px] bg-slate-50 p-1.5 rounded border border-slate-100">
+                    Nomor Resi: <strong>#LS-9821</strong><br />
+                    Total Biaya: <strong>Rp 35.000 (LUNAS)</strong>
+                  </p>
+                  <p className="text-[11px]">Pantau status cucian Anda secara real-time di:<br />
+                    <span className="text-blue-600 underline font-mono text-[10px]">https://laundry-suite.vercel.app/track</span>
+                  </p>
+                  <div className="text-[9px] text-slate-400 text-right">10:42 • Sent ✓✓</div>
+                </div>
+
+                {/* Bubble 2 */}
+                <div className="bg-white p-3.5 rounded-2xl rounded-tl-none shadow-xs text-xs text-slate-800 space-y-1.5 max-w-[90%] border border-slate-100">
+                  <p>Kabar gembira, <strong>Budi Santoso</strong>! 🎉</p>
+                  <p>Cucian Anda dengan nomor resi <strong>#LS-9821</strong> telah <strong>SELESAI & WANGI</strong>.</p>
+                  <p className="text-[11px]">Silakan diambil di outlet kami atau hubungi kami di <strong>{outletPhone}</strong>. 🌸</p>
+                  <div className="text-[9px] text-slate-400 text-right">14:15 • Sent ✓✓</div>
+                </div>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-slate-300 text-[10px] text-slate-600 text-center">
+                💬 Pesan di atas adalah simulasi tampilan nyata yang akan diterima di HP pelanggan Anda.
+              </div>
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   );

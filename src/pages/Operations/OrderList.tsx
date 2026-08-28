@@ -4,9 +4,10 @@ import { Order, OrderStatus } from '../../types';
 import { 
   Search, Filter, Printer, MessageSquare, 
   CheckCircle2, Clock, Truck, RefreshCw, Eye,
-  ChevronDown, ArrowUpDown, Tag
+  ChevronDown, ArrowUpDown, Tag, Download
 } from 'lucide-react';
 import { OrderDetailModal } from '../../components/modals/OrderDetailModal';
+import { exportOrdersCsv } from '../../utils/exportCsv';
 
 interface OrderListProps {
   onPrintReceipt: (order: Order) => void;
@@ -62,7 +63,7 @@ export const OrderList: React.FC<OrderListProps> = ({ onPrintReceipt, onPrintTag
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
             <input
@@ -70,7 +71,7 @@ export const OrderList: React.FC<OrderListProps> = ({ onPrintReceipt, onPrintTag
               placeholder="Cari nama, resi, nomor telp..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-xl w-64 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              className="pl-9 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-xl w-56 sm:w-64 focus:outline-none focus:ring-2 focus:ring-brand-500/20"
             />
           </div>
 
@@ -86,6 +87,15 @@ export const OrderList: React.FC<OrderListProps> = ({ onPrintReceipt, onPrintTag
             <option value="ready">Siap Diambil</option>
             <option value="completed">Selesai</option>
           </select>
+
+          <button
+            onClick={() => exportOrdersCsv(filteredOrders, currentTenant?.name || 'Laundry')}
+            title="Export ke File Excel / CSV"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition shadow-xs"
+          >
+            <Download className="w-3.5 h-3.5 text-emerald-700" />
+            <span>Export Excel</span>
+          </button>
         </div>
       </div>
 

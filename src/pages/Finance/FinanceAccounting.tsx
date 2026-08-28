@@ -5,8 +5,9 @@ import {
   Landmark, TrendingUp, TrendingDown, 
   Plus, Search, Calendar, FileText, ArrowUpRight, 
   ArrowDownRight, Wallet, Receipt, Banknote, BookOpen,
-  Scale, Layers, PieChart, CheckCircle2, ShieldCheck
+  Scale, Layers, PieChart, CheckCircle2, ShieldCheck, Download
 } from 'lucide-react';
+import { exportExpensesCsv } from '../../utils/exportCsv';
 
 export const FinanceAccounting: React.FC = () => {
   const { 
@@ -117,6 +118,15 @@ export const FinanceAccounting: React.FC = () => {
               </button>
             ))}
           </div>
+
+          <button
+            onClick={() => exportExpensesCsv(expenses, currentTenant?.name || 'Laundry')}
+            title="Export Rekap Biaya & Pembukuan ke Excel/CSV"
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold transition shadow-xs shrink-0"
+          >
+            <Download className="w-4 h-4 text-emerald-700" />
+            <span>Export CSV</span>
+          </button>
 
           <button
             onClick={() => setShowAddExpenseModal(true)}

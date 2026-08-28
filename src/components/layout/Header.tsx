@@ -37,6 +37,28 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewOrder, onOpenWhatsApp }
   const [showTenantMenu, setShowTenantMenu] = useState(false);
   const [showOutletMenu, setShowOutletMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+
+  React.useEffect(() => {
+    const handleBeforeInstall = (e: any) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (installPrompt) {
+      installPrompt.prompt();
+      const choice = await installPrompt.userChoice;
+      if (choice.outcome === 'accepted') {
+        setInstallPrompt(null);
+      }
+    } else {
+      alert('Untuk menginstall aplikasi di Android/iOS/PC: Klik titik tiga (opsi browser) lalu pilih "Tambahkan ke Layar Utama" / "Install Laundry Suite".');
+    }
+  };
 
   const tenantOutlets = outlets.filter(o => o.tenantId === currentTenant.id);
 
@@ -198,6 +220,16 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewOrder, onOpenWhatsApp }
             <span>+ Buat Order POS</span>
           </button>
         )}
+
+        {/* PWA Install App Button */}
+        <button
+          onClick={handleInstallApp}
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-xl text-xs font-bold transition shadow-2xs"
+          title="Pasang Aplikasi Laundry Suite ke Layar Utama (PWA)"
+        >
+          <Smartphone className="w-3.5 h-3.5 text-blue-600" />
+          <span className="hidden md:inline">Install App</span>
+        </button>
 
         {/* WhatsApp Business API Integration Status & Drawer */}
         <button
