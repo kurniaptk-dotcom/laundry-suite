@@ -26,6 +26,7 @@ const LandingPage = lazy(() => import('./pages/Marketing/LandingPage').then(m =>
 const ThermalReceiptModal = lazy(() => import('./components/modals/ThermalReceiptModal').then(m => ({ default: m.ThermalReceiptModal })));
 const GarmentTagModal = lazy(() => import('./components/modals/GarmentTagModal').then(m => ({ default: m.GarmentTagModal })));
 const WhatsAppSimulatorDrawer = lazy(() => import('./components/modals/WhatsAppSimulatorDrawer').then(m => ({ default: m.WhatsAppSimulatorDrawer })));
+const OnboardingWizard = lazy(() => import('./components/onboarding/OnboardingWizard').then(m => ({ default: m.OnboardingWizard })));
 
 // Ultra Sleek Brand Loading Skeleton Fallback
 const PageLoadingFallback: React.FC = () => (
@@ -113,6 +114,19 @@ const MainApp: React.FC = () => {
 
   // WhatsApp Drawer State
   const [showWhatsAppDrawer, setShowWhatsAppDrawer] = useState<boolean>(false);
+
+  // Onboarding Wizard State for newly registered tenants
+  const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
+
+  // Auto trigger Onboarding Wizard for new tenants
+  React.useEffect(() => {
+    if (isAuthenticated && currentRole === 'tenant_owner' && currentTenant) {
+      const isDone = localStorage.getItem(`ls_onboarding_done_${currentTenant.id}`);
+      if (!isDone && currentTenant.id !== 't-demo') {
+        setShowOnboarding(true);
+      }
+    }
+  }, [isAuthenticated, currentRole, currentTenant?.id]);
 
   // Initial route handling & auto-login for direct URL access (/super-admin, /pos, /orders, etc.)
   React.useEffect(() => {
@@ -259,7 +273,13 @@ const MainApp: React.FC = () => {
   const renderActiveScreen = () => {
     switch (activeTab) {
       case 'dashboard':
-        return <Dashboard onNavigate={setActiveTab} onOpenNewOrder={() => setActiveTab('pos')} />;
+        return (
+          <Dashboard 
+            onNavigate={setActiveTab} 
+            onOpenNewOrder={() => setActiveTab('pos')} 
+            onOpenOnboarding={() => setShowOnboarding(true)}
+          />
+        );
       case 'pos':
         return <POS onOrderCreated={handleOrderCreated} />;
       case 'orders':
@@ -292,7 +312,13 @@ const MainApp: React.FC = () => {
       case 'customer-portal':
         return <CustomerTrackingPWA />;
       default:
-        return <Dashboard onNavigate={setActiveTab} onOpenNewOrder={() => setActiveTab('pos')} />;
+        return (
+          <Dashboard 
+            onNavigate={setActiveTab} 
+            onOpenNewOrder={() => setActiveTab('pos')} 
+            onOpenOnboarding={() => setShowOnboarding(true)}
+          />
+        );
     }
   };
 
@@ -340,8 +366,18 @@ const MainApp: React.FC = () => {
         </div>
       </div>
 
-      {/* Modals with Suspense */}
+      {/* Modals & Setup Wizard with Suspense */}
       <Suspense fallback={null}>
+        {/* Interactive Onboarding Setup Wizard & Welcome Screen */}
+        {showOnboarding && (
+          <OnboardingWizard
+            onFinish={(target) => {
+              setShowOnboarding(false);
+              setActiveTab(target);
+            }}
+          />
+        )}
+
         {/* Thermal Receipt Print Modal */}
         {receiptOrder && (
           <ThermalReceiptModal

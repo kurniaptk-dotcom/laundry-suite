@@ -10,9 +10,10 @@ import {
 interface DashboardProps {
   onNavigate: (tab: string) => void;
   onOpenNewOrder: () => void;
+  onOpenOnboarding?: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder }) => {
+export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder, onOpenOnboarding }) => {
   const { currentTenant, currentOutlet, outlets, orders, customers, deliveryTasks, inventory, employees } = useApp();
 
   const isAllOutlets = currentOutlet.id === 'all';
@@ -131,6 +132,34 @@ export const Dashboard: React.FC<DashboardProps> = ({ onNavigate, onOpenNewOrder
           </div>
         </div>
       </div>
+
+      {/* Fresh Tenant Quick Onboarding Banner */}
+      {orders.length === 0 && onOpenOnboarding && (
+        <div className="p-5 rounded-3xl bg-gradient-to-r from-amber-500/10 via-brand-500/10 to-blue-500/10 border border-amber-300/60 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in slide-in-from-top duration-300">
+          <div className="flex items-start gap-3.5">
+            <div className="w-10 h-10 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md shadow-amber-500/20 font-black">
+              ⚡
+            </div>
+            <div className="space-y-0.5">
+              <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
+                <span>Panduan Langkah Awal: Sesuaikan Tarif Cuci & Info Outlet</span>
+                <span className="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Langkah 1/4</span>
+              </h3>
+              <p className="text-xs text-slate-600">
+                Lengkapi nama cabang, ubah tarif kiloan/satuan default, dan atur aroma parfum sebelum kasir memulai transaksi.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={onOpenOnboarding}
+            className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black text-xs rounded-xl shadow-md shadow-amber-500/20 transition shrink-0 flex items-center justify-center gap-1.5"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Buka Setup Wizard Awal ➔</span>
+          </button>
+        </div>
+      )}
 
       {/* KPI Cards Grid with Localized Indonesian Currency Icon */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
