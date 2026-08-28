@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="lsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E40AF" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#1E3A8A" flood-opacity="0.35" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#lsGrad)" filter="url(#shadow)" />
+  <circle cx="256" cy="256" r="140" fill="#FFFFFF" fill-opacity="0.15" />
+  <circle cx="256" cy="256" r="110" fill="#FFFFFF" fill-opacity="0.95" />
+  <circle cx="256" cy="256" r="85" fill="none" stroke="#2563EB" stroke-width="14" stroke-dasharray="24 12" />
+  <circle cx="256" cy="256" r="50" fill="url(#lsGrad)" />
+  <path d="M240 230 L275 256 L240 282 Z" fill="#FFFFFF" />
+  <text x="256" y="440" text-anchor="middle" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="42" letter-spacing="2">LAUNDRY SUITE</text>
+</svg>

@@ -1,26 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
-import { Dashboard } from './pages/Dashboard';
-import { POS } from './pages/Operations/POS';
-import { OrderList } from './pages/Operations/OrderList';
-import { ProductionKanban } from './pages/Operations/ProductionKanban';
-import { DeliveryManagement } from './pages/Delivery/DeliveryManagement';
-import { CustomerCRM } from './pages/Customers/CustomerCRM';
-import { InventoryManagement } from './pages/Inventory/InventoryManagement';
-import { PayrollHR } from './pages/People/PayrollHR';
-import { FinanceAccounting } from './pages/Finance/FinanceAccounting';
-import { ReportsAnalytics } from './pages/Reports/ReportsAnalytics';
-import { SuperAdminPortal, AdminTabType } from './pages/SuperAdmin/SuperAdminPortal';
-import { CustomerTrackingPWA } from './pages/CustomerPortal/CustomerTrackingPWA';
-import { OutletSettings } from './pages/Settings/OutletSettings';
-import { LoginPortal } from './pages/Auth/LoginPortal';
-import { ThermalReceiptModal } from './components/modals/ThermalReceiptModal';
-import { GarmentTagModal } from './components/modals/GarmentTagModal';
-import { WhatsAppSimulatorDrawer } from './components/modals/WhatsAppSimulatorDrawer';
-import { LandingPage } from './pages/Marketing/LandingPage';
+import { AdminTabType } from './pages/SuperAdmin/SuperAdminPortal';
 import { Order } from './types';
+
+// Lazy Loaded Pages (Code Splitting for Optimal Performance)
+const Dashboard = lazy(() => import('./pages/Dashboard').then(m => ({ default: m.Dashboard })));
+const POS = lazy(() => import('./pages/Operations/POS').then(m => ({ default: m.POS })));
+const OrderList = lazy(() => import('./pages/Operations/OrderList').then(m => ({ default: m.OrderList })));
+const ProductionKanban = lazy(() => import('./pages/Operations/ProductionKanban').then(m => ({ default: m.ProductionKanban })));
+const DeliveryManagement = lazy(() => import('./pages/Delivery/DeliveryManagement').then(m => ({ default: m.DeliveryManagement })));
+const CustomerCRM = lazy(() => import('./pages/Customers/CustomerCRM').then(m => ({ default: m.CustomerCRM })));
+const InventoryManagement = lazy(() => import('./pages/Inventory/InventoryManagement').then(m => ({ default: m.InventoryManagement })));
+const PayrollHR = lazy(() => import('./pages/People/PayrollHR').then(m => ({ default: m.PayrollHR })));
+const FinanceAccounting = lazy(() => import('./pages/Finance/FinanceAccounting').then(m => ({ default: m.FinanceAccounting })));
+const ReportsAnalytics = lazy(() => import('./pages/Reports/ReportsAnalytics').then(m => ({ default: m.ReportsAnalytics })));
+const SuperAdminPortal = lazy(() => import('./pages/SuperAdmin/SuperAdminPortal').then(m => ({ default: m.SuperAdminPortal })));
+const CustomerTrackingPWA = lazy(() => import('./pages/CustomerPortal/CustomerTrackingPWA').then(m => ({ default: m.CustomerTrackingPWA })));
+const OutletSettings = lazy(() => import('./pages/Settings/OutletSettings').then(m => ({ default: m.OutletSettings })));
+const LoginPortal = lazy(() => import('./pages/Auth/LoginPortal').then(m => ({ default: m.LoginPortal })));
+const LandingPage = lazy(() => import('./pages/Marketing/LandingPage').then(m => ({ default: m.LandingPage })));
+
+// Lazy Loaded Modals & Drawers
+const ThermalReceiptModal = lazy(() => import('./components/modals/ThermalReceiptModal').then(m => ({ default: m.ThermalReceiptModal })));
+const GarmentTagModal = lazy(() => import('./components/modals/GarmentTagModal').then(m => ({ default: m.GarmentTagModal })));
+const WhatsAppSimulatorDrawer = lazy(() => import('./components/modals/WhatsAppSimulatorDrawer').then(m => ({ default: m.WhatsAppSimulatorDrawer })));
+
+// Ultra Sleek Brand Loading Skeleton Fallback
+const PageLoadingFallback: React.FC = () => (
+  <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 space-y-4 animate-in fade-in duration-200">
+    <div className="relative flex items-center justify-center">
+      <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-brand-700 to-brand-500 flex items-center justify-center text-white shadow-xl shadow-brand-500/25 font-black text-base tracking-wider animate-bounce">
+        LS
+      </div>
+      <div className="absolute -inset-2 rounded-3xl border-2 border-brand-500/20 border-t-brand-600 animate-spin pointer-events-none" />
+    </div>
+    <div className="text-center space-y-1">
+      <p className="text-xs font-black text-slate-800 tracking-wide uppercase">Memuat Modul...</p>
+      <p className="text-[10px] text-slate-400">Sinkronisasi data Laundry Suite</p>
+    </div>
+  </div>
+);
 
 const VALID_TABS = [
   'dashboard', 'pos', 'orders', 'production', 'delivery',
@@ -193,32 +214,40 @@ const MainApp: React.FC = () => {
   // If user is not logged in, show Landing Page, Login Portal, or Customer Tracker
   if (!isAuthenticated) {
     if (unauthView === 'track') {
-      return <CustomerTrackingPWA />;
+      return (
+        <Suspense fallback={<PageLoadingFallback />}>
+          <CustomerTrackingPWA />
+        </Suspense>
+      );
     }
     if (unauthView === 'landing') {
       return (
-        <LandingPage
-          onOpenLogin={(view, plan) => {
-            const nextView = view || 'login';
-            setUnauthView(nextView);
-            window.history.pushState(null, '', `/${nextView}`);
-            if (plan) setSelectedPlan(plan);
-          }}
-          onExploreDemo={(role) => {
-            login(role || 'tenant_owner');
-          }}
-        />
+        <Suspense fallback={<PageLoadingFallback />}>
+          <LandingPage
+            onOpenLogin={(view, plan) => {
+              const nextView = view || 'login';
+              setUnauthView(nextView);
+              window.history.pushState(null, '', `/${nextView}`);
+              if (plan) setSelectedPlan(plan);
+            }}
+            onExploreDemo={(role) => {
+              login(role || 'tenant_owner');
+            }}
+          />
+        </Suspense>
       );
     }
     return (
-      <LoginPortal
-        initialView={unauthView === 'register' ? 'register' : 'login'}
-        defaultPlan={selectedPlan}
-        onBackToLanding={() => {
-          setUnauthView('landing');
-          window.history.pushState(null, '', '/');
-        }}
-      />
+      <Suspense fallback={<PageLoadingFallback />}>
+        <LoginPortal
+          initialView={unauthView === 'register' ? 'register' : 'login'}
+          defaultPlan={selectedPlan}
+          onBackToLanding={() => {
+            setUnauthView('landing');
+            window.history.pushState(null, '', '/');
+          }}
+        />
+      </Suspense>
     );
   }
 
@@ -304,36 +333,41 @@ const MainApp: React.FC = () => {
           />
 
           <main className="flex-1 overflow-y-auto bg-[#F8FAFC]">
-            {renderActiveScreen()}
+            <Suspense fallback={<PageLoadingFallback />}>
+              {renderActiveScreen()}
+            </Suspense>
           </main>
         </div>
       </div>
 
-      {/* Thermal Receipt Print Modal */}
-      {receiptOrder && (
-        <ThermalReceiptModal
-          order={receiptOrder}
-          outlet={currentOutlet}
-          tenant={currentTenant}
-          onClose={() => setReceiptOrder(null)}
-        />
-      )}
+      {/* Modals with Suspense */}
+      <Suspense fallback={null}>
+        {/* Thermal Receipt Print Modal */}
+        {receiptOrder && (
+          <ThermalReceiptModal
+            order={receiptOrder}
+            outlet={currentOutlet}
+            tenant={currentTenant}
+            onClose={() => setReceiptOrder(null)}
+          />
+        )}
 
-      {/* Garment Tag Label Sticker (50x30mm) Print Modal */}
-      {tagOrder && (
-        <GarmentTagModal
-          order={tagOrder}
-          outlet={currentOutlet}
-          tenant={currentTenant}
-          onClose={() => setTagOrder(null)}
-        />
-      )}
+        {/* Garment Tag Label Sticker (50x30mm) Print Modal */}
+        {tagOrder && (
+          <GarmentTagModal
+            order={tagOrder}
+            outlet={currentOutlet}
+            tenant={currentTenant}
+            onClose={() => setTagOrder(null)}
+          />
+        )}
 
-      {/* WhatsApp Automation Simulator Drawer */}
-      <WhatsAppSimulatorDrawer
-        isOpen={showWhatsAppDrawer}
-        onClose={() => setShowWhatsAppDrawer(false)}
-      />
+        {/* WhatsApp Automation Simulator Drawer */}
+        <WhatsAppSimulatorDrawer
+          isOpen={showWhatsAppDrawer}
+          onClose={() => setShowWhatsAppDrawer(false)}
+        />
+      </Suspense>
     </div>
   );
 };

@@ -1,0 +1,25 @@
+{
+  "name": "Laundry Suite — Operating Suite for Laundry",
+  "short_name": "LaundrySuite",
+  "description": "All-in-one business operating suite untuk bisnis laundry di Indonesia: POS, Produksi, Kurir, CRM & Loyalty, Inventory, HR/Payroll, dan Keuangan.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8FAFC",
+  "theme_color": "#1D4ED8",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "finance", "productivity", "utilities"]
+}

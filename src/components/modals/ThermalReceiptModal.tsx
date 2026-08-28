@@ -1,6 +1,7 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { Order, Outlet, Tenant } from '../../types';
-import { Printer, X, Check, QrCode, Sparkles } from 'lucide-react';
+import { Printer, X, Check, QrCode, Sparkles, Bluetooth } from 'lucide-react';
+import { BluetoothPrinterService } from '../../utils/escposPrinter';
 
 interface ThermalReceiptModalProps {
   order: Order;
@@ -16,9 +17,37 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({
   onClose,
 }) => {
   const receiptRef = useRef<HTMLDivElement>(null);
+  const [isBluetoothPrinting, setIsBluetoothPrinting] = useState(false);
 
   const handlePrint = () => {
     window.print();
+  };
+
+  const handleBluetoothPrint = async () => {
+    setIsBluetoothPrinting(true);
+    try {
+      await BluetoothPrinterService.printReceipt({
+        storeName: tenant.name,
+        storeAddress: outlet.address,
+        storePhone: outlet.phone,
+        invoiceNumber: order.invoiceNumber,
+        date: new Date(order.createdAt).toLocaleString('id-ID'),
+        customerName: order.customerName,
+        customerPhone: order.customerPhone,
+        items: order.items.map(item => ({
+          name: item.serviceName,
+          qty: item.qty,
+          price: item.unitPrice,
+          subtotal: item.subtotal,
+          unit: item.unit,
+        })),
+        totalAmount: order.totalAmount,
+        paymentStatus: order.paymentStatus,
+        footerMessage: 'Terima kasih atas kepercayaan Anda!\nBarang yang tidak diambil > 30 hari di luar tanggung jawab.',
+      });
+    } finally {
+      setIsBluetoothPrinting(false);
+    }
   };
 
   return (
@@ -160,23 +189,31 @@ export const ThermalReceiptModal: React.FC<ThermalReceiptModalProps> = ({
         </div>
 
         {/* Modal Actions */}
-        <div className="p-4 bg-white border-t border-slate-100 flex items-center justify-between">
+        <div className="p-4 bg-white border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="text-xs text-slate-500">
             Format: Standard Thermal Paper (80mm / 58mm)
           </span>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition"
+              className="px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 rounded-xl transition"
             >
               Tutup
             </button>
             <button
-              onClick={handlePrint}
-              className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition"
+              onClick={handleBluetoothPrint}
+              disabled={isBluetoothPrinting}
+              className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-blue-700 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition shadow-xs"
             >
-              <Printer className="w-4 h-4" />
-              <span>Cetak Sekarang</span>
+              <Bluetooth className="w-3.5 h-3.5" />
+              <span>{isBluetoothPrinting ? 'Mencetak...' : 'Direct Bluetooth'}</span>
+            </button>
+            <button
+              onClick={handlePrint}
+              className="flex items-center gap-1.5 px-5 py-2 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/20 transition"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Dialog Print</span>
             </button>
           </div>
         </div>
