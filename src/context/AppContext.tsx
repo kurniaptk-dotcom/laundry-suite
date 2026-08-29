@@ -826,10 +826,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return DatabaseEngine.getStorageUsage();
   };
 
-  // Initial Supabase cloud seeding if tables are freshly created
+  // Initial Supabase cloud seeding & Realtime WebSockets live sync
   useEffect(() => {
     SupabaseService.seedInitialData(tenants, outlets, services, customers, orders).catch(() => {});
-  }, []);
+
+    // Fetch cloud orders on mount
+    SupabaseService.fetchCloudOrders(currentTenant?.id).then(cloudOrders => {
+      if (cloudOrders && cloudOrders.length > 0) {
+        setOrders(prev => {
+          const merged = [...prev];
+          cloudOrders.forEach(co => {
+            if (!merged.some(m => m.id === co.id)) {
+              merged.unshift(co);
+            }
+          });
+          return merged;
+        });
+      }
+    }).catch(() => {});
+
+    // Realtime channel listener across multiple cashier tablets/phones
+    const channel = SupabaseService.subscribeToOrders((payload) => {
+      if (payload?.new && payload.new.id) {
+        SupabaseService.fetchCloudOrders(currentTenant?.id).then(fresh => {
+          if (fresh && fresh.length > 0) {
+            setOrders(fresh);
+          }
+        }).catch(() => {});
+      }
+    });
+
+    return () => {
+      if (channel) {
+        channel.unsubscribe();
+      }
+    };
+  }, [currentTenant?.id]);
 
   useEffect(() => {
     DatabaseEngine.saveSnapshot({

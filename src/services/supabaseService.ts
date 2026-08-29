@@ -128,6 +128,80 @@ export class SupabaseService {
   }
 
   /**
+   * Fetch all orders from Supabase Cloud
+   */
+  static async fetchCloudOrders(tenantId?: string): Promise<Order[]> {
+    if (!isSupabaseConfigured() || !supabase) return [];
+    try {
+      let query = supabase.from('orders').select('*').order('created_at', { ascending: false });
+      if (tenantId && tenantId !== 'all') {
+        query = query.eq('tenant_id', tenantId);
+      }
+      const { data, error } = await query;
+      if (error || !data) return [];
+
+      return data.map((d: any) => ({
+        id: d.id,
+        invoiceNumber: d.id.replace('ord-', 'INV-'),
+        trackingCode: d.tracking_code || 'LS-9821',
+        tenantId: d.tenant_id,
+        outletId: d.outlet_id,
+        customerId: d.customer_id,
+        customerName: d.customer_name,
+        customerPhone: d.customer_phone,
+        customerAddress: d.delivery_address || d.pickup_address,
+        orderType: d.order_type || 'walk_in',
+        status: d.order_status || 'received',
+        paymentStatus: d.payment_status || 'paid',
+        paymentMethod: d.payment_method || 'cash',
+        items: Array.isArray(d.items) ? d.items : [],
+        bags: Array.isArray(d.bags) ? d.bags : [],
+        complaints: Array.isArray(d.complaints) ? d.complaints : [],
+        totalWeightKg: d.total_weight_kg || undefined,
+        totalPcs: d.total_pcs || undefined,
+        subtotal: d.subtotal || 0,
+        discount: d.discount_amount || 0,
+        deliveryFee: d.delivery_fee || 0,
+        totalAmount: d.total_amount || 0,
+        paidAmount: d.amount_paid || 0,
+        perfumeChoice: d.perfume_choice || 'Sakura Blossom',
+        isExpress: d.is_express || false,
+        notes: d.notes || '',
+        estimatedReady: d.estimated_completion || '',
+        createdAt: d.created_at || new Date().toISOString(),
+        tags: d.is_express ? ['Express'] : ['Reguler'],
+      }));
+    } catch {
+      return [];
+    }
+  }
+
+  /**
+   * Realtime WebSockets Subscription for live multi-device syncing
+   */
+  static subscribeToOrders(callback: (payload: any) => void) {
+    if (!isSupabaseConfigured() || !supabase) return null;
+    try {
+      const channel = supabase
+        .channel('public:orders:realtime')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'orders' },
+          (payload) => {
+            console.log('[Supabase Realtime] Order event received:', payload);
+            callback(payload);
+          }
+        )
+        .subscribe();
+
+      return channel;
+    } catch (err) {
+      console.warn('[Supabase Realtime] Failed to subscribe:', err);
+      return null;
+    }
+  }
+
+  /**
    * Sync initial business setup into empty Supabase tables
    */
   static async seedInitialData(tenants: Tenant[], outlets: any[], services: any[], customers: Customer[], orders: Order[]): Promise<boolean> {
