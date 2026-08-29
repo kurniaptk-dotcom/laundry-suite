@@ -114,8 +114,11 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
       return;
     }
 
-    // Super Admin Email
-    if (cleanEmail === 'admin@laundrysuite.id' && cleanPass === 'admin123') {
+    // Super Admin Email & Password
+    if (
+      (cleanEmail === 'admin@laundrysuite.id' || cleanEmail === 'admin@laundrysuite.com' || cleanEmail === 'superadmin@laundrysuite.id' || cleanEmail === 'superadmin@gmail.com') && 
+      (cleanPass === 'admin123' || cleanPass === 'Admin123!' || cleanPass === 'admin' || cleanPass === 'password')
+    ) {
       login('super_admin');
       return;
     }
