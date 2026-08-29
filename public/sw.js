@@ -1,4 +1,4 @@
-const CACHE_NAME = 'laundry-suite-v1';
+const CACHE_NAME = 'laundry-suite-v2.1';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -28,27 +28,36 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Navigation requests: Network first, fallback to cached index.html
-  if (event.request.mode === 'navigate') {
+  // Always use Network-First for HTML navigation and JS/CSS assets to prevent stale code
+  if (event.request.mode === 'navigate' || event.request.destination === 'script' || event.request.destination === 'style') {
     event.respondWith(
-      fetch(event.request).catch(() => {
-        return caches.match('/index.html');
-      })
+      fetch(event.request)
+        .then((networkRes) => {
+          if (networkRes && networkRes.status === 200 && event.request.method === 'GET') {
+            const clone = networkRes.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return networkRes;
+        })
+        .catch(() => caches.match(event.request).then((res) => res || caches.match('/index.html')))
     );
     return;
   }
 
-  // Static assets: Cache first, fallback to network
+  // Other assets (images, icons): Stale-while-revalidate
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request).then((fetchRes) => {
-        // Cache new successful GET requests
-        if (event.request.method === 'GET' && fetchRes.status === 200) {
-          const clone = fetchRes.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
-        }
-        return fetchRes;
-      }).catch(() => response);
+    caches.match(event.request).then((cachedResponse) => {
+      const fetchPromise = fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200 && event.request.method === 'GET') {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => cachedResponse);
+
+      return cachedResponse || fetchPromise;
     })
   );
 });

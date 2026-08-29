@@ -345,9 +345,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Auth Methods
   const login = (role: UserRole, tenantId?: string, outletId?: string) => {
     setCurrentRole(role);
+    localStorage.setItem('ls_role', role);
+    localStorage.setItem('ls_auth', 'true');
+
     if (tenantId) {
       const matchT = tenants.find(t => t.id === tenantId) || (currentTenant?.id === tenantId ? currentTenant : undefined);
-      if (matchT) setCurrentTenant(matchT);
+      if (matchT) {
+        setCurrentTenant(matchT);
+        // Automatically sync the active outlet to match this tenant
+        const matchingOutlets = outlets.filter(o => o.tenantId === matchT.id);
+        if (matchingOutlets.length > 0) {
+          setCurrentOutlet(matchingOutlets[0]);
+        }
+      }
     }
     if (outletId) {
       const matchO = outlets.find(o => o.id === outletId) || (currentOutlet?.id === outletId ? currentOutlet : undefined);
@@ -358,6 +368,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const logout = () => {
     setIsAuthenticated(false);
+    localStorage.setItem('ls_auth', 'false');
   };
 
   // Actions
