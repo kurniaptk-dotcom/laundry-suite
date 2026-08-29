@@ -128,18 +128,28 @@ const MainApp: React.FC = () => {
     }
   }, [isAuthenticated, currentRole, currentTenant?.id]);
 
-  // Initial route handling & auto-login for direct URL access (/super-admin, /pos, /orders, etc.)
+  // Initial route handling
   React.useEffect(() => {
     const { tab, subTab } = getPathInfo();
     if (tab === 'super-admin') {
-      login('super_admin');
-      setActiveTab('super-admin');
-      setAdminSubTab(subTab);
-    } else if (VALID_TABS.includes(tab) && tab !== 'customer-portal') {
-      if (!isAuthenticated) {
-        login('tenant_owner');
+      if (isAuthenticated && currentRole === 'super_admin') {
+        setActiveTab('super-admin');
+        setAdminSubTab(subTab);
+      } else {
+        setUnauthView('login');
       }
-      setActiveTab(tab);
+    } else if (VALID_TABS.includes(tab) && tab !== 'customer-portal') {
+      if (isAuthenticated) {
+        setActiveTab(tab);
+      } else {
+        setUnauthView('landing');
+      }
+    } else if (tab === 'login') {
+      setUnauthView('login');
+    } else if (tab === 'register') {
+      setUnauthView('register');
+    } else if (tab === 'customer-portal' || tab === 'track' || tab === 'lacak') {
+      setUnauthView('track');
     }
   }, []);
 
