@@ -25,6 +25,7 @@ export interface Tenant {
   ownerPhone: string;
   password?: string;
   logoUrl?: string;
+  trialEndsAt?: string;
   createdAt: string;
 }
 

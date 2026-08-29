@@ -4,7 +4,7 @@ import { UserRole } from '../../types';
 import { 
   Building2, Store, Users, Bell, Search, Plus, 
   MessageSquare, Sparkles, ChevronDown, Check, ShieldCheck,
-  User, Smartphone, ExternalLink, Activity, LogOut
+  User, Smartphone, ExternalLink, Activity, LogOut, Clock
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -62,6 +62,15 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewOrder, onOpenWhatsApp }
 
   const tenantOutlets = outlets.filter(o => o.tenantId === currentTenant.id);
 
+  const trialDaysLeft = React.useMemo(() => {
+    if (currentTenant.plan !== 'trial' && currentTenant.status !== 'trial') return null;
+    if (currentTenant.trialEndsAt) {
+      const diff = new Date(currentTenant.trialEndsAt).getTime() - Date.now();
+      return Math.max(1, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+    }
+    return 14;
+  }, [currentTenant]);
+
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-6 bg-white border-b border-slate-200/80 shadow-subtle">
       {/* Left side: Context selectors */}
@@ -74,6 +83,14 @@ export const Header: React.FC<HeaderProps> = ({ onOpenNewOrder, onOpenWhatsApp }
             <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-brand-100 text-brand-700 font-extrabold uppercase tracking-wider">
               {currentTenant.plan}
             </span>
+          </div>
+        )}
+
+        {/* Trial Countdown Pill */}
+        {trialDaysLeft !== null && currentRole !== 'super_admin' && (
+          <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-amber-500/15 via-orange-500/15 to-amber-500/10 border border-amber-300 rounded-xl text-xs font-black text-amber-950 shadow-2xs">
+            <Clock className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
+            <span>⏳ Trial: {trialDaysLeft} Hari Lagi</span>
           </div>
         )}
 

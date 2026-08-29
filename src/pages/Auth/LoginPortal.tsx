@@ -21,8 +21,8 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
 }) => {
   const { login, createTenant, tenants, customers, employees } = useApp();
 
-  // Screen View: 'welcome' | 'login' | 'register'
-  const [viewState, setViewState] = useState<'welcome' | 'login' | 'register'>(initialView);
+  // Screen View: 'welcome' | 'login' | 'register' | 'verify_otp' | 'trial_welcome'
+  const [viewState, setViewState] = useState<'welcome' | 'login' | 'register' | 'verify_otp' | 'trial_welcome'>(initialView);
   
   // Login Tab: 'wa' | 'email'
   const [loginMethod, setLoginMethod] = useState<'wa' | 'email'>('email');
@@ -44,11 +44,36 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
   const [regPlan, setRegPlan] = useState<PlanType>(defaultPlan);
   const [showRegPassword, setShowRegPassword] = useState(false);
 
+  // Verification & Onboarding States
+  const [pendingRegistration, setPendingRegistration] = useState<{
+    name: string;
+    laundryName: string;
+    phone: string;
+    email: string;
+    password: string;
+    plan: PlanType;
+  } | null>(null);
+  const [otpInput, setOtpInput] = useState('');
+  const [otpError, setOtpError] = useState<string | null>(null);
+  const [otpTimer, setOtpTimer] = useState(60);
+  const [createdTrialTenant, setCreatedTrialTenant] = useState<any>(null);
+
   // Payment Gateway & Checkout States
   const [paymentMethod, setPaymentMethod] = useState<'qris' | 'va_bca' | 'va_mandiri' | 'va_bni' | 'va_bri' | 'credit_card'>('qris');
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [pendingTenant, setPendingTenant] = useState<any>(null);
   const [copiedVa, setCopiedVa] = useState(false);
+
+  // Countdown timer for OTP resend
+  React.useEffect(() => {
+    let interval: any = null;
+    if (viewState === 'verify_otp' && otpTimer > 0) {
+      interval = setInterval(() => {
+        setOtpTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [viewState, otpTimer]);
 
   // Handle Strict Authentication
   const handlePerformLogin = (e: React.FormEvent) => {
@@ -182,7 +207,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
       return;
     }
 
-    // Check duplicate
+    // Check duplicate in registered tenants
     const existing = tenants.find(t => 
       t.ownerEmail.trim().toLowerCase() === email || 
       t.ownerPhone.trim().replace(/^(\+62|62)/, '0') === phone
@@ -192,26 +217,69 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
       return;
     }
 
+    // Save pending registration without creating tenant in database yet
+    setPendingRegistration({
+      name,
+      laundryName,
+      phone,
+      email,
+      password,
+      plan: regPlan,
+    });
+    setOtpInput('849201'); // Pre-fill with sample verification code for seamless instant testing
+    setOtpTimer(60);
+    setOtpError(null);
+    setViewState('verify_otp');
+  };
+
+  // Handle OTP Confirmation
+  const handleVerifyOtp = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pendingRegistration) return;
+
+    if (otpInput.trim().length < 4) {
+      setOtpError('Harap masukkan 6-digit kode verifikasi yang valid.');
+      return;
+    }
+
+    const { name, laundryName, phone, email, password, plan } = pendingRegistration;
     const newTenantCode = (laundryName.replace(/[^A-Za-z0-9]/g, '').slice(0, 3) || 'LND').toUpperCase();
+
     const newTenant = createTenant({
       name: laundryName,
       code: newTenantCode,
-      plan: regPlan,
-      status: regPlan === 'trial' ? 'trial' : 'active',
-      mrr: regPlan === 'trial' ? 0 : regPlan === 'starter' ? 199000 : regPlan === 'growth' ? 499000 : 1299000,
+      plan: plan,
+      status: plan === 'trial' ? 'trial' : 'active',
+      mrr: plan === 'trial' ? 0 : plan === 'starter' ? 199000 : plan === 'growth' ? 499000 : 1299000,
       ownerName: name,
       ownerEmail: email,
       ownerPhone: phone,
       password: password,
     });
 
-    if (regPlan === 'trial') {
-      // Free trial instant login
-      login('tenant_owner', newTenant.id);
+    if (plan === 'trial') {
+      // Transition to dedicated Trial Onboarding Welcome Screen
+      setCreatedTrialTenant(newTenant);
+      setViewState('trial_welcome');
     } else {
       // Open Payment Checkout Simulator Modal for paid plans
       setPendingTenant(newTenant);
       setShowCheckoutModal(true);
+    }
+  };
+
+  const handleCancelRegistration = () => {
+    setPendingRegistration(null);
+    setOtpInput('');
+    setOtpError(null);
+    setViewState('register');
+  };
+
+  const handleLaunchTrialDashboard = () => {
+    if (createdTrialTenant) {
+      login('tenant_owner', createdTrialTenant.id);
+    } else if (pendingRegistration) {
+      login('tenant_owner');
     }
   };
 
@@ -852,6 +920,156 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
                     Masuk ke akun
                   </button>
                 </div>
+              </div>
+            )}
+
+            {/* ----------------- STATE: EMAIL & WHATSAPP OTP VERIFICATION ----------------- */}
+            {viewState === 'verify_otp' && pendingRegistration && (
+              <div className="space-y-4 animate-in fade-in duration-200">
+                <div className="text-center space-y-1">
+                  <div className="w-12 h-12 rounded-2xl bg-brand-50 border border-brand-200 text-brand-600 flex items-center justify-center mx-auto shadow-xs">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <h2 className="text-lg font-black text-slate-900 leading-tight pt-1">
+                    Verifikasi Akun Baru
+                  </h2>
+                  <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                    Kode OTP verifikasi telah dikirimkan ke email dan nomor WhatsApp Anda:
+                  </p>
+                  <div className="p-2 bg-slate-50 rounded-xl border border-slate-200 text-xs font-mono font-bold text-slate-800 inline-block">
+                    📧 {pendingRegistration.email} • 📱 {pendingRegistration.phone}
+                  </div>
+                </div>
+
+                {otpError && (
+                  <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs font-semibold flex items-center gap-2 animate-shake">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{otpError}</span>
+                  </div>
+                )}
+
+                <form onSubmit={handleVerifyOtp} className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 text-center mb-1.5">
+                      Masukkan 6-Digit Kode Verifikasi (OTP):
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={otpInput}
+                      onChange={(e) => setOtpInput(e.target.value.replace(/[^0-9]/g, ''))}
+                      placeholder="849201"
+                      required
+                      autoFocus
+                      className="w-full text-center tracking-[0.5em] text-2xl font-black font-mono py-2.5 bg-slate-50 border-2 border-brand-500 rounded-2xl text-slate-900 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/20"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between text-xs text-slate-500 px-1">
+                    <span>
+                      {otpTimer > 0 ? (
+                        <span className="flex items-center gap-1 text-slate-400">
+                          <Clock className="w-3 h-3" />
+                          <span>Kirim ulang ({otpTimer}s)</span>
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => { setOtpTimer(60); alert('Kode OTP baru telah dikirimkan ulang!'); }}
+                          className="font-bold text-brand-600 hover:underline"
+                        >
+                          Kirim Ulang Kode OTP
+                        </button>
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setOtpInput('849201')}
+                      className="text-[11px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md hover:bg-brand-100 transition"
+                    >
+                      Isi Otomatis: 849201
+                    </button>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-black shadow-lg shadow-brand-600/25 transition active:scale-[0.99] flex items-center justify-center gap-1.5"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>Verifikasi & Aktifkan Akun ➔</span>
+                  </button>
+                </form>
+
+                <div className="text-center pt-2">
+                  <button
+                    type="button"
+                    onClick={handleCancelRegistration}
+                    className="text-xs font-bold text-slate-400 hover:text-slate-700 transition"
+                  >
+                    ← Ubah Data Pendaftaran / Batal
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* ----------------- STATE: TRIAL ONBOARDING & COUNTDOWN WELCOME ----------------- */}
+            {viewState === 'trial_welcome' && (
+              <div className="space-y-4 text-center animate-in zoom-in-95 duration-200">
+                <div className="w-14 h-14 rounded-3xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/25 animate-bounce-gentle">
+                  <Sparkles className="w-7 h-7" />
+                </div>
+
+                <div>
+                  <span className="px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[10px] font-extrabold uppercase tracking-wider">
+                    🎉 Akun Berhasil Diaktivasi
+                  </span>
+                  <h2 className="text-xl font-black text-slate-900 leading-tight mt-2">
+                    Selamat Datang di Laundry Suite!
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+                    Paket <strong>14 Hari Free Trial</strong> Anda telah aktif dengan akses seluruh fitur bisnis tanpa biaya.
+                  </p>
+                </div>
+
+                {/* Countdown Visual Banner */}
+                <div className="p-4 bg-gradient-to-br from-amber-50 via-orange-50 to-slate-50 rounded-2xl border border-amber-200/80 text-left space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 font-extrabold text-xs text-amber-900">
+                      <Clock className="w-4 h-4 text-amber-600 animate-pulse" />
+                      <span>Countdown Masa Trial:</span>
+                    </div>
+                    <span className="px-2 py-0.5 bg-amber-500 text-white font-black text-[10px] rounded-lg shadow-xs">
+                      14 HARI TERSISA
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-slate-700 text-[11px] font-semibold pt-1">
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>Kasir POS & Timbangan</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>Multi-Outlet & Cabang</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>Notifikasi WhatsApp Otomatis</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                      <span>Laporan Laba Rugi & ERP</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleLaunchTrialDashboard}
+                  className="w-full py-3.5 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-700 hover:to-teal-600 text-white rounded-xl text-xs font-black shadow-xl shadow-emerald-600/30 transition active:scale-95 flex items-center justify-center gap-2"
+                >
+                  <span>🚀 Masuk ke Dashboard & Mulai Atur Outlet ➔</span>
+                </button>
               </div>
             )}
 

@@ -694,11 +694,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const createTenant = (tenantData: Omit<Tenant, 'id' | 'createdAt' | 'outletsCount'>): Tenant => {
     const newTenantId = `t-${Date.now()}`;
+    const now = new Date();
+    const trialEnd = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
     const newTenant: Tenant = {
       ...tenantData,
       id: newTenantId,
       outletsCount: 1,
-      createdAt: new Date().toISOString().slice(0, 10),
+      trialEndsAt: tenantData.trialEndsAt || (tenantData.plan === 'trial' || tenantData.status === 'trial' ? trialEnd.toISOString() : undefined),
+      createdAt: now.toISOString().slice(0, 10),
     };
 
     const newOutlet: Outlet = {
