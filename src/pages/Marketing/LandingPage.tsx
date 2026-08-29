@@ -166,18 +166,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onOpenLogin, onExplore
 
             <button
               onClick={() => onExploreDemo('tenant_owner')}
-              className="w-full sm:w-auto px-6 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-2xl text-sm font-bold border border-slate-200 shadow-sm transition flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-7 py-4 bg-white hover:bg-slate-50 text-slate-700 rounded-2xl text-sm font-bold border border-slate-200 shadow-sm transition flex items-center justify-center gap-2"
             >
               <Play className="w-4 h-4 text-blue-500 fill-blue-500" />
-              <span>Demo Owner POS</span>
-            </button>
-
-            <button
-              onClick={() => onExploreDemo('super_admin')}
-              className="w-full sm:w-auto px-6 py-4 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded-2xl text-sm font-bold border border-purple-200 shadow-sm transition flex items-center justify-center gap-2"
-            >
-              <ShieldCheck className="w-4 h-4 text-purple-600" />
-              <span>👑 Demo Super Admin SaaS</span>
+              <span>Coba Demo Kasir POS</span>
             </button>
           </div>
 
