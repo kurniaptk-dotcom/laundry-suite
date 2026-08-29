@@ -7,9 +7,10 @@ import {
   Wallet, Banknote, Printer, Clock, Zap, 
   CheckCircle2, AlertCircle, ArrowRight, Edit3,
   Settings, Layers, Sliders, Check, X, ShieldAlert,
-  Coins, UserCheck, Calendar
+  Coins, UserCheck, Calendar, Camera
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { BarcodeScannerModal } from '../../components/modals/BarcodeScannerModal';
 
 interface POSProps {
   onOrderCreated: (order: Order) => void;
@@ -58,6 +59,7 @@ export const POS: React.FC<POSProps> = ({ onOrderCreated }) => {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
   const [cashGiven, setCashGiven] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showCameraScanner, setShowCameraScanner] = useState(false);
 
   // =================== CRUD SERVICE MODAL STATE ===================
   const [showServiceModal, setShowServiceModal] = useState(false);
@@ -384,14 +386,26 @@ export const POS: React.FC<POSProps> = ({ onOrderCreated }) => {
                   <User className="w-4 h-4 text-brand-600" />
                   Data Pelanggan
                 </span>
-                <button
-                  type="button"
-                  onClick={() => setShowAddCustomerModal(true)}
-                  className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>+ Pelanggan Baru</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowCameraScanner(true)}
+                    className="text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
+                    title="Scan Barcode / QR Pelanggan"
+                  >
+                    <Camera className="w-3.5 h-3.5 text-brand-600" />
+                    <span>Scan QR</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setShowAddCustomerModal(true)}
+                    className="text-xs font-bold text-brand-600 hover:text-brand-700 flex items-center gap-1"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>+ Pelanggan Baru</span>
+                  </button>
+                </div>
               </div>
 
               <div className="flex gap-2">
@@ -666,6 +680,46 @@ export const POS: React.FC<POSProps> = ({ onOrderCreated }) => {
                     <span>Rp {changeAmount.toLocaleString('id-ID')}</span>
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* Dynamic Interactive QRIS Display */}
+            {paymentMethod === 'qris' && (
+              <div className="p-3.5 bg-gradient-to-br from-red-50 to-slate-50 rounded-2xl border border-red-200/80 space-y-2.5 animate-in fade-in">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span className="px-2 py-0.5 bg-red-600 text-white font-black text-[10px] rounded tracking-widest">
+                      QRIS
+                    </span>
+                    <span className="text-[11px] font-extrabold text-slate-800">
+                      Standar Pembayaran Nasional
+                    </span>
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-500 flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-amber-500 animate-pulse" />
+                    <span>04:59</span>
+                  </span>
+                </div>
+
+                <div className="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center justify-center text-center space-y-1 shadow-inner">
+                  {/* QR Matrix Representation */}
+                  <div className="w-28 h-28 bg-slate-900 rounded-lg p-2 flex items-center justify-center relative shadow-sm">
+                    <QrCode className="w-24 h-24 text-white" />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-6 h-6 rounded-md bg-white border border-slate-900 flex items-center justify-center text-[9px] font-black text-red-600">
+                        LS
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-[10px] text-slate-400 font-mono">NMID: ID102004819201</div>
+                  <div className="text-xs font-black text-slate-900">
+                    Rp {totalAmount.toLocaleString('id-ID')}
+                  </div>
+                  <div className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>BCA • GoPay • OVO • ShopeePay • Mandiri</span>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -1197,6 +1251,30 @@ export const POS: React.FC<POSProps> = ({ onOrderCreated }) => {
           </div>
         </div>
       )}
+
+      {/* Barcode & QR Camera Scanner Modal */}
+      <BarcodeScannerModal
+        isOpen={showCameraScanner}
+        onClose={() => setShowCameraScanner(false)}
+        title="Scan QR / Member / Resi Pelanggan"
+        subtitle="Arahkan kamera ke QR Member, Barcode Nota, atau Voucher"
+        onScanSuccess={(code) => {
+          // Check if matches customer phone or id
+          const matchCust = customers.find(c => 
+            c.phone.replace(/[^0-9]/g, '').includes(code.replace(/[^0-9]/g, '')) ||
+            c.id.toLowerCase() === code.toLowerCase() ||
+            c.name.toLowerCase().includes(code.toLowerCase())
+          );
+          if (matchCust) {
+            setSelectedCustomer(matchCust);
+            alert(`Pelanggan ditemukan: ${matchCust.name} (${matchCust.membershipTier})`);
+          } else {
+            // Check voucher
+            setVoucherInput(code);
+            alert(`Kode discan: ${code}`);
+          }
+        }}
+      />
 
     </div>
   );

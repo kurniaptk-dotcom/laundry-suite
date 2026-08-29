@@ -5,9 +5,10 @@ import {
   Kanban, QrCode, Sparkles, ArrowRight, 
   RotateCcw, CheckCircle2, AlertTriangle, UserCheck,
   Clock, Shirt, Flame, PackageCheck, Zap, GripVertical,
-  Eye, X, Phone, Tag, Printer
+  Eye, X, Phone, Tag, Printer, Camera
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { BarcodeScannerModal } from '../../components/modals/BarcodeScannerModal';
 
 const COLUMNS: Array<{ key: OrderStatus; title: string; icon: any; headerColor: string; accentColor: string }> = [
   { key: 'received', title: '1. Antrean Masuk', icon: Clock, headerColor: 'bg-blue-500 text-white', accentColor: 'border-t-blue-500' },
@@ -22,6 +23,7 @@ export const ProductionKanban: React.FC = () => {
   const { orders, updateOrderStatus } = useApp();
   const [barcodeInput, setBarcodeInput] = useState('');
   const [scanToast, setScanToast] = useState<{ text: string; type: 'success' | 'info' | 'error' } | null>(null);
+  const [showCameraScanner, setShowCameraScanner] = useState(false);
 
   // Drag and drop state
   const [draggedOrderId, setDraggedOrderId] = useState<string | null>(null);
@@ -151,24 +153,36 @@ export const ProductionKanban: React.FC = () => {
         </div>
 
         {/* Quick Barcode Scanner Form */}
-        <form onSubmit={handleScanBarcode} className="flex items-center gap-2">
-          <div className="relative">
-            <QrCode className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Scan Barcode / Resi (misal: LBJ-8842)..."
-              value={barcodeInput}
-              onChange={(e) => setBarcodeInput(e.target.value)}
-              className="pl-9 pr-4 py-2 text-xs bg-white border border-slate-300 rounded-xl w-72 focus:outline-none focus:ring-2 focus:ring-brand-500/20 font-mono font-bold"
-            />
-          </div>
+        <div className="flex flex-wrap items-center gap-2">
           <button
-            type="submit"
-            className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md shadow-brand-500/20 transition active:scale-95"
+            type="button"
+            onClick={() => setShowCameraScanner(true)}
+            className="flex items-center gap-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-md shadow-slate-900/20 transition active:scale-95"
+            title="Buka Kamera HP untuk Scan Barcode/QR Resi atau Kantong Pakaian"
           >
-            Scan & Next
+            <Camera className="w-3.5 h-3.5 text-amber-400" />
+            <span>Kamera Scanner</span>
           </button>
-        </form>
+
+          <form onSubmit={handleScanBarcode} className="flex items-center gap-2">
+            <div className="relative">
+              <QrCode className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Scan Barcode / Resi (misal: LBJ-8842)..."
+                value={barcodeInput}
+                onChange={(e) => setBarcodeInput(e.target.value)}
+                className="pl-9 pr-4 py-2 text-xs bg-white border border-slate-300 rounded-xl w-60 sm:w-72 focus:outline-none focus:ring-2 focus:ring-brand-500/20 font-mono font-bold"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-xs font-bold shadow-md shadow-brand-500/20 transition active:scale-95"
+            >
+              Scan & Next
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Toast Alert */}
@@ -405,6 +419,47 @@ export const ProductionKanban: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Camera Barcode & QR Scanner Modal */}
+      <BarcodeScannerModal
+        isOpen={showCameraScanner}
+        onClose={() => setShowCameraScanner(false)}
+        title="Scan Barcode Resi / Kantong Produksi"
+        subtitle="Arahkan kamera ke stiker tag pakaian atau barcode nota"
+        onScanSuccess={(scannedCode) => {
+          setBarcodeInput(scannedCode);
+          // Auto trigger scan
+          const matched = orders.find(o => 
+            o.trackingCode.toLowerCase() === scannedCode.toLowerCase() ||
+            o.invoiceNumber.toLowerCase() === scannedCode.toLowerCase()
+          );
+          if (matched) {
+            const stageFlow: OrderStatus[] = ['received', 'washing', 'drying', 'ironing', 'packing', 'ready'];
+            const currentIndex = stageFlow.indexOf(matched.status);
+            if (currentIndex >= 0 && currentIndex < stageFlow.length - 1) {
+              const nextStage = stageFlow[currentIndex + 1];
+              updateOrderStatus(matched.id, nextStage);
+              if (nextStage === 'ready') {
+                confetti({ particleCount: 60, spread: 60, origin: { y: 0.6 } });
+              }
+              setScanToast({
+                text: `Kamera Scan #${matched.trackingCode} sukses! Berpindah ke tahap: ${nextStage.toUpperCase()}`,
+                type: 'success'
+              });
+            } else {
+              setScanToast({
+                text: `Order #${matched.trackingCode} sudah mencapai tahap akhir (${matched.status.toUpperCase()})`,
+                type: 'info'
+              });
+            }
+          } else {
+            setScanToast({
+              text: `Resi "${scannedCode}" tidak ditemukan dalam sistem.`,
+              type: 'error'
+            });
+          }
+        }}
+      />
     </div>
   );
 };
