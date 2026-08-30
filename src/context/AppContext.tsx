@@ -7,6 +7,7 @@ import {
 } from '../types';
 import { DatabaseEngine, DB_VERSION } from '../services/dbService';
 import { SupabaseService } from '../services/supabaseService';
+import { WhatsAppGatewayService } from '../services/whatsappGateway';
 
 // Default mock services
 const DEFAULT_SERVICES: ServiceItem[] = [
@@ -633,6 +634,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       status: 'sent',
     };
     setWhatsappMessages(prev => [newMsg, ...prev]);
+
+    // Send real message via Fonnte / WhatsApp Gateway API in background
+    if (WhatsAppGatewayService.isAutoSendEnabled()) {
+      WhatsAppGatewayService.sendMessage({
+        target: phone,
+        message: content,
+      }).then(res => {
+        if (res.success) {
+          console.log(`[WhatsApp Gateway] Message sent successfully to ${phone} via ${res.provider}`);
+        } else {
+          console.warn(`[WhatsApp Gateway] Failed to send to ${phone}:`, res.error);
+        }
+      }).catch(err => {
+        console.warn(`[WhatsApp Gateway Error]:`, err);
+      });
+    }
   };
 
   const applyVoucherCode = (code: string, subtotal: number) => {
