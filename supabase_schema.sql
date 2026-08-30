@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS tenants (
     owner_email VARCHAR(255) NOT NULL,
     owner_phone VARCHAR(50) NOT NULL,
     logo_url TEXT,
+    trial_ends_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -257,3 +258,11 @@ CREATE POLICY "Allow public access for anon client" ON attendance FOR ALL USING 
 CREATE POLICY "Allow public access for anon client" ON payroll_slips FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow public access for anon client" ON expenses FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Allow public access for anon client" ON whatsapp_messages FOR ALL USING (true) WITH CHECK (true);
+
+-- ============================================================================
+-- REALTIME WEB-SOCKETS SETUP
+-- ============================================================================
+ALTER PUBLICATION supabase_realtime ADD TABLE orders;
+ALTER PUBLICATION supabase_realtime ADD TABLE customers;
+ALTER PUBLICATION supabase_realtime ADD TABLE delivery_tasks;
+
