@@ -6,8 +6,8 @@
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const DEFAULT_SUPABASE_URL = 'https://pxcxwendicswsfbjgwdv.supabase.co';
-const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4Y3h3ZW5kaWNzd3NmYmpnd2R2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODc0NzAyMTcsImV4cCI6MjEwMzA0NjIxN30.ZkCLbLvIWndTbAvg8iJvhN0ni491ZquEeQGoxMitkjI';
+const DEFAULT_SUPABASE_URL = 'https://jtvyjyvwvhlxtqqcpvqq.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp0dnlqeXZ3dmhseHRxcWNwdnFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjUxMTUsImV4cCI6MjEwMzcwMTExNX0.bmpJ9daUgZDOvbHrV1fTV6fKKtvL40WZRpmDc9CbGZo';
 
 const getEnvOrStorage = (key: string, storageKey: string, fallback: string): string => {
   try {
