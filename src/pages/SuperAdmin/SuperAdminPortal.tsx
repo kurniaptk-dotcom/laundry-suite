@@ -593,6 +593,230 @@ export const SuperAdminPortal: React.FC<SuperAdminPortalProps> = ({
 
 
       {/* ======================================================== */}
+      {/* 2.1. VIEW: SUBSCRIPTIONS & MRR MATRIX                   */}
+      {/* ======================================================== */}
+      {adminTab === 'subscriptions' && (
+        <div className="space-y-6 animate-in fade-in">
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-card">
+              <span className="text-xs text-slate-500 font-bold block uppercase tracking-wider">Total MRR Langganan</span>
+              <div className="text-2xl font-black text-purple-950 mt-1 font-mono">Rp 128.500.000</div>
+              <div className="text-[11px] text-emerald-600 font-bold mt-1">+14.2% MoM Growth</div>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-card">
+              <span className="text-xs text-slate-500 font-bold block uppercase tracking-wider">ARPU (Avg Revenue/Tenant)</span>
+              <div className="text-2xl font-black text-blue-900 mt-1 font-mono">Rp 328.644</div>
+              <div className="text-[11px] text-slate-400 mt-1">Per active tenant</div>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-card">
+              <span className="text-xs text-slate-500 font-bold block uppercase tracking-wider">Trial Conversion Rate</span>
+              <div className="text-2xl font-black text-emerald-700 mt-1 font-mono">68.4%</div>
+              <div className="text-[11px] text-emerald-600 font-bold mt-1">Top tier industry benchmark</div>
+            </div>
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-card">
+              <span className="text-xs text-slate-500 font-bold block uppercase tracking-wider">Gross Churn Rate</span>
+              <div className="text-2xl font-black text-amber-700 mt-1 font-mono">1.8%</div>
+              <div className="text-[11px] text-amber-600 font-bold mt-1">Sangat Sehat (&lt;3%)</div>
+            </div>
+          </div>
+
+          {/* Pricing Tier Performance Matrix */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Starter Plan */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-card space-y-4 relative overflow-hidden">
+              <div className="flex justify-between items-center">
+                <span className="px-3 py-1 bg-slate-100 text-slate-800 text-xs font-black rounded-full uppercase">
+                  Starter Plan
+                </span>
+                <span className="text-xs font-bold text-slate-400">1 Cabang</span>
+              </div>
+              <div>
+                <div className="text-2xl font-black text-slate-900">Rp 199.000 <span className="text-xs font-normal text-slate-500">/bulan</span></div>
+                <p className="text-xs text-slate-500 mt-1">Cocok untuk outlet laundry kiloan single-branch</p>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-2 text-xs">
+                <div className="flex justify-between text-slate-700">
+                  <span>Tenant Terdaftar:</span>
+                  <span className="font-black">142 Tenant</span>
+                </div>
+                <div className="flex justify-between text-slate-700">
+                  <span>Kontribusi MRR:</span>
+                  <span className="font-black text-purple-900 font-mono">Rp 28.258.000 (22%)</span>
+                </div>
+              </div>
+              <ul className="text-xs text-slate-600 space-y-2 pt-2 border-t border-slate-100">
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600" /> POS Kasir & Nota Digital</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600" /> Kanban Stasiun Produksi</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-emerald-600" /> WhatsApp Gateway Otomatis</li>
+              </ul>
+            </div>
+
+            {/* Growth Plan */}
+            <div className="bg-gradient-to-b from-purple-50/50 to-white rounded-3xl border-2 border-purple-300 p-6 shadow-xl space-y-4 relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-purple-700 text-white text-[10px] font-black px-4 py-1 rounded-bl-xl uppercase tracking-wider">
+                Most Popular
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-black rounded-full uppercase">
+                  Growth Plan
+                </span>
+                <span className="text-xs font-bold text-purple-700">Hingga 3 Cabang</span>
+              </div>
+              <div>
+                <div className="text-2xl font-black text-purple-950">Rp 499.000 <span className="text-xs font-normal text-slate-500">/bulan</span></div>
+                <p className="text-xs text-slate-500 mt-1">Multi-cabang dengan kurir antar-jemput & CRM</p>
+              </div>
+              <div className="p-3 bg-purple-100/50 rounded-2xl border border-purple-200 space-y-2 text-xs">
+                <div className="flex justify-between text-slate-700">
+                  <span>Tenant Terdaftar:</span>
+                  <span className="font-black text-purple-950">186 Tenant</span>
+                </div>
+                <div className="flex justify-between text-slate-700">
+                  <span>Kontribusi MRR:</span>
+                  <span className="font-black text-purple-900 font-mono">Rp 92.814.000 (72%)</span>
+                </div>
+              </div>
+              <ul className="text-xs text-slate-600 space-y-2 pt-2 border-t border-purple-100">
+                <li className="flex items-center gap-2 font-semibold text-slate-800"><Check className="w-4 h-4 text-purple-600" /> Semua Fitur Starter</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-purple-600" /> Multi-Outlet Dashboard</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-purple-600" /> Dispatch Kurir Antar-Jemput (PWA)</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-purple-600" /> CRM, Loyalty Points & Deposit</li>
+              </ul>
+            </div>
+
+            {/* Business Plan */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-card space-y-4 relative overflow-hidden">
+              <div className="flex justify-between items-center">
+                <span className="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-black rounded-full uppercase">
+                  Business Plan
+                </span>
+                <span className="text-xs font-bold text-blue-700">Unlimited Cabang</span>
+              </div>
+              <div>
+                <div className="text-2xl font-black text-slate-900">Rp 1.299.000 <span className="text-xs font-normal text-slate-500">/bulan</span></div>
+                <p className="text-xs text-slate-500 mt-1">Solusi enterprise waralaba, payroll & laporan ERP</p>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 space-y-2 text-xs">
+                <div className="flex justify-between text-slate-700">
+                  <span>Tenant Terdaftar:</span>
+                  <span className="font-black">63 Tenant</span>
+                </div>
+                <div className="flex justify-between text-slate-700">
+                  <span>Kontribusi MRR:</span>
+                  <span className="font-black text-purple-900 font-mono">Rp 81.837.000 (6%)</span>
+                </div>
+              </div>
+              <ul className="text-xs text-slate-600 space-y-2 pt-2 border-t border-slate-100">
+                <li className="flex items-center gap-2 font-semibold text-slate-800"><Check className="w-4 h-4 text-blue-600" /> Semua Fitur Growth</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-blue-600" /> Unlimited Multi-Cabang</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-blue-600" /> Modul HR, Payroll & Komisi</li>
+                <li className="flex items-center gap-2"><Check className="w-4 h-4 text-blue-600" /> Laporan Keuangan ERP & Neraca L/R</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+      {/* ======================================================== */}
+      {/* 2.2. VIEW: BILLING & INVOICES (REVENUE LOG)             */}
+      {/* ======================================================== */}
+      {adminTab === 'billing' && (
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-card p-6 space-y-5 animate-in fade-in">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <div>
+              <h2 className="text-base font-black text-slate-900 flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-purple-700" />
+                Daftar Tagihan & Riwayat Faktur Langganan (SaaS Invoices)
+              </h2>
+              <p className="text-xs text-slate-500">
+                Log penagihan otomatis Midtrans Snap, status pelunasan kartu/QRIS, dan riwayat faktur pajak tenant.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => alert('Fitur Ekspor Rekap Faktur CSV berhasil diunduh!')}
+                className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition"
+              >
+                📥 Ekspor CSV
+              </button>
+            </div>
+          </div>
+
+          {/* Invoices Table */}
+          <div className="overflow-x-auto rounded-2xl border border-slate-200">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th className="py-3 px-4">No. Invoice</th>
+                  <th className="py-3 px-4">Nama Tenant</th>
+                  <th className="py-3 px-4">Paket Plan</th>
+                  <th className="py-3 px-4">Nominal</th>
+                  <th className="py-3 px-4">Tanggal Tagih</th>
+                  <th className="py-3 px-4">Metode Bayar</th>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {[
+                  { inv: 'INV/2026/08/LS-9481', tenant: 'CleanFast Premium Laundry', plan: 'Business', amount: 1299000, date: '28 Agu 2026', method: 'Midtrans QRIS Auto-Debit', status: 'paid' },
+                  { inv: 'INV/2026/08/LS-9480', tenant: 'Laundry Bersih Jaya', plan: 'Growth', amount: 499000, date: '25 Agu 2026', method: 'BCA Virtual Account', status: 'paid' },
+                  { inv: 'INV/2026/08/LS-9479', tenant: 'SuperWash Laundry Mart', plan: 'Business', amount: 1299000, date: '22 Agu 2026', method: 'Mandiri Bill Payment', status: 'paid' },
+                  { inv: 'INV/2026/08/LS-9478', tenant: 'FreshKlin Kiloan Express', plan: 'Starter', amount: 199000, date: '20 Agu 2026', method: 'GoPay / QRIS Dinamis', status: 'paid' },
+                  { inv: 'INV/2026/08/LS-9477', tenant: 'Laundry Sejahtera Abadi', plan: 'Growth', amount: 499000, date: '18 Agu 2026', method: 'Kartu Kredit (Past Due)', status: 'past_due' },
+                  { inv: 'INV/2026/08/LS-9476', tenant: 'Diva Dry Cleaning & Care', plan: 'Growth', amount: 499000, date: '15 Agu 2026', method: 'Virtual Account', status: 'failed' },
+                ].map((item, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50 transition">
+                    <td className="py-3.5 px-4 font-mono font-bold text-purple-900">{item.inv}</td>
+                    <td className="py-3.5 px-4 font-extrabold text-slate-900">{item.tenant}</td>
+                    <td className="py-3.5 px-4">
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase bg-slate-100 text-slate-800">
+                        {item.plan}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
+                      Rp {item.amount.toLocaleString('id-ID')}
+                    </td>
+                    <td className="py-3.5 px-4 text-slate-600">{item.date}</td>
+                    <td className="py-3.5 px-4 text-slate-700 font-medium">{item.method}</td>
+                    <td className="py-3.5 px-4">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                        item.status === 'paid' ? 'bg-emerald-100 text-emerald-800' :
+                        item.status === 'past_due' ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-800'
+                      }`}>
+                        {item.status === 'paid' ? '● Lunas' : item.status === 'past_due' ? '⏳ Tertunggak' : '❌ Gagal'}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <button
+                          onClick={() => alert(`Faktur digital untuk ${item.inv} siap dicetak!`)}
+                          className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-bold"
+                        >
+                          Cetak Faktur
+                        </button>
+                        {item.status !== 'paid' && (
+                          <button
+                            onClick={() => alert(`Pengingat WhatsApp berhasil dikirim ke ${item.tenant}!`)}
+                            className="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-lg text-[11px] font-bold border border-purple-200"
+                          >
+                            Kirim Reminder WA
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+
+      {/* ======================================================== */}
       {/* 3. VIEW: FEATURE ADOPTION & PLATFORM USAGE              */}
       {/* ======================================================== */}
       {(adminTab === 'usage' || adminTab === 'adoption') && (
