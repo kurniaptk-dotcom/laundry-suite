@@ -3,14 +3,15 @@ import { useApp } from '../../context/AppContext';
 import { 
   Sparkles, Store, CheckCircle2, ArrowRight, ArrowLeft, 
   Droplets, Printer, Check, ShoppingBag, 
-  LayoutDashboard, MapPin, Phone, Clock
+  LayoutDashboard, MapPin, Phone, Clock, X
 } from 'lucide-react';
 
 export interface OnboardingWizardProps {
   onFinish: (targetScreen: 'pos' | 'dashboard') => void;
+  onClose?: () => void;
 }
 
-export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onFinish }) => {
+export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onFinish, onClose }) => {
   const { 
     currentTenant, 
     currentOutlet, 
@@ -19,6 +20,15 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onFinish }) 
     services, 
     updateService,
   } = useApp();
+
+  const handleDismiss = () => {
+    localStorage.setItem(`ls_onboarding_done_${currentTenant?.id || 'default'}`, 'true');
+    if (onClose) {
+      onClose();
+    } else {
+      onFinish('dashboard');
+    }
+  };
 
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
@@ -103,8 +113,17 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ onFinish }) 
               </div>
             </div>
 
-            <div className="hidden sm:flex items-center gap-1.5 bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-xs font-bold">
-              <span>Langkah {step} dari 4</span>
+            <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-1.5 bg-white/15 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 text-xs font-bold">
+                <span>Langkah {step} dari 4</span>
+              </div>
+              <button
+                onClick={handleDismiss}
+                className="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition"
+                title="Tutup / Lewati Setup"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
           </div>
 

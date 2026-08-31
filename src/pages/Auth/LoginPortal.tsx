@@ -276,6 +276,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
   };
 
   const handleLaunchTrialDashboard = () => {
+    sessionStorage.setItem('ls_trigger_onboarding', 'true');
     if (createdTrialTenant) {
       login('tenant_owner', createdTrialTenant.id);
     } else if (pendingRegistration) {
@@ -285,6 +286,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({
 
   const handleCompletePaymentCheckout = () => {
     if (pendingTenant) {
+      sessionStorage.setItem('ls_trigger_onboarding', 'true');
       setShowCheckoutModal(false);
       login('tenant_owner', pendingTenant.id);
     }

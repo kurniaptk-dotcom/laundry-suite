@@ -115,18 +115,20 @@ const MainApp: React.FC = () => {
   // WhatsApp Drawer State
   const [showWhatsAppDrawer, setShowWhatsAppDrawer] = useState<boolean>(false);
 
-  // Onboarding Wizard State for newly registered tenants
+  // Onboarding Wizard State (Only triggered ONCE right after initial registration)
   const [showOnboarding, setShowOnboarding] = useState<boolean>(false);
 
-  // Auto trigger Onboarding Wizard for new tenants
+  // Auto trigger Onboarding Wizard only for freshly registered tenants
   React.useEffect(() => {
-    if (isAuthenticated && currentRole === 'tenant_owner' && currentTenant) {
+    if (isAuthenticated && currentRole === 'tenant_owner' && currentTenant && !impersonatedTenant) {
+      const isJustRegistered = sessionStorage.getItem('ls_trigger_onboarding') === 'true';
       const isDone = localStorage.getItem(`ls_onboarding_done_${currentTenant.id}`);
-      if (!isDone && currentTenant.id !== 't-demo') {
+      if (isJustRegistered && !isDone && currentTenant.id !== 't-demo') {
         setShowOnboarding(true);
+        sessionStorage.removeItem('ls_trigger_onboarding');
       }
     }
-  }, [isAuthenticated, currentRole, currentTenant?.id]);
+  }, [isAuthenticated, currentRole, currentTenant?.id, impersonatedTenant]);
 
   // Initial route handling
   React.useEffect(() => {
@@ -385,6 +387,7 @@ const MainApp: React.FC = () => {
               setShowOnboarding(false);
               setActiveTab(target);
             }}
+            onClose={() => setShowOnboarding(false)}
           />
         )}
 
